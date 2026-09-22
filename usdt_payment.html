@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upgrade — SubnetROI Pro</title>
+<style>
+  :root{
+    --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+    --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --warn:#f5a623;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif}
+  .nav{position:sticky;top:0;z-index:10;background:rgba(10,13,19,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .nav-in{max-width:960px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:24px}
+  .brand{font-weight:700;font-size:16px}
+  .brand span{color:var(--accent)}
+  .nav-links{margin-left:auto;display:flex;gap:18px}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:13px}
+  .nav-links a:hover{color:var(--fg)}
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 48px}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:24px}
+  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:28px}
+  .plan{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative}
+  .plan.hot{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .plan .name{font-weight:700;font-size:15px}
+  .plan .price{font-size:26px;font-weight:700;margin:6px 0 2px}
+  .plan .price small{font-size:13px;color:var(--muted);font-weight:400}
+  .plan ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:12.5px}
+  .plan li{margin:3px 0}
+  .badge{position:absolute;top:-10px;right:14px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+  .paybox{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px}
+  .paybox h2{margin:0 0 4px;font-size:16px}
+  .paybox .p{color:var(--muted);font-size:12.5px;margin:0 0 16px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .field{flex:1;min-width:200px}
+  .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+  .field select,.field input{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:7px;padding:9px 11px;font:13px var(--mono)}
+  .addr{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:14px}
+  .addr code{font:13px var(--mono);word-break:break-all;color:#c9d4e8}
+  .copy{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .copy:hover{filter:brightness(1.1)}
+  .qr{width:180px;height:180px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;margin:0 auto 16px}
+  .steps{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px}
+  .steps ol{margin:0;padding-left:20px;color:var(--muted);font-size:12.5px}
+  .steps li{margin:4px 0}
+  .note{background:#1a2418;border:1px solid #2c4a2c;color:#a8d5a8;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px}
+  .warn{background:#2b1a1a;border:1px solid #4a2c2c;color:#ffb4b4;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px}
+  .btn{display:inline-block;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+  .footer{border-top:1px solid var(--border);margin-top:28px;padding-top:16px;color:var(--muted);font-size:12px;text-align:center}
+  .footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-in">
+    <div class="brand">Subnet<span>ROI</span></div>
+    <div class="nav-links">
+      <a href="roi_planner.html">Dashboard</a>
+      <a href="roi_planner.html#method">Methodology</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <h1>Upgrade to Pro</h1>
+  <div class="sub">Pay with USDT. Access unlocks within minutes of confirmation.</div>
+
+  <div class="plans">
+    <div class="plan">
+      <div class="name">Free</div>
+      <div class="price">$0<small>/mo</small></div>
+      <ul>
+        <li>Full ROI table (all 129 subnets)</li>
+        <li>Live TAO price &amp; emission data</li>
+        <li>Daily email digest</li>
+      </ul>
+    </div>
+    <div class="plan hot">
+      <div class="badge">Recommended</div>
+      <div class="name">Pro</div>
+      <div class="price">$20<small>/mo</small></div>
+      <ul>
+        <li>Hardware sizing recommendations</li>
+        <li>Alpha-price scenario modeling</li>
+        <li>Dereg-risk &amp; collateral-lock P&amp;L</li>
+        <li>Telegram alerts (emission-shift, dereg, Kraken)</li>
+        <li>Saved watchlists</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <div class="name">API</div>
+      <div class="price">$199<small>/mo</small></div>
+      <ul>
+        <li>Programmatic access to the ROI model</li>
+        <li>Bulk subnet emission data</li>
+        <li>Everything in Pro</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="paybox">
+    <h2>Pay with USDT</h2>
+    <p class="p">Select your plan and network, send the exact amount to the address below, then confirm.</p>
+
+    <div class="row">
+      <div class="field">
+        <label>Plan</label>
+        <select id="plan">
+          <option value="20" selected>Pro — $20 / month</option>
+          <option value="199">API — $199 / month</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Network</label>
+        <select id="network">
+                  <option value="ERC-20" selected>ERC-20 (Ethereum)</option>
+                  <option value="TRC-20">TRC-20 (Tron)</option>
+                </select>
+      </div>
+      <div class="field">
+        <label>Amount (USDT)</label>
+        <input id="amount" type="text" value="20" readonly>
+      </div>
+    </div>
+
+    <div class="addr">
+      <code id="addr">TREPLACE_WITH_YOUR_USDT_TRC20_ADDRESS</code>
+      <button class="copy" onclick="copyAddr()">Copy</button>
+    </div>
+
+    <div class="qr" id="qr">QR code<br>(generated from your address)</div>
+
+    <div class="steps">
+      <ol>
+        <li>Send <b id="amtLabel">20 USDT</b> on <b id="netLabel">TRC-20</b> to the address above.</li>
+        <li>Use the exact network selected — sending on the wrong network may lose funds.</li>
+        <li>After sending, click <b>I've sent payment</b> and include your transaction hash (TXID).</li>
+        <li>We verify on-chain and unlock Pro within minutes.</li>
+      </ol>
+    </div>
+
+    <div class="warn" id="addrWarn">
+          <b>Note:</b> ERC-20 (Ethereum) is configured and live. TRC-20 (Tron) is not yet configured — if you select it, the address shown is a placeholder. Send on ERC-20 for now.
+        </div>
+
+    <div class="note">
+      <b>Security:</b> always verify the address on this page matches the one you're sending to. We will never DM you asking for payment. Double-check the network before sending.
+    </div>
+
+    <a class="btn" href="mailto:mentatsolutionsllc@gmail.com?subject=SubnetROI%20Pro%20payment&body=Plan:%20Pro%20%2420%2Fmo%0ANetwork:%20TRC-20%0ATXID:%20%5Bpaste%20transaction%20hash%5D">I've sent payment</a>
+    <a class="btn ghost" href="roi_planner.html">Back to dashboard</a>
+  </div>
+
+  <div class="footer">
+    <b>SubnetROI</b> · Payments in USDT · <a href="roi_planner.html">Dashboard</a> · Questions? <a href="mailto:mentatsolutionsllc@gmail.com">mentatsolutionsllc@gmail.com</a>
+  </div>
+</div>
+
+<script>
+const ADDRS = {
+  'TRC-20': 'TREPLACE_WITH_YOUR_USDT_TRC20_ADDRESS',
+  'ERC-20': '0x7d47a26aBBC941bE36D898ba9329b74e905CC838'
+};
+function refresh(){
+  const net = document.getElementById('network').value;
+  const amt = document.getElementById('plan').value;
+  document.getElementById('addr').textContent = ADDRS[net];
+  document.getElementById('amount').value = amt;
+  document.getElementById('amtLabel').textContent = amt + ' USDT';
+  document.getElementById('netLabel').textContent = net;
+}
+function copyAddr(){
+  const a = document.getElementById('addr').textContent;
+  navigator.clipboard.writeText(a).then(()=>{
+    const b = document.querySelector('.copy'); b.textContent='Copied!';
+    setTimeout(()=>b.textContent='Copy', 1500);
+  });
+}
+document.getElementById('plan').addEventListener('change', refresh);
+document.getElementById('network').addEventListener('change', refresh);
+refresh();
+</script>
+</body>
+</html>
