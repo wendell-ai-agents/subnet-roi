@@ -72,6 +72,11 @@
   .tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px}
   .tag.kraken{background:#1a2b1a;color:#7ee787;border:1px solid #2c4a2c}
   .tag.risk{background:#2b1a1a;color:#ff8b8b;border:1px solid #4a2c2c}
+  .star{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 6px;line-height:1}
+  .star:hover{color:var(--warn)}
+  .star.on{color:var(--warn)}
+  #watchToggle.on{background:var(--warn);color:#06230f;border-color:var(--warn)}
+  #probox .s a{cursor:pointer}
   .err{background:#2b1a1a;border:1px solid #4a2c2c;color:#ffb4b4;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12.5px}
   .loading{text-align:center;color:var(--muted);padding:40px;font-size:13px}
   .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
@@ -120,12 +125,17 @@
     <div id="subMsg" class="emailok" style="display:none"></div>
   </div>
 
-  <div class="banner">
-    <div>
-      <div class="t">Pro unlocks hardware sizing, alpha-price scenarios &amp; Telegram alerts</div>
-      <div class="s">$20/mo · pay with USDT · cancel anytime</div>
+  <div class="banner" id="probox">
+    <div style="flex:1">
+      <div class="t" id="proTitle">Pro unlocks watchlists, hardware sizing &amp; Telegram alerts</div>
+      <div class="s" id="proSub">$20/mo · pay with USDT · cancel anytime</div>
     </div>
-    <a class="btn" href="usdt_payment.html">Upgrade</a>
+    <form class="emailform" id="proForm" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" onsubmit="return unlock(event)">
+      <input type="text" id="proKey" placeholder="Paste Pro / API key" style="min-width:220px" autocomplete="off">
+      <button class="btn" type="submit">Unlock</button>
+      <a class="btn ghost" href="usdt_payment.html">Upgrade</a>
+    </form>
+    <div id="proMsg" style="display:none"></div>
   </div>
 
   <div id="errbox" class="err" style="display:none"></div>
@@ -174,6 +184,7 @@
       <option value="20" selected>Top 20</option>
       <option value="50">Top 50</option>
     </select>
+    <button class="btn ghost" id="watchToggle" onclick="toggleWatchFilter()" style="display:none">★ Watchlist</button>
   </div>
 
   <div class="tblwrap">
@@ -210,7 +221,7 @@ const FALLBACK_DATA = {"fetched_at": "2026-09-20T21:30:00Z", "count": 129, "subn
 let state = { rows: [], tao: FALLBACK_TAO, source: 'fallback' };
 
 const COLS = [
-  ['logo',''],['subnet','SN'],['symbol','Sym'],['name','Name'],['price','α price (τ)'],
+  ['star',''],['logo',''],['subnet','SN'],['symbol','Sym'],['name','Name'],['price','α price (τ)'],
   ['emission','Emission %'],['minersTao','Miners TAO/d'],['yourTao','Your TAO/d'],
   ['usdDay','Your $/d'],['netDay','Net $/d'],['netMo','Net $/mo'],['netYr','Net $/yr'],
   ['payback','Payback d'],['chainbuys','Chain buys/blk'],['risk','Dereg risk']
@@ -256,6 +267,7 @@ function render(){
   const sortKey = document.getElementById('sortSel').value;
   let list = rows.filter(r=> !q || (r.name+' '+r.symbol+' '+r.subnet).toLowerCase().includes(q));
   list.sort((a,b)=>(b[sortKey]??-Infinity)-(a[sortKey]??-Infinity));
+  if(watchOnly) list = list.filter(r=>proState.watch.has(r.subnet));
   if(top) list = list.slice(0,top);
 
   const netDays = rows.map(r=>r.netDay).filter(n=>!isNaN(n));
@@ -272,6 +284,7 @@ function render(){
     const kraken = KRAKEN.has(r.subnet);
     const risk = r.risk;
     return `<tr>
+      <td>${starCell(r.subnet)}</td>
       <td>${logoCell(r.logo)}</td>
       <td>${r.subnet}</td>
       <td>${r.symbol||''}</td>
@@ -371,6 +384,94 @@ function subscribe(e){
   return false;
 }
 load();
+</script>
+<script>
+/* ---- SubnetROI Pro (API-backed) ---- */
+const API = 'https://subnet-roi-api.mentatdev.workers.dev';
+let proState = { key: localStorage.getItem('sroi_key')||'', plan: null, watch: new Set(), synced: false };
+let watchOnly = false;
+
+function starCell(n){
+  const on = proState.watch.has(n);
+  return `<button class="star${on?' on':''}" onclick="toggleStar(${n})" title="Watchlist (Pro)">${on?'★':'☆'}</button>`;
+}
+
+function paintPro(){
+  const form = document.getElementById('proForm');
+  const msg = document.getElementById('proMsg');
+  const wt = document.getElementById('watchToggle');
+  if(proState.plan){
+    form.style.display = 'none';
+    msg.style.display = 'block';
+    msg.innerHTML = `<div class="t">✓ Pro active — <b>${proState.plan==='api'?'API':'Pro'}</b> plan</div>
+      <div class="s">Star subnets to save your watchlist (synced to your key) · <a onclick="lock()">Lock</a></div>`;
+    wt.style.display = 'inline-block';
+    if(watchOnly) wt.classList.add('on');
+  } else {
+    form.style.display = 'flex';
+    msg.style.display = 'none';
+    wt.style.display = 'none';
+    wt.classList.remove('on');
+    watchOnly = false;
+  }
+}
+
+async function syncWatch(){
+  if(!proState.key) return;
+  try{
+    const r = await fetch(API+'/v1/watch', { headers: { 'x-api-key': proState.key } });
+    if(r.ok){ proState.watch = new Set((await r.json()).subnets); proState.synced = true; render(); }
+  }catch(e){}
+}
+
+async function unlock(ev){
+  if(ev) ev.preventDefault();
+  const k = (document.getElementById('proKey').value||'').trim();
+  if(!k){ showErr('Enter your Pro or API key first.'); return false; }
+  try{
+    const r = await fetch(API+'/v1/key', { headers: { 'x-api-key': k } });
+    if(!r.ok){ showErr(r.status===401 ? 'Invalid key — check it and try again.' : 'Key check failed ('+r.status+').'); return false; }
+    const j = await r.json();
+    proState.key = k; localStorage.setItem('sroi_key', k); proState.plan = j.plan; proState.synced = false;
+    await syncWatch();
+    paintPro();
+    return false;
+  }catch(e){ showErr('Pro API unreachable — try again in a moment.'); return false; }
+}
+
+function lock(){
+  proState.key=''; proState.plan=null; proState.watch=new Set(); proState.synced=false;
+  localStorage.removeItem('sroi_key'); paintPro(); render();
+}
+
+async function toggleStar(n){
+  if(!proState.key || !proState.plan){ showErr('Watchlists are a Pro feature — enter your Pro/API key above or upgrade.'); return; }
+  if(proState.watch.has(n)) proState.watch.delete(n); else proState.watch.add(n);
+  render();
+  try{
+    const r = await fetch(API+'/v1/watch', { method:'PUT',
+      headers:{ 'x-api-key': proState.key, 'Content-Type':'application/json' },
+      body: JSON.stringify({ subnets: [...proState.watch] }) });
+    if(!r.ok && r.status===403) showErr('Watchlists require a Pro or API key.');
+  }catch(e){ showErr('Could not save watchlist — API unreachable.'); }
+}
+
+function toggleWatchFilter(){
+  watchOnly = !watchOnly;
+  document.getElementById('watchToggle').classList.toggle('on', watchOnly);
+  render();
+}
+
+(async function initPro(){
+  if(proState.key){
+    try{
+      const r = await fetch(API+'/v1/key', { headers: { 'x-api-key': proState.key } });
+      if(r.ok){ proState.plan = (await r.json()).plan; await syncWatch(); }
+      else { proState.key=''; localStorage.removeItem('sroi_key'); }
+    }catch(e){}
+  }
+  paintPro();
+})();
 </script>
 </body>
 </html>
