@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bittensor subnet ROI planner — expected miner/validator emissions per subnet from live on-chain data. Hardware sizing, payback, dereg risk across all 129 subnets.">
+<meta property="og:title" content="SubnetROI — Bittensor Subnet ROI Planner">
+<meta property="og:description" content="Expected miner/validator emissions per subnet from live on-chain data. Hardware sizing, payback, dereg risk.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wendell-ai-agents.github.io/subnet-roi/roi_planner.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
 <title>Subnet ROI — Bittensor Miner/Validator ROI Planner</title>
 <style>
   :root{
@@ -67,6 +73,13 @@
   .tag.kraken{background:#1a2b1a;color:#7ee787;border:1px solid #2c4a2c}
   .tag.risk{background:#2b1a1a;color:#ff8b8b;border:1px solid #4a2c2c}
   .err{background:#2b1a1a;border:1px solid #4a2c2c;color:#ffb4b4;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12.5px}
+  .loading{text-align:center;color:var(--muted);padding:40px;font-size:13px}
+  .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .emailform{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .emailform input[type=email]{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:6px;padding:8px 10px;font:13px var(--mono);flex:1;min-width:200px}
+  .emailform .btn{padding:8px 16px}
+  .emailok{color:var(--good);font-size:12px;margin-top:6px}
   .method{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:16px}
   .method h3{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
   .method code{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font:12px var(--mono);color:#c9d4e8}
@@ -82,6 +95,7 @@
       <a href="#tool">Dashboard</a>
       <a href="#method">Methodology</a>
       <a href="usdt_payment.html">Pricing</a>
+      <a href="#digest">Daily Digest</a>
       <a class="btn" href="usdt_payment.html">Upgrade · Pay with USDT</a>
     </div>
   </div>
@@ -91,6 +105,18 @@
   <div class="hero">
     <h1>Bittensor Subnet ROI Planner</h1>
     <p>Expected miner/validator emissions per subnet from live on-chain data. Input your hardware and stake, see net $/day, payback, and dereg risk across all 129 subnets.</p>
+  </div>
+
+  <div class="banner" id="digest">
+    <div style="flex:1">
+      <div class="t">Get the daily top-10 subnets in your inbox</div>
+      <div class="s">Free · every morning · live emission &amp; ROI data</div>
+    </div>
+    <form class="emailform" onsubmit="return subscribe(event)">
+      <input type="email" id="subEmail" placeholder="you@example.com" required>
+      <button class="btn" type="submit">Subscribe</button>
+    </form>
+    <div id="subMsg" class="emailok" style="display:none"></div>
   </div>
 
   <div class="banner">
@@ -112,7 +138,7 @@
 
   <div class="grid">
     <div class="card"><div class="lbl">Best net / day</div><div class="val" id="bestNet">—</div></div>
-    <div class="card"><div class="lbl">Best subnet</div><div class="val" id="bestSubnet" style="font-size:15px">—</div></div>
+    <div class="card"><div class="lbl">Best subnet (at your share)</div><div class="val" id="bestSubnet" style="font-size:15px">—</div></div>
     <div class="card"><div class="lbl">Median net / day</div><div class="val" id="medNet">—</div></div>
     <div class="card"><div class="lbl">Subnets profitable</div><div class="val" id="profitable">—</div></div>
   </div>
@@ -124,7 +150,7 @@
       <div class="field"><label>GPU power (W)</label><input id="gpuPower" type="number" value="350" min="0"></div>
       <div class="field"><label>Electricity ($/kWh)</label><input id="elecRate" type="number" value="0.12" step="0.01" min="0"></div>
       <div class="field"><label>Infra ($/mo)</label><input id="infra" type="number" value="20" min="0"></div>
-      <div class="field"><label>Assumed incentive share (%)</label><input id="incentive" type="number" value="0.5" step="0.1" min="0.001"></div>
+      <div class="field"><label>Assumed incentive share (%)</label><input id="incentive" type="number" value="0.1" step="0.05" min="0.001"></div>
       <div class="field"><label>Registration cost (TAO)</label><input id="regCost" type="number" value="1.0" step="0.1" min="0"></div>
       <div class="field"><label>Amortization (days)</label><input id="amort" type="number" value="365" min="1"></div>
     </div>
@@ -152,7 +178,7 @@
   <div class="tblwrap">
     <table id="tbl">
       <thead><tr id="thead"></tr></thead>
-      <tbody id="tbody"></tbody>
+      <tbody id="tbody"><tr><td colspan="15" class="loading"><span class="spinner"></span>Loading live data…</td></tr></tbody>
     </table>
   </div>
 
@@ -248,7 +274,7 @@ function render(){
       <td>${logoCell(r.logo)}</td>
       <td>${r.subnet}</td>
       <td>${r.symbol||''}</td>
-      <td>${r.name||''}${kraken?'<span class="tag kraken">Kraken</span>':''}${risk?'<span class="tag risk">dereg</span>':''}</td>
+      <td>${r.name||''}${kraken?'<span class="tag kraken">Kraken roadmap</span>':''}${risk?'<span class="tag risk">dereg</span>':''}</td>
       <td>${fmt(r.price,4)}</td>
       <td>${r.emission!=null?r.emission.toFixed(2)+'%':'—'}</td>
       <td>${fmt(r.minersTao,2)}</td>
@@ -330,6 +356,19 @@ document.getElementById('thead').addEventListener('click', e=>{
   document.getElementById('sortSel').value = k; render();
 });
 
+function subscribe(e){
+  e.preventDefault();
+  const em = document.getElementById('subEmail').value.trim();
+  const msg = document.getElementById('subMsg');
+  if(!em || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ msg.textContent='Enter a valid email.'; msg.style.display='block'; return false; }
+  try{
+    const url = 'https://formspree.io/f/REPLACE_FORM_ID';
+    fetch(url, {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({email:em, _subject:'SubnetROI digest subscribe'})})
+      .then(r=>{ msg.textContent = r.ok ? 'Subscribed! Check your inbox to confirm.' : 'Error — try again.'; msg.style.display='block'; })
+      .catch(()=>{ msg.textContent='Error — try again.'; msg.style.display='block'; });
+  }catch(err){ msg.textContent='Error — try again.'; msg.style.display='block'; }
+  return false;
+}
 load();
 </script>
 </body>
