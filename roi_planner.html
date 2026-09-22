@@ -405,7 +405,6 @@ function subscribe(e){
   return false;
 }
 load();
-loadReg();
 </script>
 <script>
 /* ---- SubnetROI Registration ---- */
@@ -448,6 +447,7 @@ async function loadRegForecast(){
     document.getElementById('regTtf').textContent=d.daysToFloor!=null?`${d.daysToFloor.toFixed(1)} d`:'—';
   }catch(e){}
 }
+loadReg();
 </script>
 <script>
 /* ---- SubnetROI Pro (API-backed) ---- */
