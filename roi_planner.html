@@ -271,8 +271,6 @@ function setData(rows, tao, source, time){
   document.getElementById('krakenCount').textContent = rows.filter(r=>KRAKEN.has(r.subnet)).length;
   document.getElementById('taoPrice').textContent = '$'+fmt(tao,2);
   document.getElementById('taoPriceSrc').textContent = source==='live'?'(live)':'(fallback)';
-  document.getElementById('datasrc').textContent = source==='live'?'LIVE':'FALLBACK DATA';
-  document.getElementById('datasrc').className = source==='live'?'live':'fallback';
   render();
 }
 
