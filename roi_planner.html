@@ -18,8 +18,9 @@
   .brand span{color:var(--accent)}
   .nav-links{display:flex;gap:18px;margin-left:auto;align-items:center}
   .nav-links a{color:var(--muted);text-decoration:none;font-size:13px}
-  .nav-links a:hover{color:var(--fg)}
-  .btn{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+    .nav-links a:hover{color:var(--fg)}
+    .nav-links a.btn{color:#fff}
+    .btn{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;letter-spacing:.01em}
   .btn:hover{filter:brightness(1.1)}
   .wrap{max-width:1280px;margin:0 auto;padding:24px 20px 40px}
   .hero{margin-bottom:20px}
@@ -279,30 +280,44 @@ function showErr(msg){ const e=document.getElementById('errbox'); e.style.displa
 
 async function load(){
   let rows=null, tao=null, time=null, source='fallback';
+  const mapRows = (arr)=> arr.map(s=>({
+    subnet:s.subnet, symbol:s.symbol, name:s.name, price:s.price,
+    emission:s.emission, minersTao:s.miners_tao_per_day, chainbuys:s.chain_buys_per_block,
+    risk:!!s.deregistration_risk, marketcap:s.marketcap, volume:s.volume, logo:s.logo_url
+  }));
+  // 1) same-origin snapshot (reliable; refreshed by cron)
   try{
-    const r = await fetch('https://api.taomarketcap.com/public/v1/subnets/table/');
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const d = await r.json();
-    rows = d.map(s=>({
-      subnet:s.subnet, symbol:s.symbol, name:s.name, price:s.price,
-      emission:s.emission, minersTao:s.miners_tao_per_day, chainbuys:s.chain_buys_per_block,
-      risk:!!s.deregistration_risk, marketcap:s.marketcap, volume:s.volume, logo:s.logo_url
-    }));
-    time = new Date().toISOString().slice(0,16).replace('T',' ');
-    source='live';
-  }catch(e){
-    showErr('Live TaoMarketCap fetch failed ('+e.message+'). Showing baked fallback snapshot.');
-    rows = FALLBACK_DATA.subnets.map(s=>({
-      subnet:s.subnet, symbol:s.symbol, name:s.name, price:s.price,
-      emission:s.emission, minersTao:s.miners_tao_per_day, chainbuys:s.chain_buys_per_block,
-      risk:!!s.deregistration_risk, marketcap:s.marketcap, volume:s.volume, logo:s.logo_url
-    }));
-    time = FALLBACK_DATA.fetched_at;
+    const r = await fetch('subnet_data.json');
+    if(r.ok){
+      const d = await r.json();
+      rows = mapRows(d.subnets||[]);
+      tao = d.tao_usd || null;
+      time = d.fetched_at;
+      source='live';
+    }
+  }catch(e){}
+  // 2) live TMC (may be CloudFront-blocked in some browsers)
+  if(!rows){
+    try{
+      const r = await fetch('https://api.taomarketcap.com/public/v1/subnets/table/');
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const d = await r.json();
+      rows = mapRows(d);
+      time = new Date().toISOString().slice(0,16).replace('T',' ');
+      source='live';
+    }catch(e){
+      showErr('Live data fetch failed ('+e.message+'). Showing baked fallback snapshot.');
+      rows = mapRows(FALLBACK_DATA.subnets);
+      time = FALLBACK_DATA.fetched_at;
+    }
   }
-  try{
-    const c = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bittensor&vs_currencies=usd');
-    if(c.ok){ const j=await c.json(); if(j.bittensor) tao=j.bittensor.usd; }
-  }catch(e){ /* keep fallback */ }
+  // 3) TAO price fallback
+  if(!tao){
+    try{
+      const c = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bittensor&vs_currencies=usd');
+      if(c.ok){ const j=await c.json(); if(j.bittensor) tao=j.bittensor.usd; }
+    }catch(e){}
+  }
   setData(rows, tao||FALLBACK_TAO, source, time);
 }
 
