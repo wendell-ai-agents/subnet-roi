@@ -77,6 +77,15 @@
   .star.on{color:var(--warn)}
   #watchToggle.on{background:var(--warn);color:#06230f;border-color:var(--warn)}
   #probox .s a{cursor:pointer}
+  .reg{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:20px}
+  .reg h3{margin:0 0 12px;font-size:15px}
+  .regtag{font-size:10px;font-weight:600;color:#7ee787;background:#1a2b1a;border:1px solid #2c4a2c;border-radius:4px;padding:1px 6px;vertical-align:middle}
+  .reggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+  .regcard{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+  .regcard .lbl{font-size:11px;color:var(--muted);margin-bottom:2px}
+  .regcard .val{font-size:18px;font-weight:700}
+  .regcard .val small{font-size:11px;color:var(--muted);font-weight:400}
+  .regchart{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px;min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
   .err{background:#2b1a1a;border:1px solid #4a2c2c;color:#ffb4b4;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12.5px}
   .loading{text-align:center;color:var(--muted);padding:40px;font-size:13px}
   .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
@@ -185,6 +194,18 @@
       <option value="50">Top 50</option>
     </select>
     <button class="btn ghost" id="watchToggle" onclick="toggleWatchFilter()" style="display:none">★ Watchlist</button>
+  </div>
+
+  <div class="reg" id="reg">
+    <h3>Subnet registration cost <span class="regtag" id="regTag">live</span></h3>
+    <div class="reggrid">
+      <div class="regcard"><div class="lbl">Current lock cost</div><div class="val" id="regCostNow">—</div></div>
+      <div class="regcard"><div class="lbl">Floor estimate</div><div class="val" id="regFloor">—</div></div>
+      <div class="regcard"><div class="lbl">Next slot</div><div class="val" id="regNext">—</div></div>
+      <div class="regcard"><div class="lbl">Time to floor</div><div class="val" id="regTtf">—</div></div>
+    </div>
+    <div class="regchart" id="regChart"><span class="spinner"></span>Loading registration curve…</div>
+    <div class="hint">Subnet-creation lock cost: doubles per registration, decays linearly over ~100,800 blocks (~2 weeks), floored at the network minimum (currently ~462 TAO). One registration per ~7,200 blocks (~1 day) network-wide. Forecast is a linear fit of the post-event decay — a new registration doubles the cost instantly, so treat projections as estimates.</div>
   </div>
 
   <div class="tblwrap">
@@ -384,6 +405,49 @@ function subscribe(e){
   return false;
 }
 load();
+loadReg();
+</script>
+<script>
+/* ---- SubnetROI Registration ---- */
+const REG_API = 'https://subnet-roi-api.mentatdev.workers.dev';
+function regSpark(series){
+  const w=560,h=110,pad=8;
+  const xs=series.map(p=>p.b), ys=series.map(p=>p.tao);
+  const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(...ys,0), y1=Math.max(...ys);
+  const sx=p=>pad+(p-x0)/((x1-x0)||1)*(w-2*pad);
+  const sy=p=>h-pad-(p-y0)/((y1-y0)||1)*(h-2*pad);
+  const line=series.map((p,i)=>(i?'L':'M')+sx(p.b).toFixed(1)+' '+sy(p.tao).toFixed(1)).join(' ');
+  const last=series[series.length-1];
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto" preserveAspectRatio="none">
+    <polyline points="${line}" fill="none" stroke="#4f8cff" stroke-width="2"/>
+    <circle cx="${sx(last.b)}" cy="${sy(last.tao)}" r="3" fill="#4f8cff"/>
+    <text x="${sx(last.b)-4}" y="${sy(last.tao)-8}" fill="#8b93a3" font-size="10">${last.tao.toFixed(1)} τ</text>
+  </svg>`;
+}
+async function loadReg(){
+  const box=document.getElementById('regChart');
+  try{
+    const r=await fetch(REG_API+'/v1/registration');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    document.getElementById('regCostNow').innerHTML=`${d.currentTao.toFixed(1)} <small>TAO · $${Math.round(d.currentUsd).toLocaleString()}</small>`;
+    document.getElementById('regFloor').textContent=`${d.floorEstimateTao.toFixed(1)} TAO`;
+    const ns=d.nextSlot;
+    document.getElementById('regNext').innerHTML=ns&&ns.etaBlocks>0
+      ? `${Math.ceil(ns.etaBlocks/7200)} <small>days</small>` : '<small>open now</small>';
+    document.getElementById('regTtf').textContent='—';
+    box.innerHTML=regSpark(d.series);
+    if(proState.key&&proState.plan) loadRegForecast();
+  }catch(e){ box.textContent='Registration data unavailable — try again shortly.'; }
+}
+async function loadRegForecast(){
+  try{
+    const r=await fetch(REG_API+'/v1/registration/forecast',{headers:{'x-api-key':proState.key}});
+    if(!r.ok) return;
+    const d=await r.json();
+    document.getElementById('regTtf').textContent=d.daysToFloor!=null?`${d.daysToFloor.toFixed(1)} d`:'—';
+  }catch(e){}
+}
 </script>
 <script>
 /* ---- SubnetROI Pro (API-backed) ---- */
