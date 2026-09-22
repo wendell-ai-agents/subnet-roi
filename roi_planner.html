@@ -363,7 +363,7 @@ function subscribe(e){
   const msg = document.getElementById('subMsg');
   if(!em || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ msg.textContent='Enter a valid email.'; msg.style.display='block'; return false; }
   try{
-    const url = 'https://formspree.io/f/REPLACE_FORM_ID';
+    const url = 'https://formspree.io/f/mdekgzpo';
     fetch(url, {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({email:em, _subject:'SubnetROI digest subscribe'})})
       .then(r=>{ msg.textContent = r.ok ? 'Subscribed! Check your inbox to confirm.' : 'Error — try again.'; msg.style.display='block'; })
       .catch(()=>{ msg.textContent='Error — try again.'; msg.style.display='block'; });
