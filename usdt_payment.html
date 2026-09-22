@@ -51,8 +51,17 @@
   .btn{display:inline-block;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
   .btn:hover{filter:brightness(1.1)}
   .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+  .btn.good{background:var(--good);color:#06230f}
   .footer{border-top:1px solid var(--border);margin-top:28px;padding-top:16px;color:var(--muted);font-size:12px;text-align:center}
   .footer a{color:var(--accent);text-decoration:none}
+  h3{margin:22px 0 6px;font-size:14px}
+  .pay-method{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 16px}
+  .method{flex:1;min-width:200px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer}
+  .method h4{margin:0 0 6px;font-size:13px}
+  .method p{margin:0;color:var(--muted);font-size:12px}
+  .method.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .hidden{display:none}
+  .invoice-form{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -68,7 +77,7 @@
 
 <div class="wrap">
   <h1>Upgrade to Pro</h1>
-  <div class="sub">Pay with USDT. Access unlocks within minutes of confirmation.</div>
+  <div class="sub">Two ways to pay: by credit/debit card (settled to us as USDT) or directly in USDT. Access unlocks within minutes of confirmation.</div>
 
   <div class="plans">
     <div class="plan">
@@ -104,60 +113,83 @@
   </div>
 
   <div class="paybox">
-    <h2>Pay with USDT</h2>
-    <p class="p">Select your plan and network, send the exact amount to the address below, then confirm.</p>
+    <h2>Choose how to pay</h2>
+    <p class="p">Select a plan above (Pro or API), then pick a payment method.</p>
 
-    <div class="row">
-      <div class="field">
-        <label>Plan</label>
-        <select id="plan">
-          <option value="20" selected>Pro — $20 / month</option>
-          <option value="199">API — $199 / month</option>
-        </select>
+    <div class="pay-method" id="methodRow">
+      <div class="method active" id="methodCard" onclick="chooseMethod('card')">
+        <h4>💳 Credit / Debit card</h4>
+        <p>Pay by card — we receive the payment in USDT, you get a receipt.</p>
       </div>
-      <div class="field">
-        <label>Network</label>
-        <select id="network">
-                  <option value="ERC-20" selected>ERC-20 (Ethereum)</option>
-                  <option value="TRC-20">TRC-20 (Tron)</option>
-                </select>
-      </div>
-      <div class="field">
-        <label>Amount (USDT)</label>
-        <input id="amount" type="text" value="20" readonly>
+      <div class="method" id="methodUsdt" onclick="chooseMethod('usdt')">
+        <h4>🪙 Direct USDT</h4>
+        <p>Send USDT straight to our wallet — no card fees.</p>
       </div>
     </div>
 
-    <div class="addr">
-      <code id="addr">TREPLACE_WITH_YOUR_USDT_TRC20_ADDRESS</code>
-      <button class="copy" onclick="copyAddr()">Copy</button>
-    </div>
-
-    <div class="qr" id="qr">QR code<br>(generated from your address)</div>
-
-    <div class="steps">
-      <ol>
-        <li>Send <b id="amtLabel">20 USDT</b> on <b id="netLabel">TRC-20</b> to the address above.</li>
-        <li>Use the exact network selected — sending on the wrong network may lose funds.</li>
-        <li>After sending, click <b>I've sent payment</b> and include your transaction hash (TXID).</li>
-        <li>We verify on-chain and unlock Pro within minutes.</li>
-      </ol>
-    </div>
-
-    <div class="warn" id="addrWarn">
-          <b>Note:</b> ERC-20 (Ethereum) is configured and live. TRC-20 (Tron) is not yet configured — if you select it, the address shown is a placeholder. Send on ERC-20 for now.
+    <!-- Card path -->
+    <div id="cardPanel" class="invoice-form">
+      <h3>Pay by card / request an invoice</h3>
+      <p class="p">Enter your email — we'll email you a payment link immediately (card) or an invoice you can pay by card or USDT. No card details are typed on this site.</p>
+      <div class="row">
+        <div class="field">
+          <label>Your email</label>
+          <input id="custEmail" type="email" placeholder="you@example.com">
         </div>
-
-    <div class="note">
-      <b>Security:</b> always verify the address on this page matches the one you're sending to. We will never DM you asking for payment. Double-check the network before sending.
+        <div class="field">
+          <label>Plan</label>
+          <select id="plan" onchange="syncAmount()">
+            <option value="20" selected>Pro — $20 / month</option>
+            <option value="199">API — $199 / month</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn good" id="cardBtn" onclick="getInvoice()">Email me a payment link</div>
+      <div class="warn hidden" id="invoiceWarn" style="margin-top:12px">Please enter a valid email address.</div>
+      <div class="note hidden" id="invoiceNote" style="margin-top:12px">✓ Request sent. If your gateway is not yet live, an invoice will be sent to both you and <b>mentatsolutionsllc@gmail.com</b> manually within the next business hours.</div>
     </div>
 
-    <a class="btn" href="mailto:mentatsolutionsllc@gmail.com?subject=SubnetROI%20Pro%20payment&body=Plan:%20Pro%20%2420%2Fmo%0ANetwork:%20TRC-20%0ATXID:%20%5Bpaste%20transaction%20hash%5D">I've sent payment</a>
-    <a class="btn ghost" href="roi_planner.html">Back to dashboard</a>
-  </div>
+    <!-- USDT direct path -->
+    <div id="usdtPanel" class="invoice-form hidden">
+      <h3>Send USDT directly</h3>
+      <div class="row">
+        <div class="field">
+          <label>Plan</label>
+          <select id="planU" onchange="syncAmount()">
+            <option value="20" selected>Pro — $20 / month</option>
+            <option value="199">API — $199 / month</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Network</label>
+          <select id="network" onchange="sUsdt()">
+            <option value="ERC-20" selected>ERC-20 (Ethereum)</option>
+            <option value="TRC-20">TRC-20 (Tron)</option>
+          </select>
+        </div>
+      </div>
+      <div class="addr">
+        <code id="addr">TREPLACE_WITH_YOUR_USDT_TRC20_ADDRESS</code>
+        <button class="copy" onclick="copyAddr()">Copy</button>
+      </div>
+      <div class="steps">
+        <ol>
+          <li>Send <b id="amtLabel">20 USDT</b> on <b id="netLabel">ERC-20</b> to the address above.</li>
+          <li>Use the exact network selected — sending on the wrong network may lose funds.</li>
+          <li>After sending, click <b>I've sent payment</b> and include your transaction hash (TXID).</li>
+          <li>We verify on-chain and unlock Pro within minutes.</li>
+        </ol>
+      </div>
+      <div class="note">
+        <b>Security:</b> always verify the address on this page matches the one you're sending to. We will never DM you asking for payment. Double-check the network before sending.
+      </div>
+      <a class="btn" id="confirmUsdt" href="mailto:mentatsolutionsllc@gmail.com?subject=SubnetROI%20Pro%20payment&body=Plan:%20Pro%20%2420%2Fmo%0ANetwork:%20ERC-20%0ATXID:%20%5Bpaste%20transaction%20hash%5D">I've sent payment</a>
+      <a class="btn ghost" href="roi_planner.html">Back to dashboard</a>
+    </div>
 
-  <div class="footer">
-    <b>SubnetROI</b> · Payments in USDT · <a href="roi_planner.html">Dashboard</a> · Questions? <a href="mailto:mentatsolutionsllc@gmail.com">mentatsolutionsllc@gmail.com</a>
+    <div class="footer">
+      <b>SubnetROI</b> · Payments via card (USDT-settled) or direct USDT · <a href="roi_planner.html">Dashboard</a> · Questions? <a href="mailto:mentatsolutionsllc@gmail.com">mentatsolutionsllc@gmail.com</a>
+    </div>
   </div>
 </div>
 
@@ -166,24 +198,58 @@ const ADDRS = {
   'TRC-20': 'TREPLACE_WITH_YOUR_USDT_TRC20_ADDRESS',
   'ERC-20': '0x7d47a26aBBC941bE36D898ba9329b74e905CC838'
 };
-function refresh(){
+function chooseMethod(m){
+  document.getElementById('cardPanel').classList.toggle('hidden', m!=='card');
+  document.getElementById('usdtPanel').classList.toggle('hidden', m!=='usdt');
+  document.getElementById('methodCard').classList.toggle('active', m==='card');
+  document.getElementById('methodUsdt').classList.toggle('active', m==='usdt');
+}
+function syncAmount(){
+  const plan = document.getElementById('plan').value || document.getElementById('planU').value;
+  const selected = document.getElementById('plan').value === '' ? document.getElementById('planU').value : plan;
   const net = document.getElementById('network').value;
-  const amt = document.getElementById('plan').value;
+  const amt = selected || 20;
+  document.getElementById('amtLabel').textContent = amt + ' USDT';
+  document.getElementById('netLabel').textContent = net;
+  document.getElementById('amount') && (document.getElementById('amount').value = amt);
+}
+function sUsdt(){
+  const net = document.getElementById('network').value;
+  const amt = document.getElementById('planU').value;
   document.getElementById('addr').textContent = ADDRS[net];
-  document.getElementById('amount').value = amt;
   document.getElementById('amtLabel').textContent = amt + ' USDT';
   document.getElementById('netLabel').textContent = net;
 }
 function copyAddr(){
   const a = document.getElementById('addr').textContent;
   navigator.clipboard.writeText(a).then(()=>{
-    const b = document.querySelector('.copy'); b.textContent='Copied!';
+    const b = document.querySelector('#usdtPanel .copy'); b.textContent='Copied!';
     setTimeout(()=>b.textContent='Copy', 1500);
   });
 }
-document.getElementById('plan').addEventListener('change', refresh);
-document.getElementById('network').addEventListener('change', refresh);
-refresh();
+function getInvoice(){
+  const email = document.getElementById('custEmail').value.trim();
+  const planEl = document.getElementById('plan');
+  const plan = planEl.options[planEl.selectedIndex] ? planEl.options[planEl.selectedIndex].text : 'Pro';
+  document.getElementById('invoiceWarn').classList.add('hidden');
+  document.getElementById('invoiceNote').classList.add('hidden');
+  if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    document.getElementById('invoiceWarn').classList.remove('hidden');
+    return;
+  }
+  // Compose an email to us requesting the invoice; the plan + payer email are prefilled.
+  const subject = encodeURIComponent('SubnetROI ' + plan + ' — payment request');
+  const body = encodeURIComponent(
+    'Please send me a payment link for SubnetROI.\n\n' +
+    'Plan: ' + plan + '\n' +
+    'Payer email: ' + email + '\n' +
+    'Payment method: card (USDT-settled) or invoice\n\n' +
+    'Please email the payment link to: ' + email
+  );
+  window.location.href = 'mailto:mentatsolutionsllc@gmail.com?subject=' + subject + '&body=' + body;
+  document.getElementById('invoiceNote').classList.remove('hidden');
+}
+syncAmount();
 </script>
 </body>
 </html>
