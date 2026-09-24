@@ -12,13 +12,30 @@
 <title>Subnet ROI — Bittensor Miner/Validator ROI Planner</title>
 <style>
   :root{
+    --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
+    --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
+    --warn:#e08a00; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --navbg:rgba(255,255,255,.92); --rowhover:#eef2f8;
+    --banner1:#e8eef9; --banner2:#dbe6f7; --bannerborder:#c5d3ec;
+    --kgbg:#e3f4e8; --kgfg:#1a7f37; --kgbd:#b7e2c3;
+    --rkbg:#fde7e7; --rkfg:#c63a3a; --rkbd:#f5c2c2;
+    --errbg:#fde7e7; --errbd:#f5c2c2; --errfg:#b3382e;
+    --codecolor:#3c4656; --watchontext:#ffffff;
+  }
+  [data-theme="dark"]{
     --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
     --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c;
-    --warn:#f5a623; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --warn:#f5a623;
+    --navbg:rgba(10,13,19,.92); --rowhover:#161c28;
+    --banner1:#13203a; --banner2:#0f1a2e; --bannerborder:#2a3a5c;
+    --kgbg:#1a2b1a; --kgfg:#7ee787; --kgbd:#2c4a2c;
+    --rkbg:#2b1a1a; --rkfg:#ff8b8b; --rkbd:#4a2c2c;
+    --errbg:#2b1a1a; --errbd:#4a2c2c; --errfg:#ffb4b4;
+    --codecolor:#c9d4e8; --watchontext:#06230f;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif}
-  .nav{position:sticky;top:0;z-index:10;background:rgba(10,13,19,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .nav{position:sticky;top:0;z-index:10;background:var(--navbg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
   .nav-in{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:24px}
   .brand{font-weight:700;font-size:16px;letter-spacing:.02em}
   .brand span{color:var(--accent)}
@@ -32,7 +49,7 @@
   .hero{margin-bottom:20px}
   .hero h1{font-size:24px;margin:0 0 4px}
   .hero p{color:var(--muted);margin:0;font-size:13.5px;max-width:760px}
-  .banner{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#13203a,#0f1a2e);border:1px solid #2a3a5c;border-radius:10px;padding:12px 16px;margin-bottom:18px}
+  .banner{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,var(--banner1),var(--banner2));border:1px solid var(--bannerborder);border-radius:10px;padding:12px 16px;margin-bottom:18px}
   .banner .t{font-size:13.5px;font-weight:600}
   .banner .s{font-size:12px;color:var(--muted)}
   .banner .btn{margin-left:auto;white-space:nowrap}
@@ -59,7 +76,7 @@
   td:first-child,th:first-child{text-align:left}
   td:nth-child(2),th:nth-child(2){text-align:left}
   td:nth-child(3),th:nth-child(3){text-align:left}
-  tr:hover td{background:#161c28}
+  tr:hover td{background:var(--rowhover)}
   .pos{color:var(--good)} .neg{color:var(--bad)}
   .logo{width:22px;height:22px;border-radius:5px;object-fit:cover;vertical-align:middle;background:var(--panel2)}
   .logo.blank{visibility:hidden}
@@ -70,23 +87,23 @@
   .foot{color:var(--muted);font-size:11.5px;margin-top:16px;line-height:1.6}
   .foot b{color:var(--fg)}
   .tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px}
-  .tag.kraken{background:#1a2b1a;color:#7ee787;border:1px solid #2c4a2c}
-  .tag.risk{background:#2b1a1a;color:#ff8b8b;border:1px solid #4a2c2c}
+  .tag.kraken{background:var(--kgbg);color:var(--kgfg);border:1px solid var(--kgbd)}
+  .tag.risk{background:var(--rkbg);color:var(--rkfg);border:1px solid var(--rkbd)}
   .star{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 6px;line-height:1}
   .star:hover{color:var(--warn)}
   .star.on{color:var(--warn)}
-  #watchToggle.on{background:var(--warn);color:#06230f;border-color:var(--warn)}
+  #watchToggle.on{background:var(--warn);color:var(--watchontext);border-color:var(--warn)}
   #probox .s a{cursor:pointer}
   .reg{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:20px}
   .reg h3{margin:0 0 12px;font-size:15px}
-  .regtag{font-size:10px;font-weight:600;color:#7ee787;background:#1a2b1a;border:1px solid #2c4a2c;border-radius:4px;padding:1px 6px;vertical-align:middle}
+  .regtag{font-size:10px;font-weight:600;color:var(--kgfg);background:var(--kgbg);border:1px solid var(--kgbd);border-radius:4px;padding:1px 6px;vertical-align:middle}
   .reggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
   .regcard{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
   .regcard .lbl{font-size:11px;color:var(--muted);margin-bottom:2px}
   .regcard .val{font-size:18px;font-weight:700}
   .regcard .val small{font-size:11px;color:var(--muted);font-weight:400}
   .regchart{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px;min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
-  .err{background:#2b1a1a;border:1px solid #4a2c2c;color:#ffb4b4;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12.5px}
+  .err{background:var(--errbg);border:1px solid var(--errbd);color:var(--errfg);border-radius:8px;padding:10px;margin-bottom:12px;font-size:12.5px}
   .loading{text-align:center;color:var(--muted);padding:40px;font-size:13px}
   .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -96,10 +113,17 @@
   .emailok{color:var(--good);font-size:12px;margin-top:6px}
   .method{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:16px}
   .method h3{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-  .method code{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font:12px var(--mono);color:#c9d4e8}
+  .method code{background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font:12px var(--mono);color:var(--codecolor)}
   .footer{border-top:1px solid var(--border);margin-top:28px;padding-top:16px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
   .footer a{color:var(--accent);text-decoration:none}
+  .theme-toggle{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:7px;padding:6px 10px;font-size:15px;cursor:pointer;line-height:1}
+  .theme-toggle:hover{filter:brightness(1.05)}
 </style>
+<script>
+(function(){try{var t=localStorage.getItem('sroi_theme')||'light';document.documentElement.dataset.theme=(t==='dark'?'dark':'light');}catch(e){document.documentElement.dataset.theme='light';}
+document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('themeBtn');if(b)b.textContent=document.documentElement.dataset.theme==='dark'?'☀️':'🌙';});})();
+function toggleTheme(){var cur=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=cur;try{localStorage.setItem('sroi_theme',cur);}catch(e){}var b=document.getElementById('themeBtn');if(b)b.textContent=cur==='dark'?'☀️':'🌙';}
+</script>
 <script data-goatcounter="https://subnetroi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -107,6 +131,7 @@
   <div class="nav-in">
     <div class="brand">Subnet<span>ROI</span></div>
     <div class="nav-links">
+      <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
       <a href="#tool">Dashboard</a>
       <a href="#method">Methodology</a>
       <a href="usdt_payment.html">Pricing</a>
