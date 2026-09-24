@@ -83,8 +83,9 @@ function toggleTheme(){var cur=document.documentElement.dataset.theme==='dark'?'
   <div class="panel active" id="panel-site">
     <div class="grid">
       <div class="card"><div class="lbl">Digest last sent</div><div class="val" id="digestLast" style="font-size:15px">—</div></div>
-      <div class="card"><div class="lbl">Free tool</div><div class="val" id="freeState" style="font-size:15px">planner + registration tracker live</div></div>
-      <div class="card"><div class="lbl">Site status</div><div class="val" id="siteStatus" style="font-size:15px">—</div></div>
+            <div class="card"><div class="lbl">Visitors (7d)</div><div class="val" id="visitors" style="font-size:15px">—</div></div>
+            <div class="card"><div class="lbl">Visitors (30d)</div><div class="val" id="visitors30" style="font-size:15px">—</div></div>
+            <div class="card"><div class="lbl">Site status</div><div class="val" id="siteStatus" style="font-size:15px">—</div></div>
     </div>
     <div class="screen">
       <div class="bar"><span>Live screen — what a free visitor sees</span><a href="/roi_planner.html" target="_blank">open full ↗</a></div>
@@ -155,6 +156,15 @@ async function backoffice(){
     document.getElementById('apiCount').textContent=d.keys.api;
     document.getElementById('apiMrr').textContent='$'+d.mrr_estimate.api+'/mo';
     document.getElementById('digestLast').textContent=(d.watchers.roi_digest.last||'—')+' <small>UTC</small>';
+        const gc=d.goatcounter||{};
+        if(gc.configured){
+          const w=gc.week||{}, m=gc.month||{};
+          document.getElementById('visitors').innerHTML=(w.uniques!=null?w.uniques:'—')+' <small>unique · '+(w.hits!=null?w.hits:'—')+' hits</small>';
+          document.getElementById('visitors30').innerHTML=(m.uniques!=null?m.uniques:'—')+' <small>unique · '+(m.hits!=null?m.hits:'—')+' hits</small>';
+        } else {
+          document.getElementById('visitors').textContent='add GOATCOUNTER_API_KEY';
+          document.getElementById('visitors30').textContent='add GOATCOUNTER_API_KEY';
+        }
     document.getElementById('nudges').textContent=d.watchers.invoice_watcher.nudges||0;
     const pv=d.payments_verified||{};
     document.getElementById('payments').textContent=(pv.erc20||0)+' <small>ERC-20 · '+(pv.trc20||0)+' TRC-20</small>';
