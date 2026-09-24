@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-09-24T21:32:06+00:00",
+  "customers": {
+    "count": 1,
+    "list": [
+      {
+        "date": "2026-09-22",
+        "plan": "api",
+        "email": "mentatsolutionsllc@gmail.com"
+      }
+    ]
+  },
+  "keys": {
+    "total": 2,
+    "pro": 1,
+    "api": 1
+  },
+  "mrr_estimate": {
+    "pro": 20,
+    "api": 199,
+    "total": 219
+  },
+  "watchers": {
+    "usdt_watcher": {
+      "last": "2026-09-24T15:30:02",
+      "status": "scan complete: 0 new tx, 0 tracked, latest block 26050005"
+    },
+    "tron_watcher": {
+      "last": "2026-09-24T15:30:02",
+      "status": "scan complete: 0 new tx, 0 tracked"
+    },
+    "invoice_watcher": {
+      "last": "2026-09-24",
+      "status": "found 0 unread 'payment request' email(s)",
+      "nudges": 1
+    },
+    "reg_cost_alert": {
+      "last": "2026-09-24",
+      "status": "cost=761.2 floor=474.3 near_floor=False below_thresh=False",
+      "alerts": 0
+    },
+    "roi_digest": {
+      "last": "2026-09-23T08:00:03",
+      "status": "sent digest to mentatsolutionsllc@gmail.com (10 subnets, TAO $311.02)"
+    }
+  },
+  "payments_verified": {
+    "erc20": 0,
+    "trc20": 0
+  }
+}
