@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-24T21:32:06+00:00",
+  "generated_at": "2026-09-24T21:37:46+00:00",
   "customers": {
     "count": 1,
     "list": [
@@ -22,11 +22,11 @@
   },
   "watchers": {
     "usdt_watcher": {
-      "last": "2026-09-24T15:30:02",
-      "status": "scan complete: 0 new tx, 0 tracked, latest block 26050005"
+      "last": "2026-09-24T15:35:01",
+      "status": "scan complete: 0 new tx, 0 tracked, latest block 26050030"
     },
     "tron_watcher": {
-      "last": "2026-09-24T15:30:02",
+      "last": "2026-09-24T15:35:01",
       "status": "scan complete: 0 new tx, 0 tracked"
     },
     "invoice_watcher": {
@@ -47,5 +47,8 @@
   "payments_verified": {
     "erc20": 0,
     "trc20": 0
+  },
+  "goatcounter": {
+    "configured": false
   }
 }
