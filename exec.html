@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>SubnetROI — Executive Dashboard (internal)</title>
+<style>
+  :root{
+    --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
+    --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
+    --warn:#e08a00; --navbg:rgba(255,255,255,.92); --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  [data-theme="dark"]{
+    --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+    --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c;
+    --warn:#f5a623; --navbg:rgba(10,13,19,.92);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif}
+  .nav{position:sticky;top:0;z-index:10;background:var(--navbg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .nav-in{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
+  .brand{font-weight:700;font-size:16px}
+  .brand span{color:var(--accent)}
+  .badge{font-size:10px;font-weight:600;color:var(--warn);border:1px solid var(--warn);border-radius:20px;padding:2px 8px}
+  .theme-toggle{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:7px;padding:6px 10px;font-size:15px;cursor:pointer}
+  .wrap{max-width:1280px;margin:0 auto;padding:20px}
+  .live{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .live .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .live .val{font-size:16px;font-weight:600}
+  .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .tab{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .panel{display:none}
+  .panel.active{display:block}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px}
+  .card .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .card .val{font-size:20px;font-weight:700;margin-top:2px}
+  .card .val small{font-size:12px;color:var(--muted);font-weight:400}
+  .card .sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .screen{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .screen iframe{width:100%;height:520px;border:0;display:block;background:#fff}
+  .screen .bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--panel2);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)}
+  .screen .bar a{color:var(--accent);text-decoration:none}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600}
+  .ok{color:var(--good)} .warn2{color:var(--warn)} .down{color:var(--bad)}
+  .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+  .wcard{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+  .wcard .n{font-size:12px;font-weight:600}
+  .wcard .t{font-size:11px;color:var(--muted);margin-top:2px}
+  .wcard .s{font-size:11px;margin-top:4px;font-family:var(--mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .foot{margin-top:16px;font-size:11px;color:var(--muted)}
+</style>
+<script>
+(function(){try{var t=localStorage.getItem('sroi_theme')||'light';document.documentElement.dataset.theme=(t==='dark'?'dark':'light');}catch(e){document.documentElement.dataset.theme='light';}})();
+function toggleTheme(){var cur=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=cur;try{localStorage.setItem('sroi_theme',cur);}catch(e){}}
+</script>
+</head>
+<body>
+<div class="nav"><div class="nav-in">
+  <div class="brand">Subnet<span>ROI</span> <span class="badge">Exec · internal</span></div>
+  <button class="theme-toggle" onclick="toggleTheme()" style="margin-left:auto">🌙/☀️</button>
+</div></div>
+
+<div class="wrap">
+  <div class="live">
+    <div class="card"><div class="lbl">TAO</div><div class="val" id="tao">—</div></div>
+    <div class="card"><div class="lbl">API service</div><div class="val" id="apistatus">—</div></div>
+    <div class="card"><div class="lbl">Registration cost</div><div class="val" id="regcost">—</div></div>
+    <div class="card"><div class="lbl">MRR (ledger)</div><div class="val" id="mrr">—</div></div>
+    <div class="card"><div class="lbl">Total keys</div><div class="val" id="keys">—</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-t="site" onclick="tab('site')">Level 1 · Site (Free)</button>
+    <button class="tab" data-t="pro" onclick="tab('pro')">Level 2 · Pro</button>
+    <button class="tab" data-t="api" onclick="tab('api')">Level 3 · API</button>
+  </div>
+
+  <div class="panel active" id="panel-site">
+    <div class="grid">
+      <div class="card"><div class="lbl">Digest last sent</div><div class="val" id="digestLast" style="font-size:15px">—</div></div>
+      <div class="card"><div class="lbl">Free tool</div><div class="val" id="freeState" style="font-size:15px">planner + registration tracker live</div></div>
+      <div class="card"><div class="lbl">Site status</div><div class="val" id="siteStatus" style="font-size:15px">—</div></div>
+    </div>
+    <div class="screen">
+      <div class="bar"><span>Live screen — what a free visitor sees</span><a href="/roi_planner.html" target="_blank">open full ↗</a></div>
+      <iframe src="/roi_planner.html" loading="lazy" title="Planner"></iframe>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-pro">
+    <div class="grid">
+      <div class="card"><div class="lbl">Pro customers</div><div class="val" id="proCount">—</div></div>
+      <div class="card"><div class="lbl">Pro MRR</div><div class="val" id="proMrr">—</div></div>
+      <div class="card"><div class="lbl">Payment requests nudged</div><div class="val" id="nudges">—</div></div>
+      <div class="card"><div class="lbl">Payments verified (on-chain)</div><div class="val" id="payments">—</div></div>
+    </div>
+    <div class="screen">
+      <div class="bar"><span>Live screen — the upgrade/payment surface</span><a href="/usdt_payment.html" target="_blank">open full ↗</a></div>
+      <iframe src="/usdt_payment.html" loading="lazy" title="Payment"></iframe>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-api">
+    <div class="grid">
+      <div class="card"><div class="lbl">API customers</div><div class="val" id="apiCount">—</div></div>
+      <div class="card"><div class="lbl">API MRR</div><div class="val" id="apiMrr">—</div></div>
+      <div class="card"><div class="lbl">Rate limits</div><div class="val" style="font-size:15px">pro 60/min · api 600/min</div></div>
+      <div class="card"><div class="lbl">Deploy status</div><div class="val" id="deployStatus" style="font-size:15px">—</div></div>
+    </div>
+    <div class="screen">
+      <div class="bar"><span>Live screen — API documentation</span><a href="https://subnet-roi-api.mentatdev.workers.dev/docs" target="_blank">open full ↗</a></div>
+      <iframe src="https://subnet-roi-api.mentatdev.workers.dev/docs" loading="lazy" title="API docs"></iframe>
+    </div>
+  </div>
+
+  <div class="strip" id="watchstrip"><i style="color:var(--muted)">Loading automation status…</i></div>
+  <div class="foot" id="foot">Data refreshed: — · Live figures from the API and the local ledger (exec.json).</div>
+</div>
+
+<script>
+const API='https://subnet-roi-api.mentatdev.workers.dev';
+function tab(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.t===t));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+t));
+}
+async function live(){
+  try{
+    const h=await (await fetch(API+'/v1/health')).json();
+    document.getElementById('tao').textContent='$'+h.tao.toFixed(2);
+    document.getElementById('apistatus').innerHTML='<span class="ok">● online</span>';
+    document.getElementById('deployStatus').textContent=h.dataReady?'ok (data ready)':'warn (no data)';
+    const r=await (await fetch(API+'/v1/registration')).json();
+    document.getElementById('regcost').innerHTML=r.currentTao.toFixed(1)+' <small>TAO</small>';
+  }catch(e){
+    document.getElementById('tao').textContent='—';
+    document.getElementById('apistatus').innerHTML='<span class="down">● offline</span>';
+    document.getElementById('regcost').textContent='—';
+  }
+  try{
+    const r=await fetch('/roi_planner.html'); document.getElementById('siteStatus').textContent=r.ok?'HTTP '+r.status:'down';
+  }catch(e){ document.getElementById('siteStatus').textContent='down'; }
+}
+async function backoffice(){
+  try{
+    const d=await (await fetch('exec.json?'+Date.now())).json();
+    document.getElementById('mrr').textContent='$'+d.mrr_estimate.total;
+    document.getElementById('keys').textContent=d.keys.total+' <small>(pro '+d.keys.pro+' · api '+d.keys.api+')</small>';
+    document.getElementById('proCount').textContent=d.keys.pro;
+    document.getElementById('proMrr').textContent='$'+d.mrr_estimate.pro+'/mo';
+    document.getElementById('apiCount').textContent=d.keys.api;
+    document.getElementById('apiMrr').textContent='$'+d.mrr_estimate.api+'/mo';
+    document.getElementById('digestLast').textContent=(d.watchers.roi_digest.last||'—')+' <small>UTC</small>';
+    document.getElementById('nudges').textContent=d.watchers.invoice_watcher.nudges||0;
+    const pv=d.payments_verified||{};
+    document.getElementById('payments').textContent=(pv.erc20||0)+' <small>ERC-20 · '+(pv.trc20||0)+' TRC-20</small>';
+    // watcher strip
+    const names={usdt_watcher:'ERC-20 watcher',tron_watcher:'TRC-20 watcher',invoice_watcher:'Invoice watcher',reg_cost_alert:'Reg-cost alert',roi_digest:'Daily digest'};
+    document.getElementById('watchstrip').innerHTML=Object.entries(d.watchers).map(([k,v])=>
+      `<div class="wcard"><div class="n">${names[k]||k}</div><div class="t">last: ${v.last||'—'}</div><div class="s">${String(v.status||'').slice(0,70)}</div></div>`).join('');
+    document.getElementById('foot').textContent='Data refreshed: '+d.generated_at+' UTC · live figures from the API + local ledger.';
+  }catch(e){
+    document.getElementById('watchstrip').innerHTML='<i style="color:var(--bad)">exec.json unavailable: '+e.message+'</i>';
+  }
+}
+live(); backoffice();
+setInterval(live, 60000);
+</script>
+</body>
+</html>
