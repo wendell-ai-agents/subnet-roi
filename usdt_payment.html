@@ -146,7 +146,7 @@
       </div>
       <div class="btn good" id="cardBtn" onclick="getInvoice()">Email me a payment link</div>
       <div class="warn hidden" id="invoiceWarn" style="margin-top:12px">Please enter a valid email address.</div>
-      <div class="note hidden" id="invoiceNote" style="margin-top:12px">✓ Request sent. If your gateway is not yet live, an invoice will be sent to both you and <b>mentatsolutionsllc@gmail.com</b> manually within the next business hours.</div>
+      <div class="note hidden" id="invoiceNote" style="margin-top:12px">✓ Request sent. If your gateway is not yet live, an invoice will be sent to both you and <b>info@subnetroi.com</b> manually within the next business hours.</div>
     </div>
 
     <!-- USDT direct path -->
@@ -183,12 +183,12 @@
       <div class="note">
         <b>Security:</b> always verify the address on this page matches the one you're sending to. We will never DM you asking for payment. Double-check the network before sending.
       </div>
-      <a class="btn" id="confirmUsdt" href="mailto:mentatsolutionsllc@gmail.com?subject=SubnetROI%20Pro%20payment&body=Plan:%20Pro%20%2420%2Fmo%0ANetwork:%20ERC-20%0ATXID:%20%5Bpaste%20transaction%20hash%5D">I've sent payment</a>
+      <a class="btn" id="confirmUsdt" href="mailto:info@subnetroi.com?subject=SubnetROI%20Pro%20payment&body=Plan:%20Pro%20%2420%2Fmo%0ANetwork:%20ERC-20%0ATXID:%20%5Bpaste%20transaction%20hash%5D">I've sent payment</a>
       <a class="btn ghost" href="roi_planner.html">Back to dashboard</a>
     </div>
 
     <div class="footer">
-      <b>SubnetROI</b> · Payments via card (USDT-settled) or direct USDT · <a href="roi_planner.html">Dashboard</a> · Questions? <a href="mailto:mentatsolutionsllc@gmail.com">mentatsolutionsllc@gmail.com</a>
+      <b>SubnetROI</b> · Payments via card (USDT-settled) or direct USDT · <a href="roi_planner.html">Dashboard</a> · Questions? <a href="mailto:info@subnetroi.com">info@subnetroi.com</a>
     </div>
   </div>
 </div>
@@ -246,7 +246,7 @@ function getInvoice(){
     'Payment method: card (USDT-settled) or invoice\n\n' +
     'Please email the payment link to: ' + email
   );
-  window.location.href = 'mailto:mentatsolutionsllc@gmail.com?subject=' + subject + '&body=' + body;
+  window.location.href = 'mailto:info@subnetroi.com?subject=' + subject + '&body=' + body;
   document.getElementById('invoiceNote').classList.remove('hidden');
 }
 syncAmount();
