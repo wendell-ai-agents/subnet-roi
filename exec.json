@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-26T17:00:01+00:00",
+  "generated_at": "2026-09-26T17:15:01+00:00",
   "customers": {
     "count": 1,
     "list": [
@@ -22,11 +22,11 @@
   },
   "watchers": {
     "usdt_watcher": {
-      "last": "2026-09-26T10:55:02",
-      "status": "scan complete: 0 new tx, 0 tracked, latest block 26062951"
+      "last": "2026-09-26T11:10:01",
+      "status": "scan complete: 0 new tx, 0 tracked, latest block 26063027"
     },
     "tron_watcher": {
-      "last": "2026-09-26T10:55:02",
+      "last": "2026-09-26T11:10:01",
       "status": "scan complete: 0 new tx, 0 tracked"
     },
     "invoice_watcher": {
@@ -36,7 +36,7 @@
     },
     "reg_cost_alert": {
       "last": "2026-09-26",
-      "status": "cost=646.6 floor=474.0 near_floor=False below_thresh=False",
+      "status": "cost=646.0 floor=473.3 near_floor=False below_thresh=False",
       "alerts": 0
     },
     "roi_digest": {
