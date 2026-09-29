@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T14:00:01+00:00",
+  "generated_at": "2026-09-29T14:15:01+00:00",
   "customers": {
     "count": 1,
     "list": [
@@ -22,11 +22,11 @@
   },
   "watchers": {
     "usdt_watcher": {
-      "last": "2026-09-29T07:55:01",
-      "status": "scan complete: 0 new tx, 0 tracked, latest block 26083555"
+      "last": "2026-09-29T08:10:02",
+      "status": "scan complete: 0 new tx, 0 tracked, latest block 26083630"
     },
     "tron_watcher": {
-      "last": "2026-09-29T07:55:01",
+      "last": "2026-09-29T08:10:02",
       "status": "scan complete: 0 new tx, 0 tracked"
     },
     "invoice_watcher": {
@@ -36,12 +36,12 @@
     },
     "reg_cost_alert": {
       "last": "2026-09-29",
-      "status": "cost=1053.6 floor=462.1 near_floor=False below_thresh=False",
+      "status": "cost=1052.8 floor=461.4 near_floor=False below_thresh=False",
       "alerts": 0
     },
     "roi_digest": {
-      "last": "2026-09-28T08:00:04",
-      "status": "sent digest to mentatsolutionsllc@gmail.com (10 subnets, TAO $307.97)"
+      "last": "2026-09-29T08:00:04",
+      "status": "sent digest to mentatsolutionsllc@gmail.com (10 subnets, TAO $267.82)"
     }
   },
   "payments_verified": {
