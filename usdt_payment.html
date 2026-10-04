@@ -23,7 +23,9 @@
   h1{font-size:24px;margin:0 0 4px}
   .sub{color:var(--muted);font-size:13.5px;margin-bottom:24px}
   .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:28px}
-  .plan{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative}
+  .plan{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;cursor:pointer;transition:border-color .15s, box-shadow .15s}
+  .plan:hover{border-color:var(--accent)}
+  .plan.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .plan.hot{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .plan .name{font-weight:700;font-size:15px}
   .plan .price{font-size:26px;font-weight:700;margin:6px 0 2px}
@@ -101,7 +103,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   <div class="sub">Two ways to pay: by credit/debit card (settled to us as USDT) or directly in USDT. Access unlocks within minutes of confirmation.</div>
 
   <div class="plans">
-    <div class="plan">
+    <div class="plan" style="cursor:default" data-val="0">
       <div class="name">Free</div>
       <div class="price">$0<small>/mo</small></div>
       <ul>
@@ -110,7 +112,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <li>Daily email digest</li>
       </ul>
     </div>
-    <div class="plan hot">
+    <div class="plan hot" data-val="20" onclick="selectPlan(20)">
       <div class="badge">Recommended</div>
       <div class="name">Pro</div>
       <div class="price">$20<small>/mo</small></div>
@@ -122,7 +124,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <li>Saved watchlists</li>
       </ul>
     </div>
-    <div class="plan">
+    <div class="plan" data-val="199" onclick="selectPlan(199)">
       <div class="name">API</div>
       <div class="price">$199<small>/mo</small></div>
       <ul>
@@ -159,7 +161,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         </div>
         <div class="field">
           <label>Plan</label>
-          <select id="plan" onchange="syncAmount()">
+          <select id="plan" onchange="syncAmount(this)">
             <option value="20" selected>Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
           </select>
@@ -176,7 +178,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
       <div class="row">
         <div class="field">
           <label>Plan</label>
-          <select id="planU" onchange="syncAmount()">
+          <select id="planU" onchange="syncAmount(this)">
             <option value="20" selected>Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
           </select>
@@ -227,14 +229,24 @@ function chooseMethod(m){
   document.getElementById('methodCard').classList.toggle('active', m==='card');
   document.getElementById('methodUsdt').classList.toggle('active', m==='usdt');
 }
-function syncAmount(){
-  const plan = document.getElementById('plan').value || document.getElementById('planU').value;
-  const selected = document.getElementById('plan').value === '' ? document.getElementById('planU').value : plan;
+function syncAmount(el){
+  const src = el ? el.value : document.getElementById('planU').value;
+  document.getElementById('plan').value = src;
+  document.getElementById('planU').value = src;
+  const amt = +src || 20;
   const net = document.getElementById('network').value;
-  const amt = selected || 20;
+  const planName = amt===199 ? 'API — $199 / month' : 'Pro — $20 / month';
   document.getElementById('amtLabel').textContent = amt + ' USDT';
   document.getElementById('netLabel').textContent = net;
-  document.getElementById('amount') && (document.getElementById('amount').value = amt);
+  document.querySelectorAll('.plan[data-val]').forEach(c=>c.classList.toggle('selected', +c.dataset.val===amt));
+  document.getElementById('confirmUsdt').href =
+    'mailto:info@subnetroi.com?subject=' + encodeURIComponent('SubnetROI ' + (amt===199?'API':'Pro') + ' payment') +
+    '&body=' + encodeURIComponent('Plan: ' + planName + '\nNetwork: ' + net + '\nTXID: [paste transaction hash]');
+}
+function selectPlan(v){
+  document.getElementById('plan').value = v;
+  document.getElementById('planU').value = v;
+  syncAmount();
 }
 function renderQR(net){
   const box = document.getElementById('qr');
@@ -264,11 +276,9 @@ function renderQR(net){
 }
 function sUsdt(){
   const net = document.getElementById('network').value;
-  const amt = document.getElementById('planU').value;
   document.getElementById('addr').textContent = ADDRS[net];
-  document.getElementById('amtLabel').textContent = amt + ' USDT';
-  document.getElementById('netLabel').textContent = net;
   renderQR(net);
+  syncAmount();
 }
 function copyAddr(){
   const a = document.getElementById('addr').textContent;
