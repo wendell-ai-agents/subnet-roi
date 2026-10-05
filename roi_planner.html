@@ -102,6 +102,8 @@
   .regcard .lbl{font-size:11px;color:var(--muted);margin-bottom:2px}
   .regcard .val{font-size:18px;font-weight:700}
   .regcard .val small{font-size:11px;color:var(--muted);font-weight:400}
+  .prolock{font-size:11px;font-weight:600;color:var(--accent);border:1px dashed var(--accent);border-radius:6px;padding:2px 8px;cursor:pointer;white-space:nowrap}
+  .prolock:hover{background:var(--accent);color:#fff}
   .regchart{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px;min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
   .err{background:var(--errbg);border:1px solid var(--errbd);color:var(--errfg);border-radius:8px;padding:10px;margin-bottom:12px;font-size:12.5px}
   .loading{text-align:center;color:var(--muted);padding:40px;font-size:13px}
@@ -440,20 +442,28 @@ load();
 <script>
 /* ---- SubnetROI Registration ---- */
 const REG_API = 'https://subnet-roi-api.mentatdev.workers.dev';
-function regSpark(series){
-  const w=560,h=110,pad=8;
+function regSpark(series, floor){
+  const w=560,h=116,padL=8,padR=8,padB=18;
   const xs=series.map(p=>p.b), ys=series.map(p=>p.tao);
-  const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(...ys,0), y1=Math.max(...ys);
-  const sx=p=>pad+(p-x0)/((x1-x0)||1)*(w-2*pad);
-  const sy=p=>h-pad-(p-y0)/((y1-y0)||1)*(h-2*pad);
+  const x0=Math.min(...xs), x1=Math.max(...xs);
+  const y0=Math.min(...ys, floor||0), y1=Math.max(...ys);
+  const sx=p=>padL+(p-x0)/((x1-x0)||1)*(w-padL-padR);
+  const sy=p=>h-padB-(p-y0)/((y1-y0)||1)*(h-padB-10);
   const pts=series.map(p=>sx(p.b).toFixed(1)+' '+sy(p.tao).toFixed(1)).join(' ');
   const last=series[series.length-1];
-  const lx=sx(last.b), ly=sy(last.tao);
-  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;display:block" preserveAspectRatio="none" role="img" aria-label="Registration cost decay curve">
-    <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2"/>
-    <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.5" fill="var(--accent)"/>
-    <text x="${(lx-7).toFixed(1)}" y="${(ly<26?ly+16:ly-8).toFixed(1)}" fill="var(--muted)" font-size="11" text-anchor="end">${last.tao.toFixed(1)} τ</text>
-  </svg>`;
+  const lx=sx(last.b), ly=sy(last.tao), fy=sy(floor);
+  const days=Math.round((x1-x0)/7200);   // ~1 day per 7,200 blocks
+  let o=`<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;display:block" preserveAspectRatio="none" role="img" aria-label="Registration cost decay curve">`;
+  o+=`<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
+  o+=`<line x1="${padL}" y1="${fy.toFixed(1)}" x2="${w-padR}" y2="${fy.toFixed(1)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/>`;
+  o+=`<text x="${(w-padR-3).toFixed(1)}" y="${(fy-3).toFixed(1)}" fill="var(--muted)" font-size="9" text-anchor="end">floor ${floor.toFixed(0)} τ</text>`;
+  o+=`<circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.5" fill="var(--accent)"/>`;
+  o+=`<text x="${(lx-7).toFixed(1)}" y="${(ly<26?ly+16:ly-8).toFixed(1)}" fill="var(--muted)" font-size="11" text-anchor="end">${last.tao.toFixed(1)} τ</text>`;
+  o+=`<text x="${padL}" y="${(h-5).toFixed(1)}" fill="var(--muted)" font-size="9">−${days} d</text>`;
+  o+=`<text x="${(w-padR).toFixed(1)}" y="${(h-5).toFixed(1)}" fill="var(--muted)" font-size="9" text-anchor="end">now</text>`;
+  o+='</svg>';
+  return o;
+}
 }
 async function loadReg(){
   const box=document.getElementById('regChart');
@@ -466,11 +476,15 @@ async function loadReg(){
     const ns=d.nextSlot;
     document.getElementById('regNext').innerHTML=ns&&ns.etaBlocks>0
       ? `${Math.ceil(ns.etaBlocks/7200)} <small>days</small>` : '<small>open now</small>';
-    document.getElementById('regTtf').textContent='—';
-    box.innerHTML=regSpark(d.series);
+    const ttf=document.getElementById('regTtf');
+    ttf.innerHTML = (proState.key && proState.plan)
+      ? '<span class="ttfload">…</span>'
+      : '<span class="prolock" onclick="unlockPro()" title="Pro feature — paste your Pro/API key to unlock">🔒 Pro</span>';
+    box.innerHTML=regSpark(d.series, d.floorEstimateTao);
     if(proState.key&&proState.plan) loadRegForecast();
   }catch(e){ box.textContent='Registration data unavailable — try again shortly.'; }
 }
+function unlockPro(){ const i=document.getElementById('proKey'); if(i){ i.scrollIntoView({behavior:'smooth',block:'center'}); i.focus(); } }
 async function loadRegForecast(){
   try{
     const r=await fetch(REG_API+'/v1/registration/forecast',{headers:{'x-api-key':proState.key}});
