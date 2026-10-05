@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methodology &amp; Guide — SubnetROI</title>
+<meta name="description" content="How SubnetROI works, what Bittensor is, subnet registrations, lock costs, hardware setups, and how to find a good subnet.">
+<style>
+  :root{
+    --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#dce3ec;
+    --fg:#1c2430; --muted:#5b6b7f; --accent:#2f6fe4; --good:#1a7f37; --warn:#b45309;
+    --codecolor:#3c4656; --navbg:rgba(246,248,251,.92);
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  [data-theme="dark"]{
+    --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+    --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --warn:#f5a623;
+    --codecolor:#c9d4e8; --navbg:rgba(10,13,19,.92);
+  }
+  *{box-sizing:border-box}
+  html{scroll-padding-top:72px}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 -apple-system,Segoe UI,Roboto,sans-serif}
+  .nav{position:sticky;top:0;z-index:10;background:var(--navbg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .nav-in{max-width:900px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:20px}
+  .brand{font-weight:700;font-size:16px;text-decoration:none;color:var(--fg)}
+  .brand span{color:var(--accent)}
+  .nav-links{margin-left:auto;display:flex;gap:16px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:13px}
+  .nav-links a:hover{color:var(--fg)}
+  .nav-links a.on{color:var(--accent);font-weight:600}
+  .theme-toggle{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 60px}
+  .hero h1{margin:0 0 8px;font-size:26px}
+  .hero p{margin:0 0 6px;color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:34px 0 10px;padding-top:8px}
+  h3{font-size:15px;margin:20px 0 8px}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 14px;padding-left:22px}
+  li{margin-bottom:6px}
+  a{color:var(--accent)}
+  code{background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font:12.5px var(--mono);color:var(--codecolor)}
+  pre{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:12.5px var(--mono);color:var(--codecolor)}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px}
+  .cards .card{margin-bottom:0}
+  .card h3{margin:0 0 6px}
+  .card .num{font-size:22px;font-weight:700;color:var(--accent);margin:2px 0}
+  .card .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0 16px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .tag{display:inline-block;font-size:10px;padding:1px 7px;border-radius:4px;margin-left:6px;vertical-align:middle}
+  .tag.hot{background:#e3f4e8;color:#1a7f37;border:1px solid #b7e0c3}
+  .tag.kraken{background:var(--panel2);color:var(--accent);border:1px solid var(--border)}
+  .note{background:#e3f4e8;border:1px solid #b7e0c3;color:#1a7f37;border-radius:8px;padding:12px 14px;font-size:12.5px;margin:14px 0}
+  .warnbox{background:#fdecec;border:1px solid #f5c2c2;color:#c22f2f;border-radius:8px;padding:12px 14px;font-size:12.5px;margin:14px 0}
+  .footer{max-width:900px;margin:0 auto;padding:24px 20px 40px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
+  .toc{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px}
+  .toc a{text-decoration:none}
+  .toc ol{margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-in">
+    <a class="brand" href="roi_planner.html">Subnet<span>ROI</span></a>
+    <div class="nav-links">
+      <a href="roi_planner.html">Dashboard</a>
+      <a href="methodology.html" class="on">Methodology</a>
+      <a href="usdt_payment.html">Pricing</a>
+      <a href="roi_planner.html#digestpage">Daily Digest</a>
+      <a class="btn" href="usdt_payment.html" style="background:var(--accent);color:#fff;border-radius:8px;padding:7px 14px;font-weight:600">Upgrade · Pay with USDT</a>
+      <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Methodology &amp; Beginner's Guide</h1>
+    <p>What Bittensor is, how subnet mining and registrations work, what the SubnetROI numbers mean, and how to use this site efficiently — written for newcomers.</p>
+  </div>
+
+  <div class="toc">
+    <b>On this page</b>
+    <ol>
+      <li><a href="#why">Why SubnetROI exists — and how to use it efficiently</a></li>
+      <li><a href="#bittensor">What is Bittensor, and why is it so popular?</a></li>
+      <li><a href="#registrations">Subnet registrations: lock costs, floors, slots, time-to-floor</a></li>
+      <li><a href="#hardware">Machine setups &amp; how a beginner gets started</a></li>
+      <li><a href="#goodsubnet">What to look for in a good subnet</a></li>
+      <li><a href="#subnets">Important subnets today</a></li>
+      <li><a href="#model">The SubnetROI model: formulas, inputs &amp; caveats</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. WHY -->
+  <h2 id="why">Why SubnetROI exists — and how to use it efficiently</h2>
+  <div class="card">
+    <p>Bittensor's network is <b>hard to navigate</b>: 129 subnets, each with its own emission share, alpha price, miner pool, liquidity and risk profile. Most newcomers pick a subnet by word of mouth or a logo, then discover it is unprofitable after paying a registration cost measured in hundreds of TAO.</p>
+    <p>SubnetROI collapses that into one screen: for your hardware and assumptions, every subnet is ranked by its expected <b>net $/day</b> (revenue minus power, infra, amortized registration and capex). The point is to <b>screen before you commit</b> — a few minutes on this site replaces hours of spreadsheet work, and it updates every 30 minutes from live chain data.</p>
+    <h3>How to use the site efficiently</h3>
+    <ol>
+      <li><b>Set your hardware once</b> — GPU capex + power (or use the tier presets via the API), electricity rate, infra, and your assumed incentive share. These are saved assumptions; the ranking changes with them.</li>
+      <li><b>Sort by Net $/d</b> — the default. The top of the list is the best screen for your setup. Check Payback days next to it.</li>
+      <li><b>Star subnets</b> (Pro) to build a watchlist that syncs to your key, then hit the ★ filter to see only your candidates.</li>
+      <li><b>Model scenarios</b> (Pro): change the alpha price or add locked collateral to see how your net moves before you commit capital.</li>
+      <li><b>Watch the registration-cost panel</b> — when the lock cost nears its floor, a registration slot is cheap (see below).</li>
+      <li><b>Subscribe to the daily digest</b> — the top-10 subnets by net $/day arrive in your inbox each morning.</li>
+    </ol>
+  </div>
+
+  <!-- 2. BITTENSOR -->
+  <h2 id="bittensor">What is Bittensor, and why is it so popular?</h2>
+  <div class="card">
+    <p>Bittensor is a <b>decentralized machine-intelligence network</b>: instead of one company (an OpenAI, a Google) training and owning AI models, the network pays anyone to produce useful machine-intelligence work — inference, data, compute, agents, robotics data — and rewards the work that validators judge best. It is orchestrated entirely on-chain.</p>
+    <p>The network is organized into <b>subnets</b> (~129 live), each a separate marketplace for one type of work:</p>
+    <ul>
+      <li><b>Miner</b> — does the work (serves inference, submits data, runs compute) and is paid in the subnet's <b>alpha token</b>.</li>
+      <li><b>Validator</b> — checks the work, sets weights, and earns from the subnet's emission.</li>
+      <li><b>Root / subnet-0</b> — the network's baseline (no alpha market; not investable — shown as "Root subnet (baseline)" in the table).</li>
+    </ul>
+    <h3>Why it is popular</h3>
+    <ul>
+      <li><b>Real revenue</b> — the network's top subnets generate meaningful annualized income (Lium ~$8–10M/yr, Targon ~$5.5–6M, Chutes ~$4–5M by the 2026 revenue index).</li>
+      <li><b>Alpha tokens &amp; dTAO</b> — each subnet's alpha trades with its own price; top subnets have deep liquidity and volatile (opportunistic) markets. In 2026 the first subnets' alphas were listed on a major centralized exchange (Kraken), a first for the ecosystem.</li>
+      <li><b>Mainstream attention</b> — in September 2026 Grayscale filed with the SEC for a Bittensor ETP, and the network has grown from 32 subnets (2024) to 129, with a 128→256 subnet-capacity expansion underway.</li>
+      <li><b>Open participation</b> — anyone with a GPU can register and mine; you are paid for demonstrated work, not stake hoarding (though some subnets add collateral locks).</li>
+    </ul>
+    <p>TAO (the network token) is the base currency — registration burns, validator stakes, and most economics are denominated in TAO.</p>
+  </div>
+
+  <!-- 3. REGISTRATIONS -->
+  <h2 id="registrations">Subnet registrations: lock costs, floors, slots, time-to-floor</h2>
+  <div class="card">
+    <p>Becoming a miner on a subnet means <b>registering a hotkey</b> on-chain — and registration is paid in TAO. There are two entirely different "registration" numbers, and confusing them is the most common beginner mistake:</p>
+    <ul>
+      <li><b>Miner registration (burn)</b> — the cost to join an existing subnet as a miner. It is a dynamic burn: it decays every block and <b>jumps ~26% on each registration</b> (×1.26), with a 360-block half-life. This is the price you actually pay to mine.</li>
+      <li><b>Subnet creation (lock)</b> — the cost to <b>create a brand-new subnet</b>. This is what the SubnetROI registration panel tracks, and it has its own mechanics below.</li>
+    </ul>
+    <p>Subnet-creation lock costs follow a clean, predictable cycle:</p>
+    <ul>
+      <li><b>Doubling</b> — each new subnet registration <b>doubles</b> the lock cost instantly.</li>
+      <li><b>Decay</b> — then it decays linearly to a floor over ~<b>100,800 blocks (~2 weeks)</b>.</li>
+      <li><b>Floor estimate</b> — the governance-set minimum (~478 TAO today; it has been lower). The lock cost can never go below this.</li>
+      <li><b>Rate limit / next slot</b> — only ~<b>one registration per 7,200 blocks (~1 day)</b> network-wide. "Next slot" is when the next registration becomes possible.</li>
+      <li><b>Time to floor</b> — the time until the decay brings the cost to its floor. The SubnetROI panel fits the post-event decay curve and shows projected cost at 1/3/7 days.</li>
+    </ul>
+    <div class="cards">
+      <div class="card"><div class="lbl">Current lock cost</div><div class="num">~1,253 TAO</div><div>today's live value (≈ $375k)</div></div>
+      <div class="card"><div class="lbl">Floor estimate</div><div class="num">~478 TAO</div><div>governance minimum</div></div>
+      <div class="card"><div class="lbl">Next slot</div><div class="num">~0.4 days</div><div>one registration/day network-wide</div></div>
+      <div class="card"><div class="lbl">Strategy</div><div class="num" style="font-size:16px">Wait for the floor</div><div>registering near the floor saves ~60%+ vs. right after a doubling</div></div>
+    </div>
+    <p><b>Why this matters:</b> if you want to create a subnet, the lock cost is your biggest upfront item — and the swing between "just doubled" and "at the floor" is often <b>more than 2×</b>. The SubnetROI registration panel exists to time that window, and the Pro forecast/alerts tell you when a cheap slot is near.</p>
+  </div>
+
+  <!-- 4. HARDWARE -->
+  <h2 id="hardware">Machine setups &amp; how a beginner gets started</h2>
+  <div class="card">
+    <p>Hardware needs vary wildly by subnet — a data subnet runs fine on a VPS, while an 80GB compute subnet needs an A100/H100. The site's tier presets cover the common bands:</p>
+    <table>
+      <tr><th>Tier</th><th>Typical hardware</th><th>Capex (est.)</th><th>Power</th><th>Fits</th></tr>
+      <tr><td>CPU VPS</td><td>Any cloud VPS</td><td>~$700</td><td>80W</td><td>Data / light-validation subnets</td></tr>
+      <tr><td>12–16GB</td><td>RTX 3060/4060 Ti, used cards</td><td>~$600</td><td>250W</td><td>Low-end entry; testing the water</td></tr>
+      <tr><td>24GB <span class="tag hot">sweet spot</span></td><td>RTX 3090 / 4090</td><td>~$2,500</td><td>350W</td><td>Most consumer-friendly; popular starting point (20–24GB VRAM is the common recommendation)</td></tr>
+      <tr><td>48GB</td><td>A6000 / A40 / 2×3090</td><td>~$5,000</td><td>400W</td><td>Mid-tier inference/agents</td></tr>
+      <tr><td>80GB</td><td>A100 / H100-class</td><td>~$18,000</td><td>700W</td><td>Heavy inference, LLM-serving subnets (SN 3, 4, 51, 64 auto-assume this)</td></tr>
+      <tr><td>2×80GB</td><td>2× A100/H100</td><td>~$36,000</td><td>1,400W</td><td>Top-end compute</td></tr>
+    </table>
+    <h3>Getting started as a miner (high level)</h3>
+    <ol>
+      <li><b>Scope the subnet first</b> — read its README/whitepaper, check its <code>min_compute.yml</code>, and use SubnetROI to see whether its emission justifies your hardware before you pay anything.</li>
+      <li><b>Set up a wallet</b> — Bittensor wallets have a <b>coldkey</b> (your funds/keys, kept secure) and a <b>hotkey</b> (the miner's operational identity). Create both with <code>btcli wallet create</code>. Fund the coldkey with TAO for registration + a little for transaction fees.</li>
+      <li><b>Run a node or use an RPC</b> — either run a subtensor node or point <code>btcli</code> at a public RPC endpoint.</li>
+      <li><b>Register</b> — <code>btcli subnet register --netuid N</code> (the burn price) or, for a new subnet, <code>btcli subnet create</code> (the lock cost). You receive a <b>UID</b>.</li>
+      <li><b>Run the miner</b> — install the subnet's miner code, <b>publish your axon</b> (your serving address), and keep the UID alive. Validators must be able to reach you.</li>
+      <li><b>Watch your share</b> — your emissions depend on the <b>incentive share</b> the validators give you. It is positional: top miners capture most, median miners often hover near breakeven. SubnetROI's <i>incentive share</i> input exists to model this reality honestly.</li>
+    </ol>
+    <div class="warnbox">Beginner tip: do not pay the current lock/burn price "because the subnet looks cool." Screener first, register near a cheap registration window, and budget for 2–4 weeks of runtime before judging a subnet. Most subnets are unprofitable for median miners — the top-10 list exists because it is genuinely hard to be in it.</div>
+  </div>
+
+  <!-- 5. GOOD SUBNET -->
+  <h2 id="goodsubnet">What to look for in a good subnet</h2>
+  <div class="card">
+    <p>Each column in the SubnetROI table is a screen. A healthy candidate checks several boxes:</p>
+    <ul>
+      <li><b>Emission %</b> — the subnet's share of network emissions. Higher is more revenue potential, but also more miners competing. Growth (rising share) beats flat.</li>
+      <li><b>α price (τ)</b> — the subnet's alpha token value. A high emission with a collapsing alpha price can still lose money; look at <b>miners TAO/day</b> (the actual pool) and your <b>net $/day</b>, not the headline.</li>
+      <li><b>Volume &amp; liquidity</b> — deep liquidity means you can actually sell the alpha you earn without moving the market. Low-liquidity subnets can have phantom high prices.</li>
+      <li><b>Chain buys</b> — on-chain alpha purchases per block. Sustained buying is demand for the subnet's token and a floor under price.</li>
+      <li><b>Dereg risk</b> — flagged subnets risk being deregistered (killed). Avoid unless you know why you're there.</li>
+      <li><b>Kraken roadmap</b> — subnets whose alphas are listed (or roadmap-listed) on a major CEX: listings historically bring liquidity and price appreciation.</li>
+      <li><b>Collateral policy</b> — some subnets lock a share of registration as collateral (stake you earn back by mining). Model it with the collateral input so the locked capital doesn't surprise you.</li>
+      <li><b>Consistency</b> — a subnet that has held its emission share and price for months is safer than a new one with a two-day spike.</li>
+    </ul>
+  </div>
+
+  <!-- 6. IMPORTANT SUBNETS -->
+  <h2 id="subnets">Important subnets today</h2>
+  <div class="card">
+    <p>Current leaders by emission share (live from TaoMarketCap) — a good map of where the ecosystem's economics sit:</p>
+    <table>
+      <tr><th>SN</th><th>Name</th><th>Emission %</th><th>Why it matters</th></tr>
+      <tr><td>51</td><td>lium.io</td><td>12.5% <span class="tag hot">largest</span></td><td>Top of the network — estimated ~$8–10M/yr miner revenue; always the reference subnet.</td></tr>
+      <tr><td>64</td><td>Chutes</td><td>9.5% <span class="tag kraken">Kraken</span></td><td>AI inference marketplace; ~$4–5M/yr; heavy compute (g80 assumed).</td></tr>
+      <tr><td>4</td><td>Targon</td><td>6.8% <span class="tag kraken">Kraken</span></td><td>Operational intelligence; ~$5.5–6M/yr; g80-class hardware.</td></tr>
+      <tr><td>120</td><td>Affine</td><td>6.1%</td><td>Top-5 emission; a mature, deep-liquidity subnet.</td></tr>
+      <tr><td>107</td><td>Minos</td><td>5.4%</td><td>Compute-heavy subnet in the top tier.</td></tr>
+      <tr><td>44</td><td>Score</td><td>4.9% <span class="tag kraken">Kraken</span></td><td>Kraken-roadmap subnet with a significant emission share.</td></tr>
+      <tr><td>53</td><td>engy</td><td>4.3%</td><td>Energy-domain subnet in the top tier.</td></tr>
+      <tr><td>8</td><td>Vanta</td><td>3.9%</td><td>Long-running subnet (security/active inference) with steady share.</td></tr>
+      <tr><td>80</td><td>OpenRoboto</td><td>—</td><td>Robotics-data subnet; notable for being the first subnet to move alpha onto Base.</td></tr>
+    </table>
+    <p>Emission shares move — the SubnetROI table refreshes every 30 minutes, and the Pro Telegram alerts (emission-shift, dereg, Kraken price moves) exist precisely because these rankings change fast.</p>
+  </div>
+
+  <!-- 7. MODEL -->
+  <h2 id="model">The SubnetROI model: formulas, inputs &amp; caveats</h2>
+  <div class="card">
+    <p>The planner ranks all subnets by expected <b>net $/day</b> for a miner running your hardware:</p>
+    <pre>your TAO/day  = miners_tao_per_day × incentive_share
+your USD/day  = your TAO/day × TAO price
+net $/day     = your USD/day − power − infra − amortized registration − amortized capex
+payback       = GPU capex / net $/day</pre>
+
+    <h3>Inputs &amp; what they mean</h3>
+    <ul>
+      <li><b>GPU capex / power</b> — what you pay for the hardware and its draw. Power cost = kW × 24h × $/kWh.</li>
+      <li><b>Infra</b> — monthly hosting, rack, networking (annualized into the daily figure).</li>
+      <li><b>Incentive share</b> — your assumed fraction of the subnet's miner pool. <b>Positional and competitive</b>: top miners capture most emissions, median miners hover near breakeven. It is an input, not a live measurement.</li>
+      <li><b>Registration cost</b> — the TAO burned to register a miner, amortized over the period.</li>
+      <li><b>Alpha price</b> — scenario override: scales every subnet's income by your target α price ÷ its live price. Leave empty to use live prices.</li>
+      <li><b>Collateral locked</b> — scenario: TAO you lock as miner collateral. The model reports its USD value and an annualized opportunity cost (default 5%/yr) against your net.</li>
+    </ul>
+
+    <p><b>Live data</b> — <code>miners_tao_per_day</code> (the subnet's total miner pool), emission %, α price, volume, liquidity and chain buys come from the <a href="https://api.taomarketcap.com">TaoMarketCap public API</a>, refreshed every 30 minutes; TAO price from <a href="https://www.coingecko.com">CoinGecko</a>. The site falls back to a stored snapshot if the sources are unreachable.</p>
+
+    <div class="warnbox">Important caveats — Miner income is <b>alpha-denominated</b> and volatile; emission is <b>not</b> pro-rata to α price (the spec-440 gate redistributes emissions to winners). Collateral figures are scenarios you set — there is no live per-subnet collateral feed. SN 0 is the root subnet (baseline, not investable). Figures are <b>estimates, not predictions</b> — validate against taostats before committing capital.</div>
+  </div>
+
+  <p style="color:var(--muted);font-size:12.5px">Sources: TaoMarketCap public API (live subnet table, market data, registration constants), Bittensor documentation (bittensor.com/docs — mining, burn, collateral), CoinGecko, and the SubnetROI registration API (live lock cost / floor / next-slot). Revenue estimates are annualized from the 2026 network revenue index and are directional, not audited.</p>
+</div>
+
+<div class="footer">
+  <div><b>SubnetROI</b> · Bittensor miner/validator ROI planner</div>
+  <div style="margin-top:4px"><a href="roi_planner.html">Dashboard</a> · <a href="methodology.html">Methodology</a> · <a href="usdt_payment.html">Pricing</a> · <a href="mailto:info@subnetroi.com">info@subnetroi.com</a></div>
+  <div style="margin-top:4px">This tool informs, it does not advise.</div>
+</div>
+
+<script>
+(function(){
+  function saved(){ try{ var s=localStorage.getItem('sroi_theme'); if(s==='dark'||s==='light') return s; }catch(e){} return null; }
+  function apply(t){ document.documentElement.dataset.theme=t; var b=document.getElementById('themeBtn'); if(b) b.textContent=(t==='dark'?'☀️':'🌙'); }
+  apply(saved() || 'light');   // default: light; saved choice wins
+})();
+function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?'light':'dark'; document.documentElement.dataset.theme=cur; try{ localStorage.setItem('sroi_theme',cur); }catch(e){} var b=document.getElementById('themeBtn'); if(b) b.textContent=(cur==='dark'?'☀️':'🌙'); }
+</script>
+</body>
+</html>
