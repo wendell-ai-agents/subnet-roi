@@ -65,6 +65,7 @@
   .inputs{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px}
   .inputs h3{margin:0 0 10px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
   .inrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  html{scroll-padding-top:72px}
   .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
   .field input{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:6px;padding:7px 9px;font:13px var(--mono)}
   .field input:focus{outline:1px solid var(--accent)}
@@ -267,14 +268,39 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
 
   <div class="method" id="method">
     <h3>Methodology</h3>
-    <p style="margin:0 0 6px;color:var(--muted);font-size:12.5px">
-      <code>your TAO/day = miners_tao_per_day × incentive_share</code> ·
-      <code>your USD/day = your TAO/day × TAO price</code> ·
-      <code>net/day = USD/day − power − infra − amortized registration − amortized capex</code> ·
-      <code>payback = GPU capex / net/day</code>
+
+    <p style="margin:0 0 10px;color:var(--muted);font-size:12.5px">
+      The planner ranks all 129 subnets by expected <b>net $/day</b> for a miner running your hardware. The model:
     </p>
+    <p style="margin:0 0 6px;color:var(--muted);font-size:12.5px">
+      <code>your TAO/day = miners_tao_per_day × incentive_share</code> &middot;
+      <code>your USD/day = your TAO/day × TAO price</code> &middot;
+      <code>net $/day = your USD/day − power − infra − amortized registration − amortized capex</code> &middot;
+      <code>payback = GPU capex / net $/day</code>
+    </p>
+
+    <p style="margin:12px 0 6px;color:var(--muted);font-size:12px">
+      <b style="color:var(--fg)">Inputs &amp; what they mean:</b>
+    </p>
+    <ul style="margin:0 0 10px;color:var(--muted);font-size:12px;padding-left:20px">
+      <li><b style="color:var(--fg)">GPU capex / power</b> — what you pay for the hardware and its draw. Power cost = kW × 24h × $/kWh.</li>
+      <li><b style="color:var(--fg)">Infra</b> — monthly hosting, rack, networking (annualized into the daily figure).</li>
+      <li><b style="color:var(--fg)">Incentive share</b> — your assumed fraction of the subnet's miner pool. This is <b>positional and competitive</b>: top miners capture most emissions, median miners hover near breakeven. It is an input, not a live measurement.</li>
+      <li><b style="color:var(--fg)">Registration cost</b> — the TAO burned to register a miner, amortized over the period.</li>
+      <li><b style="color:var(--fg)">Alpha price</b> — scenario override: scales every subnet's income by your target α price ÷ its live price. Leave empty to use live prices.</li>
+      <li><b style="color:var(--fg)">Collateral locked</b> — scenario: TAO you lock as miner collateral. The model reports its USD value and an annualized opportunity cost (default 5%/yr) against your net.</li>
+    </ul>
+
+    <p style="margin:0 0 6px;color:var(--muted);font-size:12px">
+      <b style="color:var(--fg)">Live data</b> — <code>miners_tao_per_day</code> (the subnet's total miner pool), emission %, α price, volume, liquidity and chain buys come from the <a href="https://api.taomarketcap.com" style="color:var(--accent)">TaoMarketCap public API</a>, refreshed every 30 minutes; TAO price from <a href="https://www.coingecko.com" style="color:var(--accent)">CoinGecko</a>. The site falls back to a stored snapshot if the sources are unreachable.
+    </p>
+
+    <p style="margin:0 0 6px;color:var(--muted);font-size:12px">
+      <b style="color:var(--fg)">Important caveats</b> — Miner income is <b>alpha-denominated</b> and volatile; emission is <b>not</b> pro-rata to α price (the spec-440 gate redistributes emissions to winners). Collateral figures are scenarios you set — there is no live per-subnet collateral feed. SN 0 is the root subnet (baseline, not investable).
+    </p>
+
     <p style="margin:0;color:var(--muted);font-size:12px">
-      <code>miners_tao_per_day</code> is the subnet's total miner pool (live from TaoMarketCap). Miner income is <b>alpha-denominated</b> and volatile; emission is <b>not</b> pro-rata to alpha price (spec-440 gate redistributes to winners). Figures are estimates, not predictions — validate against taostats before acting.
+      Figures are <b>estimates, not predictions</b> — validate against taostats before committing capital. This tool informs, it does not advise.
     </p>
   </div>
 
