@@ -6,13 +6,23 @@
 <title>Upgrade — SubnetROI Pro</title>
 <style>
   :root{
+    --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#dce3ec;
+    --fg:#1c2430; --muted:#5b6b7f; --accent:#2f6fe4; --good:#1a7f37; --warn:#b45309;
+    --codecolor:#3c4656; --navbg:rgba(246,248,251,.92);
+    --notebg:#e3f4e8; --notebd:#b7e0c3; --notefg:#1a7f37;
+    --warnbg:#fdecec; --warnbd:#f5c2c2; --warnfg:#c22f2f;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  [data-theme="dark"]{
     --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
     --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --warn:#f5a623;
-    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --codecolor:#c9d4e8; --navbg:rgba(10,13,19,.92);
+    --notebg:#1a2418; --notebd:#2c4a2c; --notefg:#a8d5a8;
+    --warnbg:#2b1a1a; --warnbd:#4a2c2c; --warnfg:#ffb4b4;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif}
-  .nav{position:sticky;top:0;z-index:10;background:rgba(10,13,19,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .nav{position:sticky;top:0;z-index:10;background:var(--navbg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
   .nav-in{max-width:960px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:24px}
   .brand{font-weight:700;font-size:16px}
   .brand span{color:var(--accent)}
@@ -41,18 +51,18 @@
   .field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
   .field select,.field input{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:7px;padding:9px 11px;font:13px var(--mono)}
   .addr{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:14px}
-  .addr code{font:13px var(--mono);word-break:break-all;color:#c9d4e8}
+  .addr code{font:13px var(--mono);word-break:break-all;color:var(--codecolor)}
   .copy{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
   .copy:hover{filter:brightness(1.1)}
   .qr{width:190px;height:190px;background:#fff;border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;padding:8px;box-sizing:border-box}
   .qr svg{display:block;width:100%;height:100%}
-  .qr .qrhint{color:#8b93a3;font-size:11px;text-align:center}
+  .qr .qrhint{color:var(--muted);font-size:11px;text-align:center}
   .qr.placeholder{background:var(--panel2)}
   .steps{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px}
   .steps ol{margin:0;padding-left:20px;color:var(--muted);font-size:12.5px}
   .steps li{margin:4px 0}
-  .note{background:#1a2418;border:1px solid #2c4a2c;color:#a8d5a8;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px}
-  .warn{background:#2b1a1a;border:1px solid #4a2c2c;color:#ffb4b4;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px}
+  .note{background:var(--notebg);border:1px solid var(--notebd);color:var(--notefg);border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px}
+  .warn{background:var(--warnbg);border:1px solid var(--warnbd);color:var(--warnfg);border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:16px}
   .btn{display:inline-block;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
   .btn:hover{filter:brightness(1.1)}
   .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
