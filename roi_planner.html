@@ -252,20 +252,6 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
 
   <div class="hint" style="margin-top:8px">SN 0 is the <b>root subnet</b> — the network&#39;s baseline, not a regular subnet: it has no alpha market (price fixed at 1.0 τ), 0% emission, and isn&#39;t investable. Exclude it from ROI comparisons.</div>
 
-  <div class="method" id="digestpage">
-    <h3>Daily Digest — preview <span style="font-size:11px;color:var(--muted);font-weight:400">(what subscribers receive each morning)</span></h3>
-    <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead><tr style="color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em">
-          <th style="padding:6px 8px">SN</th><th style="padding:6px 8px">Name</th><th style="padding:6px 8px">α price (τ)</th>
-          <th style="padding:6px 8px">Emission %</th><th style="padding:6px 8px">Net $/d</th>
-        </tr></thead>
-        <tbody id="digestRows"><tr><td colspan="5" style="padding:10px">—</td></tr></tbody>
-      </table>
-    </div>
-    <p style="margin:10px 0 0;color:var(--muted);font-size:12px">Subscribe above to receive this in your inbox every morning — plus the full methodology notes and live TAO price.</p>
-  </div>
-
   <div class="method" id="method">
     <h3>Methodology</h3>
 
@@ -304,9 +290,25 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
     </p>
   </div>
 
+  <div class="method" id="digestpage">
+    <h3>Daily Digest — preview <span style="font-size:11px;color:var(--muted);font-weight:400">(what subscribers receive each morning)</span></h3>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em">
+          <th style="padding:6px 8px">SN</th><th style="padding:6px 8px">Name</th><th style="padding:6px 8px">α price (τ)</th>
+          <th style="padding:6px 8px">Emission %</th><th style="padding:6px 8px">Net $/d</th>
+        </tr></thead>
+        <tbody id="digestRows"><tr><td colspan="5" style="padding:10px">—</td></tr></tbody>
+      </table>
+    </div>
+    <p style="margin:10px 0 0;color:var(--muted);font-size:12px">Subscribe above to receive this in your inbox every morning — plus the full methodology notes and live TAO price.</p>
+  </div>
+
   <div class="footer">
     <div><b>SubnetROI</b> · Bittensor miner/validator ROI planner</div>
     <div>Data: <a href="https://api.taomarketcap.com">TaoMarketCap</a> + <a href="https://www.coingecko.com">CoinGecko</a> · <a href="usdt_payment.html">Pricing</a> · This tool informs, it does not advise.</div>
+    <div style="margin-top:8px;font-size:11.5px;color:var(--muted)">Pro: watchlists · hardware sizing · alpha-price &amp; collateral scenarios · registration forecast · Telegram alerts (emission-shift, dereg, Kraken) · daily digest</div>
+    <div style="margin-top:4px;font-size:11.5px;color:var(--muted)">Questions? <a href="mailto:info@subnetroi.com" style="color:var(--accent)">info@subnetroi.com</a> · <a href="usdt_payment.html" style="color:var(--accent)">Upgrade</a></div>
   </div>
 </div>
 
