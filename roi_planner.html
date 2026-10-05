@@ -211,7 +211,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   <div class="toolbar">
     <input type="text" id="q" placeholder="Filter by name / symbol / netuid…">
     <select id="sortSel">
-      <option value="netday">Sort: net $/day</option>
+      <option value="netDay">Sort: net $/day</option>
       <option value="minersTao">miners TAO/day</option>
       <option value="emission">emission %</option>
       <option value="price">alpha price (τ)</option>
@@ -320,7 +320,7 @@ function render(){
   const top = +document.getElementById('topSel').value;
   const sortKey = document.getElementById('sortSel').value;
   let list = rows.filter(r=> !q || (r.name+' '+r.symbol+' '+r.subnet).toLowerCase().includes(q));
-  list.sort((a,b)=>(b[sortKey]??-Infinity)-(a[sortKey]??-Infinity));
+  list.sort((a,b)=>{ const ka=a[sortKey]??-Infinity, kb=b[sortKey]??-Infinity; return sortKey==='payback' ? ka-kb : kb-ka; });
   if(watchOnly) list = list.filter(r=>proState.watch.has(r.subnet));
   if(top) list = list.slice(0,top);
 
