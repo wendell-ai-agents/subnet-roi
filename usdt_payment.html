@@ -327,17 +327,23 @@ function getInvoice(){
     document.getElementById('invoiceWarn').classList.remove('hidden');
     return;
   }
-  // Compose an email to us requesting the invoice; the plan + payer email are prefilled.
-  const subject = encodeURIComponent('SubnetROI ' + plan + ' — payment request');
-  const body = encodeURIComponent(
-    'Please send me a payment link for SubnetROI.\n\n' +
-    'Plan: ' + plan + '\n' +
-    'Payer email: ' + email + '\n' +
-    'Payment method: card (USDT-settled) or invoice\n\n' +
-    'Please email the payment link to: ' + email
-  );
-  window.location.href = 'mailto:info@subnetroi.com?subject=' + subject + '&body=' + body;
-  document.getElementById('invoiceNote').classList.remove('hidden');
+  // Submit the request via Formspree -> emails the owner's Gmail, which the
+  // invoice watcher polls. Field names match the watcher's parser.
+  fetch('https://formspree.io/f/mdekgzpo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      'Payer email': email,
+      'Plan': plan,
+      'Payment method': 'card (USDT-settled) or invoice',
+      _subject: 'SubnetROI payment request'
+    })
+  }).then(function(r){
+    document.getElementById('invoiceNote').classList.remove('hidden');
+  }).catch(function(){
+    document.getElementById('invoiceWarn').textContent = 'Request failed — please email info@subnetroi.com directly.';
+    document.getElementById('invoiceWarn').classList.remove('hidden');
+  });
 }
 (function(){ var b='m'; try{ if(localStorage.getItem('sroi_billing')==='y') b='y'; }catch(e){} setBilling(b); })();
 renderQR('TRC-20');
