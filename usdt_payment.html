@@ -36,6 +36,9 @@
   .plan{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;cursor:pointer;transition:border-color .15s, box-shadow .15s}
   .plan:hover{border-color:var(--accent)}
   .plan.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .billing{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+  .billing .b{background:var(--panel);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:6px 16px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .billing .b.active{background:var(--accent);border-color:var(--accent);color:#fff}
   .plan.hot{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
   .plan .name{font-weight:700;font-size:15px}
   .plan .price{font-size:26px;font-weight:700;margin:6px 0 2px}
@@ -106,6 +109,10 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   <h1>Upgrade to Pro</h1>
   <div class="sub">Two ways to pay: by credit/debit card (settled to us as USDT) or directly in USDT. Access unlocks within minutes of confirmation.</div>
 
+  <div class="billing">
+    <button id="billM" class="b active" onclick="setBilling('m')">Monthly</button>
+    <button id="billY" class="b" onclick="setBilling('y')">Yearly — 2 mo free</button>
+  </div>
   <div class="plans">
     <div class="plan" style="cursor:default" data-val="0">
       <div class="name">Free</div>
@@ -116,7 +123,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <li>Daily email digest</li>
       </ul>
     </div>
-    <div class="plan hot" data-val="20" onclick="selectPlan(20)">
+    <div class="plan hot" id="cardPro" data-val="20" data-v="20" onclick="selectPlan(this.dataset.v)">
       <div class="badge">Recommended</div>
       <div class="name">Pro</div>
       <div class="price">$20<small>/mo</small></div>
@@ -128,7 +135,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <li>Saved watchlists</li>
       </ul>
     </div>
-    <div class="plan" data-val="199" onclick="selectPlan(199)">
+    <div class="plan" id="cardApi" data-val="199" data-v="199" onclick="selectPlan(this.dataset.v)">
       <div class="name">API</div>
       <div class="price">$199<small>/mo</small></div>
       <ul>
@@ -233,18 +240,37 @@ function chooseMethod(m){
   document.getElementById('methodCard').classList.toggle('active', m==='card');
   document.getElementById('methodUsdt').classList.toggle('active', m==='usdt');
 }
+const PLNAME = {20:'Pro — $20 / month', 200:'Pro — $200 / year', 199:'API — $199 / month', 1990:'API — $1990 / year'};
+function setBilling(p){
+  document.getElementById('billM').classList.toggle('active', p==='m');
+  document.getElementById('billY').classList.toggle('active', p==='y');
+  try{ localStorage.setItem('sroi_billing', p); }catch(e){}
+  const y = p==='y';
+  const proV = y?'200':'20', apiV = y?'1990':'199';
+  const proL = y?'Pro — $200 / year':'Pro — $20 / month';
+  const apiL = y?'API — $1990 / year':'API — $199 / month';
+  const proP = y?'$200<small>/yr</small>':'$20<small>/mo</small>';
+  const apiP = y?'$1990<small>/yr</small>':'$199<small>/mo</small>';
+  const cp=document.getElementById('cardPro'), ca=document.getElementById('cardApi');
+  cp.dataset.v=proV; cp.dataset.val=proV; ca.dataset.v=apiV; ca.dataset.val=apiV;
+  cp.querySelector('.price').innerHTML=proP; ca.querySelector('.price').innerHTML=apiP;
+  const opts = '<option value="'+proV+'" selected>'+proL+'</option><option value="'+apiV+'">'+apiL+'</option>';
+  document.getElementById('plan').innerHTML=opts;
+  document.getElementById('planU').innerHTML=opts;
+  syncAmount();
+}
 function syncAmount(el){
   const src = el ? el.value : document.getElementById('planU').value;
   document.getElementById('plan').value = src;
   document.getElementById('planU').value = src;
   const amt = +src || 20;
   const net = document.getElementById('network').value;
-  const planName = amt===199 ? 'API — $199 / month' : 'Pro — $20 / month';
+  const planName = PLNAME[amt] || ('$'+amt+' /mo');
   document.getElementById('amtLabel').textContent = amt + ' USDT';
   document.getElementById('netLabel').textContent = net;
   document.querySelectorAll('.plan[data-val]').forEach(c=>c.classList.toggle('selected', +c.dataset.val===amt));
   document.getElementById('confirmUsdt').href =
-    'mailto:info@subnetroi.com?subject=' + encodeURIComponent('SubnetROI ' + (amt===199?'API':'Pro') + ' payment') +
+    'mailto:info@subnetroi.com?subject=' + encodeURIComponent('SubnetROI ' + (amt===199||amt===1990?'API':'Pro') + ' payment') +
     '&body=' + encodeURIComponent('Plan: ' + planName + '\nNetwork: ' + net + '\nTXID: [paste transaction hash]');
 }
 function selectPlan(v){
@@ -313,7 +339,7 @@ function getInvoice(){
   window.location.href = 'mailto:info@subnetroi.com?subject=' + subject + '&body=' + body;
   document.getElementById('invoiceNote').classList.remove('hidden');
 }
-syncAmount();
+(function(){ var b='m'; try{ if(localStorage.getItem('sroi_billing')==='y') b='y'; }catch(e){} setBilling(b); })();
 renderQR('TRC-20');
 </script>
 </body>

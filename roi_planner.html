@@ -515,7 +515,7 @@ function paintPro(){
     form.style.display = 'none';
     msg.style.display = 'block';
     msg.innerHTML = `<div class="t">✓ Pro active — <b>${proState.plan==='api'?'API':'Pro'}</b> plan</div>
-      <div class="s">Star subnets to save your watchlist (synced to your key) · <a onclick="lock()">Lock</a></div>`;
+      <div class="s">${proState.daysLeft!=null ? 'Key expires <b>'+ (proState.expiresAt||'').slice(0,10) +'</b> ('+ proState.daysLeft +' days) · ' : ''}Star subnets to save your watchlist (synced to your key) · <a onclick="lock()">Lock</a></div>`;
     wt.style.display = 'inline-block';
     if(watchOnly) wt.classList.add('on');
   } else {
@@ -541,9 +541,10 @@ async function unlock(ev){
   if(!k){ showErr('Enter your Pro or API key first.'); return false; }
   try{
     const r = await fetch(API+'/v1/key', { headers: { 'x-api-key': k } });
-    if(!r.ok){ showErr(r.status===401 ? 'Invalid key — check it and try again.' : 'Key check failed ('+r.status+').'); return false; }
+    if(!r.ok){ showErr(r.status===402 ? 'Key expired — renew at the payment page.' : (r.status===401 ? 'Invalid key — check it and try again.' : 'Key check failed ('+r.status+').')); return false; }
     const j = await r.json();
-    proState.key = k; localStorage.setItem('sroi_key', k); proState.plan = j.plan; proState.synced = false;
+    proState.key = k; localStorage.setItem('sroi_key', k); proState.plan = j.plan;
+    proState.expiresAt = j.expires_at || null; proState.daysLeft = j.daysLeft; proState.synced = false;
     await syncWatch();
     paintPro();
     return false;
