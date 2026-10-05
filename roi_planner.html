@@ -320,7 +320,9 @@ function render(){
   const top = +document.getElementById('topSel').value;
   const sortKey = document.getElementById('sortSel').value;
   let list = rows.filter(r=> !q || (r.name+' '+r.symbol+' '+r.subnet).toLowerCase().includes(q));
-  list.sort((a,b)=>{ const ka=a[sortKey]??-Infinity, kb=b[sortKey]??-Infinity; return sortKey==='payback' ? ka-kb : kb-ka; });
+  list.sort((a,b)=>{ const miss=sortKey==='payback'?Infinity:-Infinity;
+    const ka=a[sortKey]==null?miss:a[sortKey], kb=b[sortKey]==null?miss:b[sortKey];
+    return sortKey==='payback' ? ka-kb : kb-ka; });
   if(watchOnly) list = list.filter(r=>proState.watch.has(r.subnet));
   if(top) list = list.slice(0,top);
 
@@ -342,7 +344,7 @@ function render(){
       <td>${logoCell(r.logo)}</td>
       <td>${r.subnet}</td>
       <td>${r.symbol||''}</td>
-      <td${r.subnet===0?' title="Root subnet — network baseline, not investable"':''}>${r.name||''}${kraken?'<span class="tag kraken">Kraken roadmap</span>':''}${risk?'<span class="tag risk">dereg</span>':''}</td>
+      <td${r.subnet===0?' title="Root subnet — network baseline, not investable"':''}>${r.name||''}${kraken?' <span class="tag kraken">Kraken roadmap</span>':''}${risk?' <span class="tag risk">dereg</span>':''}</td>
       <td>${fmt(r.price,4)}</td>
       <td>${r.emission!=null?r.emission.toFixed(2)+'%':'—'}</td>
       <td>${fmt(r.minersTao,2)}</td>
