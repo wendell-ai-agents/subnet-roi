@@ -141,7 +141,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
       <a href="#tool">Dashboard</a>
       <a href="#method">Methodology</a>
       <a href="usdt_payment.html">Pricing</a>
-      <a href="#digest">Daily Digest</a>
+      <a href="#digestpage">Daily Digest</a>
       <a class="btn" href="usdt_payment.html">Upgrade · Pay with USDT</a>
     </div>
   </div>
@@ -156,7 +156,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   <div class="banner" id="digest">
     <div style="flex:1">
       <div class="t">Get the daily top-10 subnets in your inbox</div>
-      <div class="s">Free · every morning · live emission &amp; ROI data</div>
+      <div class="s">Free · every morning · live emission &amp; ROI data — this is a preview of what the email contains.</div>
     </div>
     <form class="emailform" onsubmit="return subscribe(event)">
       <input type="email" id="subEmail" placeholder="you@example.com" required>
@@ -250,6 +250,20 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   </div>
 
   <div class="hint" style="margin-top:8px">SN 0 is the <b>root subnet</b> — the network&#39;s baseline, not a regular subnet: it has no alpha market (price fixed at 1.0 τ), 0% emission, and isn&#39;t investable. Exclude it from ROI comparisons.</div>
+
+  <div class="method" id="digestpage">
+    <h3>Daily Digest — preview <span style="font-size:11px;color:var(--muted);font-weight:400">(what subscribers receive each morning)</span></h3>
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em">
+          <th style="padding:6px 8px">SN</th><th style="padding:6px 8px">Name</th><th style="padding:6px 8px">α price (τ)</th>
+          <th style="padding:6px 8px">Emission %</th><th style="padding:6px 8px">Net $/d</th>
+        </tr></thead>
+        <tbody id="digestRows"><tr><td colspan="5" style="padding:10px">—</td></tr></tbody>
+      </table>
+    </div>
+    <p style="margin:10px 0 0;color:var(--muted);font-size:12px">Subscribe above to receive this in your inbox every morning — plus the full methodology notes and live TAO price.</p>
+  </div>
 
   <div class="method" id="method">
     <h3>Methodology</h3>
@@ -345,6 +359,15 @@ function render(){
   const med = netDays.length? netDays.sort((a,b)=>a-b)[Math.floor(netDays.length/2)] : null;
   document.getElementById('medNet').innerHTML = med!=null? money(med)+' <small>/day</small>' : '—';
   document.getElementById('profitable').textContent = `${profitable} / ${rows.length}`;
+
+  const digestTop = [...rows].sort((a,b)=>(b.netDay??-1e18)-(a.netDay??-1e18)).slice(0,10);
+  document.getElementById('digestRows').innerHTML = digestTop.map(r=>
+    `<tr><td style="padding:5px 8px;border-bottom:1px solid var(--border)">${r.subnet}</td>`+
+    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">${r.name||''}</td>`+
+    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">${fmt(r.price,4)}</td>`+
+    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">${r.emission!=null?r.emission.toFixed(2)+'%':'—'}</td>`+
+    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)" class="${r.netDay>=0?'pos':'neg'}">${money(r.netDay)}</td></tr>`
+  ).join('');
 
   document.getElementById('thead').innerHTML = COLS.map(([k,l])=>`<th data-k="${k}">${l}</th>`).join('');
   document.getElementById('tbody').innerHTML = list.map(r=>{
