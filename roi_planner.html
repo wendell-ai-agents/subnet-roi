@@ -204,6 +204,9 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
       <div class="field"><label>Assumed incentive share (%)</label><input id="incentive" type="number" value="0.1" step="0.05" min="0.001"></div>
       <div class="field"><label>Registration cost (TAO)</label><input id="regCost" type="number" value="1.0" step="0.1" min="0"></div>
       <div class="field"><label>Amortization (days)</label><input id="amort" type="number" value="365" min="1"></div>
+      <div class="field"><label>Alpha price (τ) — scenario</label><input id="alphaPrice" type="number" step="0.001" min="0" placeholder="live"></div>
+      <div class="field"><label>Collateral locked (TAO)</label><input id="collateralTao" type="number" value="0" min="0"></div>
+      <div class="field"><label>Collateral cost (%/yr)</label><input id="collateralRate" type="number" value="5" step="0.5" min="0"></div>
     </div>
     <div class="hint">Incentive share is your assumed fraction of a subnet's miner emissions — it is <b>positional and competitive</b> (top miners take most; median miners hover near breakeven). This is an assumption, not a live number. Registration cost is a sunk burn.</div>
   </div>
@@ -278,22 +281,27 @@ const COLS = [
   ['star',''],['logo',''],['subnet','SN'],['symbol','Sym'],['name','Name'],['price','α price (τ)'],
   ['emission','Emission %'],['minersTao','Miners TAO/d'],['yourTao','Your TAO/d'],
   ['usdDay','Your $/d'],['netDay','Net $/d'],['netMo','Net $/mo'],['netYr','Net $/yr'],
-  ['payback','Payback d'],['chainbuys','Chain buys/blk'],['risk','Dereg risk']
+  ['netDayColl','Net $/d (net coll.)'],['payback','Payback d'],['chainbuys','Chain buys/blk'],['risk','Dereg risk']
 ];
 
 function fmt(n,d=2){ if(n==null||isNaN(n)) return '—'; return n.toLocaleString('en-US',{maximumFractionDigits:d}); }
 function money(n){ return (n<0?'-':'')+'$'+fmt(Math.abs(n),0); }
 
 function compute(row, inp){
+  const alphaMult = inp.alphaPrice!=null && row.price ? inp.alphaPrice/row.price : 1;
   const yourTao = row.minersTao * inp.incentive;
-  const usdDay = yourTao * state.tao;
+  const usdDay = yourTao * state.tao * alphaMult;
   const power = (inp.gpuPower/1000)*24*inp.elecRate;
   const infra = inp.infra/30;
   const regAmort = (inp.regCost*state.tao)/inp.amort;
   const capexAmort = inp.gpuCapex/inp.amort;
   const netDay = usdDay - power - infra - regAmort - capexAmort;
   const payback = netDay>0 ? inp.gpuCapex/netDay : null;
-  return { yourTao, usdDay, netDay, netMo:netDay*30, netYr:netDay*365, payback };
+  const collateralUsd = inp.collateralTao * state.tao;
+  const collateralCostDay = collateralUsd * (inp.collateralRate/100) / 365;
+  const netDayColl = netDay - collateralCostDay;
+  return { yourTao, usdDay, netDay, netMo:netDay*30, netYr:netDay*365, payback,
+          collateralUsd, collateralCostDay, netDayColl, netMoColl:netDayColl*30 };
 }
 
 function getInputs(){
@@ -305,6 +313,9 @@ function getInputs(){
     incentive:(+document.getElementById('incentive').value||0)/100,
     regCost:+document.getElementById('regCost').value||0,
     amort:+document.getElementById('amort').value||365,
+    alphaPrice: document.getElementById('alphaPrice').value==='' ? null : +document.getElementById('alphaPrice').value||0,
+    collateralTao:+document.getElementById('collateralTao').value||0,
+    collateralRate:+document.getElementById('collateralRate').value||0,
   };
 }
 
@@ -353,6 +364,7 @@ function render(){
       <td class="${r.netDay>=0?'pos':'neg'}">${money(r.netDay)}</td>
       <td class="${r.netMo>=0?'pos':'neg'}">${money(r.netMo)}</td>
       <td class="${r.netYr>=0?'pos':'neg'}">${money(r.netYr)}</td>
+      <td class="${r.netDayColl>=0?'pos':'neg'}">${money(r.netDayColl)}</td>
       <td>${r.payback!=null?fmt(r.payback,0):'—'}</td>
       <td>${fmt(r.chainbuys,2)}</td>
       <td>${r.risk?'yes':'no'}</td>
