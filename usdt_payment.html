@@ -107,7 +107,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
 
 <div class="wrap">
   <h1>Upgrade to Pro</h1>
-  <div class="sub">Two ways to pay: by credit/debit card (settled to us as USDT) or directly in USDT. Access unlocks within minutes of confirmation.</div>
+  <div class="sub">Pay in USDT (TRC-20 or ERC-20). Access unlocks within minutes of confirmation.</div>
 
   <div class="billing">
     <button id="billM" class="b active" onclick="setBilling('m')">Monthly</button>
@@ -152,8 +152,8 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
 
     <div class="pay-method" id="methodRow">
       <div class="method active" id="methodCard" onclick="chooseMethod('card')">
-        <h4>💳 Credit / Debit card</h4>
-        <p>Pay by card — we receive the payment in USDT, you get a receipt.</p>
+        <h4>🪙 Pay with USDT</h4>
+        <p>Get a payment link — pay on a secure page in USDT (TRC-20 or ERC-20).</p>
       </div>
       <div class="method" id="methodUsdt" onclick="chooseMethod('usdt')">
         <h4>🪙 Direct USDT</h4>
@@ -163,8 +163,8 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
 
     <!-- Card path -->
     <div id="cardPanel" class="invoice-form">
-      <h3>Pay by card / request an invoice</h3>
-      <p class="p">Enter your email — we'll email you a payment link immediately (card) or an invoice you can pay by card or USDT. No card details are typed on this site.</p>
+      <h3>Pay with USDT</h3>
+      <p class="p">Enter your email — we'll create a payment link you can pay in USDT (TRC-20 or ERC-20). No card details are needed.</p>
       <div class="row">
         <div class="field">
           <label>Your email</label>
@@ -223,7 +223,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
     </div>
 
     <div class="footer">
-      <b>SubnetROI</b> · Payments via card (USDT-settled) or direct USDT · <a href="roi_planner.html">Dashboard</a> · Questions? <a href="mailto:info@subnetroi.com">info@subnetroi.com</a>
+      <b>SubnetROI</b> · Payments in USDT (TRC-20 / ERC-20) · <a href="roi_planner.html">Dashboard</a> · Questions? <a href="mailto:info@subnetroi.com">info@subnetroi.com</a>
     </div>
   </div>
 </div>
