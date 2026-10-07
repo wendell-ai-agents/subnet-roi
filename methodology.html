@@ -153,9 +153,29 @@
   <h2 id="digest">6 · The Daily Digest</h2>
   <div class="card">
     <p>Every morning, SubnetROI emails a digest with the <b>top 10 subnets</b> — sorted by net $/day for YOUR hardware. It's the fastest way to stay on top of shifts. Subscribe below (free), or <a href="usdt_payment.html">upgrade</a> to unlock the Kraken roadmap + live registration alerts.</p>
+    <form class="emailform" onsubmit="return subscribe(event)" style="margin-top:14px">
+      <input type="email" id="subEmail" placeholder="you@example.com" required>
+      <button class="btn" type="submit">Subscribe</button>
+    </form>
+    <div id="subMsg" class="emailok" style="display:none"></div>
   </div>
 
   <p style="color:var(--muted);font-size:12px;margin-top:34px">SubnetROI · info@subnetroi.com · Data: TaoMarketCap public API + CoinGecko · This is an estimate tool — always validate against taostats before making decisions.</p>
 </div>
+<script>
+function subscribe(e){
+  e.preventDefault();
+  const em = document.getElementById('subEmail').value.trim();
+  const msg = document.getElementById('subMsg');
+  if(!em || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ msg.textContent='Enter a valid email.'; msg.style.display='block'; return false; }
+  try{
+    const url = 'https://subnet-roi-api.mentatdev.workers.dev/v1/digest/subscribe';
+    fetch(url, {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({email:em})})
+      .then(r=>{ msg.textContent = r.ok ? 'Subscribed! You\u2019ll get the daily digest.' : 'Error — try again.'; msg.style.display='block'; })
+      .catch(()=>{ msg.textContent='Error — try again.'; msg.style.display='block'; });
+  }catch(err){ msg.textContent='Error — try again.'; msg.style.display='block'; }
+  return false;
+}
+</script>
 </body>
 </html>

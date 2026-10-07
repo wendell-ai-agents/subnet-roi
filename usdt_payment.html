@@ -319,25 +319,39 @@ function copyAddr(){
 }
 function getInvoice(){
   const email = document.getElementById('custEmail').value.trim();
-  const planEl = document.getElementById('plan');
-  const plan = planEl.options[planEl.selectedIndex] ? planEl.options[planEl.selectedIndex].text : 'Pro';
+  const amt = +document.getElementById('plan').value || 20;
   document.getElementById('invoiceWarn').classList.add('hidden');
   document.getElementById('invoiceNote').classList.add('hidden');
   if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
     document.getElementById('invoiceWarn').classList.remove('hidden');
     return;
   }
-  // Compose an email to us requesting the invoice; the plan + payer email are prefilled.
-  const subject = encodeURIComponent('SubnetROI ' + plan + ' — payment request');
-  const body = encodeURIComponent(
-    'Please send me a payment link for SubnetROI.\n\n' +
-    'Plan: ' + plan + '\n' +
-    'Payer email: ' + email + '\n' +
-    'Payment method: card (USDT-settled) or invoice\n\n' +
-    'Please email the payment link to: ' + email
-  );
-  window.location.href = 'mailto:info@subnetroi.com?subject=' + subject + '&body=' + body;
-  document.getElementById('invoiceNote').classList.remove('hidden');
+  // Map the selected amount to the worker's plan name.
+  const plan = amt===200 ? 'pro-year' : amt===199 ? 'api' : amt===1990 ? 'api-year' : 'pro';
+  const btn = document.getElementById('cardBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Creating invoice…';
+  btn.style.opacity = '0.6';
+  fetch('https://subnet-roi-api.mentatdev.workers.dev/v1/paylink', {
+    method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body: JSON.stringify({email: email, plan: plan})
+  })
+    .then(r=> r.json().then(d=>({ok:r.ok, d})))
+    .then(({ok, d})=>{
+      btn.textContent = orig; btn.style.opacity = '1';
+      if(ok && d.payment_url){
+        document.getElementById('invoiceNote').classList.remove('hidden');
+        window.open(d.payment_url, '_blank');
+      } else {
+        document.getElementById('invoiceWarn').textContent = 'Could not create invoice — try again or email info@subnetroi.com.';
+        document.getElementById('invoiceWarn').classList.remove('hidden');
+      }
+    })
+    .catch(()=>{
+      btn.textContent = orig; btn.style.opacity = '1';
+      document.getElementById('invoiceWarn').textContent = 'Network error — try again or email info@subnetroi.com.';
+      document.getElementById('invoiceWarn').classList.remove('hidden');
+    });
 }
 (function(){ var b='m'; try{ if(localStorage.getItem('sroi_billing')==='y') b='y'; }catch(e){} setBilling(b); })();
 renderQR('TRC-20');
