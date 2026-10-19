@@ -45,7 +45,9 @@
   .plan .price small{font-size:13px;color:var(--muted);font-weight:400}
   .plan ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:12.5px}
   .plan li{margin:3px 0}
-  .badge{position:absolute;top:-10px;right:14px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+  .plan .badge{position:absolute;top:-10px;right:14px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+  /* Ebook is a one-time purchase — center it on its own row */
+  #cardEbook{grid-column:1/-1;justify-self:center;max-width:340px;width:100%}
   .paybox{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px}
   .paybox h2{margin:0 0 4px;font-size:16px}
   .paybox .p{color:var(--muted);font-size:12.5px;margin:0 0 16px}
@@ -181,9 +183,9 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <div class="field">
           <label>Plan</label>
           <select id="plan" onchange="syncAmount(this)">
-            <option value="20" selected>Pro — $20 / month</option>
+            <option value="19" selected>Ebook — 19 USDT (one-time)</option>
+            <option value="20">Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
-            <option value="19">Ebook — 19 USDT (one-time)</option>
           </select>
         </div>
       </div>
@@ -199,9 +201,9 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <div class="field">
           <label>Plan</label>
           <select id="planU" onchange="syncAmount(this)">
-            <option value="20" selected>Pro — $20 / month</option>
+            <option value="19" selected>Ebook — 19 USDT (one-time)</option>
+            <option value="20">Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
-            <option value="19">Ebook — 19 USDT (one-time)</option>
           </select>
         </div>
         <div class="field">
@@ -264,7 +266,7 @@ function setBilling(p){
   const cp=document.getElementById('cardPro'), ca=document.getElementById('cardApi');
   cp.dataset.v=proV; cp.dataset.val=proV; ca.dataset.v=apiV; ca.dataset.val=apiV;
   cp.querySelector('.price').innerHTML=proP; ca.querySelector('.price').innerHTML=apiP;
-  const opts = '<option value="'+proV+'" selected>'+proL+'</option><option value="'+apiV+'">'+apiL+'</option><option value="19">Ebook — 19 USDT (one-time)</option>';
+  const opts = '<option value="19" selected>Ebook — 19 USDT (one-time)</option><option value="'+proV+'">'+proL+'</option><option value="'+apiV+'">'+apiL+'</option>';
   document.getElementById('plan').innerHTML=opts;
   document.getElementById('planU').innerHTML=opts;
   syncAmount();
