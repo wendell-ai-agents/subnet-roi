@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stop Losing TAO — The Bittensor Staking Survival Guide</title>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--fg:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149}
+  [data-theme="light"]{--bg:#ffffff;--card:#f6f8fa;--border:#d0d7de;--fg:#1f2328;--muted:#57606a;--accent:#0969da;--green:#1a7f37;--red:#cf222e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6}
+  .nav{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--border)}
+  .nav-in{max-width:760px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px}
+  .nav-in a{color:var(--muted);text-decoration:none;font-size:13px}
+  .nav-in a:hover{color:var(--fg)}
+  .nav-in .brand{font-weight:700;color:var(--fg)}
+  .nav-in .brand span{color:var(--accent)}
+  .nav-in .right{margin-left:auto;display:flex;gap:16px;align-items:center}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 60px}
+  .kicker{color:var(--accent);font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+  h1{font-size:38px;line-height:1.15;margin-bottom:16px;font-weight:800}
+  h1 .accent{color:var(--accent)}
+  .sub{font-size:18px;color:var(--muted);margin-bottom:28px}
+  .hero{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:32px}
+  .hero .price{font-size:22px;font-weight:800;color:var(--green)}
+  .hero .price small{font-size:14px;color:var(--muted);font-weight:400}
+  .btn{display:block;text-align:center;background:var(--accent);color:#fff;font-weight:700;font-size:18px;padding:16px 24px;border-radius:8px;text-decoration:none;margin:18px 0 8px}
+  .btn:hover{opacity:.9}
+  .btn-note{text-align:center;font-size:12px;color:var(--muted)}
+  h2{font-size:24px;margin:36px 0 14px;font-weight:700}
+  .quote{border-left:3px solid var(--accent);background:var(--card);padding:14px 18px;border-radius:0 8px 8px 0;margin:14px 0;font-style:italic;color:var(--muted)}
+  .quote b{color:var(--fg);font-style:normal}
+  ul{margin:10px 0 14px 20px}
+  li{margin-bottom:8px}
+  .check{color:var(--green);font-weight:700;margin-right:8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px}
+  .card b{display:block;margin-bottom:6px}
+  .card p{font-size:14px;color:var(--muted)}
+  .warn{background:var(--card);border:1px solid var(--red);border-radius:10px;padding:16px 18px;margin:16px 0}
+  .warn b{color:var(--red)}
+  .guarantee{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin:20px 0;text-align:center}
+  .guarantee b{color:var(--green)}
+  .faq{margin:16px 0}
+  .faq details{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:10px}
+  .faq summary{font-weight:600;cursor:pointer}
+  .faq p{font-size:14px;color:var(--muted);margin-top:8px}
+  .final{text-align:center;margin-top:40px}
+  .final .price{font-size:26px;font-weight:800;color:var(--green)}
+  .disclaimer{font-size:11px;color:var(--muted);margin-top:30px;text-align:center}
+  @media(max-width:600px){.grid{grid-template-columns:1fr}h1{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="nav"><div class="nav-in">
+  <a class="brand" href="roi_planner.html">Subnet<span>ROI</span></a>
+  <div class="right">
+    <a href="roi_planner.html">Planner</a>
+    <a href="methodology.html">Methodology</a>
+    <a href="usdt_payment.html">Pricing</a>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="kicker">The Bittensor Staking Survival Guide</div>
+  <h1>Stop Losing TAO.<br><span class="accent">Start Staking It Right.</span></h1>
+  <p class="sub">Why your staked TAO keeps dropping — and the exact system to stake safely, pick the right subnets, and stop getting wrecked by bad validators and dead subnets.</p>
+
+  <div class="hero">
+    <div class="price">$19 <small>· instant download · plain English, no jargon</small></div>
+    <a class="btn" href="usdt_payment.html">Get the Guide — $19</a>
+    <div class="btn-note">Instant PDF · read on any device · 30-day money-back guarantee</div>
+  </div>
+
+  <h2>If you've staked TAO, you've probably felt this.</h2>
+  <div class="quote">"I staked 9 TAO to a subnet. Everything was dandy and I thought I was on my way to turn my 9 TAO into 30. Two weeks ago I had around 12 TAO. But now it says I have only 9.16. I have no idea what's going on."</div>
+  <div class="quote">"I've been consistently receiving .01 tao/day and accrued 1.5 tao since June. Does anyone know why my staking rewards would have quit? It says my rewards are 0 for the last week."</div>
+  <div class="quote">"The new subnets have no emissions for at least 7 days. There is no liquidity, and unless you know what you're doing, you'll get wrecked. I've worked with 3 people this week 'my stake was stolen!'"</div>
+
+  <p>These are real posts from the Bittensor community. And they all share one root cause: <b>nobody ever explained how staking actually works.</b></p>
+
+  <h2>Here's the truth nobody tells you</h2>
+  <p>When you stake TAO to a subnet, you are <b>not</b> putting it in a savings account. You are <b>swapping your TAO for that subnet's Alpha token</b>. Your wallet shows the Alpha's value in TAO terms — so when the Alpha price drops, your "TAO" drops with it.</p>
+  <p>That one sentence explains the "losing TAO" posts, the stopped rewards, and the wrecked new-subnet gambles. And almost nobody on Bittensor understands it.</p>
+
+  <h2>What you'll learn</h2>
+  <div class="grid">
+    <div class="card"><b>Why your TAO disappears</b><p>The #1 mistake that makes staked TAO vanish — and how to avoid it.</p></div>
+    <div class="card"><b>How staking really works</b><p>Alpha, validators, delegate take, root subnet — explained in plain English.</p></div>
+    <div class="card"><b>Why rewards stop</b><p>The halving, dTAO, and validator changes — and what to do about each.</p></div>
+    <div class="card"><b>Pick a safe validator</b><p>How to choose one that won't bleed you dry — not just the highest APY.</p></div>
+    <div class="card"><b>Spot scams &amp; dead subnets</b><p>The red flags that save you from losing 20 TAO in seconds.</p></div>
+    <div class="card"><b>A beginner staking plan</b><p>A simple risk-free-to-aggressive ladder you can follow today.</p></div>
+  </div>
+
+  <h2>This guide is for you if…</h2>
+  <ul>
+    <li><span class="check">✓</span>You staked TAO and watched the number go down with no idea why</li>
+    <li><span class="check">✓</span>You're new to Bittensor and terrified of losing money staking</li>
+    <li><span class="check">✓</span>You picked a validator by APY% and got burned</li>
+    <li><span class="check">✓</span>You want to stake safely without checking your wallet every day</li>
+    <li><span class="check">✓</span>You've already lost TAO and want to know what to do next</li>
+  </ul>
+
+  <div class="warn"><b>Warning:</b> If you stake to a brand-new subnet with no liquidity and no emissions, you can lose 20 TAO in seconds — and not even be able to unstake because the fee is more than what's left. This guide shows you exactly how to avoid that.</div>
+
+  <h2>What's inside</h2>
+  <ul>
+    <li><span class="check">✓</span>8 chapters, ~30 minutes to read, zero jargon</li>
+    <li><span class="check">✓</span>The 5-minute safety checklist before you stake anything</li>
+    <li><span class="check">✓</span>Real red flags for spotting scams and dead subnets</li>
+    <li><span class="check">✓</span>A simple staking ladder from risk-free to aggressive</li>
+    <li><span class="check">✓</span>What to do if you've already lost TAO</li>
+  </ul>
+
+  <div class="guarantee"><b>30-Day Money-Back Guarantee.</b><br>Read it. If it doesn't help you stake with more confidence, email me and I'll refund every cent. No questions.</div>
+
+  <h2>Frequently asked</h2>
+  <div class="faq">
+    <details><summary>Is this financial advice?</summary><p>No. It's an educational guide that explains how Bittensor staking works and how to avoid common mistakes. Always do your own research and never stake more than you can afford to lose.</p></details>
+    <details><summary>I'm a complete beginner. Is this too advanced?</summary><p>No — it's written for beginners. It assumes you know nothing and explains everything in plain English.</p></details>
+    <details><summary>How do I get the guide?</summary><p>Instant download as a PDF. Read it on your phone, tablet, or computer.</p></details>
+    <details><summary>What if it doesn't help?</summary><p>30-day money-back guarantee. Email me and I'll refund you, no questions asked.</p></details>
+  </div>
+
+  <div class="final">
+    <p class="sub" style="margin-bottom:10px">Stop guessing. Start staking right.</p>
+    <div class="price">$19</div>
+    <a class="btn" href="usdt_payment.html">Get the Guide — $19</a>
+    <div class="btn-note">Instant PDF · 30-day money-back guarantee</div>
+  </div>
+
+  <div class="disclaimer">This guide is for educational purposes only and is not financial advice. Bittensor staking involves risk, including loss of principal. Always do your own research and never stake more than you can afford to lose.</div>
+</div>
+</body>
+</html>
