@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-19T22:30:01+00:00",
+  "generated_at": "2026-10-19T22:45:01+00:00",
   "customers": {
     "count": 5,
     "list": [
@@ -42,11 +42,11 @@
   },
   "watchers": {
     "usdt_watcher": {
-      "last": "2026-10-19T16:25:01",
-      "status": "scan complete: 0 new tx, 0 tracked, latest block 26229592"
+      "last": "2026-10-19T16:40:02",
+      "status": "scan complete: 0 new tx, 0 tracked, latest block 26229666"
     },
     "tron_watcher": {
-      "last": "2026-10-19T16:25:01",
+      "last": "2026-10-19T16:40:02",
       "status": "scan complete: 0 new tx, 2 tracked"
     },
     "invoice_watcher": {
