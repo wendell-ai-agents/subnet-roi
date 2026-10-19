@@ -144,6 +144,14 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <li>Everything in Pro</li>
       </ul>
     </div>
+    <div class="plan" id="cardEbook" data-val="19" data-v="19" onclick="selectPlan(this.dataset.v)">
+      <div class="name">📕 Ebook</div>
+      <div class="price">19 USDT<small>/one-time</small></div>
+      <ul>
+        <li>Stop Losing TAO — 124-page staking guide</li>
+        <li>Instant PDF · read on any device</li>
+      </ul>
+    </div>
   </div>
 
   <div class="paybox">
@@ -175,6 +183,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
           <select id="plan" onchange="syncAmount(this)">
             <option value="20" selected>Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
+            <option value="19">Ebook — 19 USDT (one-time)</option>
           </select>
         </div>
       </div>
@@ -192,6 +201,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
           <select id="planU" onchange="syncAmount(this)">
             <option value="20" selected>Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
+            <option value="19">Ebook — 19 USDT (one-time)</option>
           </select>
         </div>
         <div class="field">
@@ -240,7 +250,7 @@ function chooseMethod(m){
   document.getElementById('methodCard').classList.toggle('active', m==='card');
   document.getElementById('methodUsdt').classList.toggle('active', m==='usdt');
 }
-const PLNAME = {20:'Pro — $20 / month', 200:'Pro — $200 / year', 199:'API — $199 / month', 1990:'API — $1990 / year'};
+const PLNAME = {19:'Ebook — 19 USDT (one-time)', 20:'Pro — $20 / month', 200:'Pro — $200 / year', 199:'API — $199 / month', 1990:'API — $1990 / year'};
 function setBilling(p){
   document.getElementById('billM').classList.toggle('active', p==='m');
   document.getElementById('billY').classList.toggle('active', p==='y');
@@ -254,7 +264,7 @@ function setBilling(p){
   const cp=document.getElementById('cardPro'), ca=document.getElementById('cardApi');
   cp.dataset.v=proV; cp.dataset.val=proV; ca.dataset.v=apiV; ca.dataset.val=apiV;
   cp.querySelector('.price').innerHTML=proP; ca.querySelector('.price').innerHTML=apiP;
-  const opts = '<option value="'+proV+'" selected>'+proL+'</option><option value="'+apiV+'">'+apiL+'</option>';
+  const opts = '<option value="'+proV+'" selected>'+proL+'</option><option value="'+apiV+'">'+apiL+'</option><option value="19">Ebook — 19 USDT (one-time)</option>';
   document.getElementById('plan').innerHTML=opts;
   document.getElementById('planU').innerHTML=opts;
   syncAmount();
@@ -270,7 +280,7 @@ function syncAmount(el){
   document.getElementById('netLabel').textContent = net;
   document.querySelectorAll('.plan[data-val]').forEach(c=>c.classList.toggle('selected', +c.dataset.val===amt));
   document.getElementById('confirmUsdt').href =
-    'mailto:info@subnetroi.com?subject=' + encodeURIComponent('SubnetROI ' + (amt===199||amt===1990?'API':'Pro') + ' payment') +
+    'mailto:info@subnetroi.com?subject=' + encodeURIComponent('SubnetROI ' + (amt===19?'Ebook payment':(amt===199||amt===1990?'API':'Pro') + ' payment')) +
     '&body=' + encodeURIComponent('Plan: ' + planName + '\nNetwork: ' + net + '\nTXID: [paste transaction hash]');
 }
 function selectPlan(v){
@@ -327,7 +337,7 @@ function getInvoice(){
     return;
   }
   // Map the selected amount to the worker's plan name.
-  const plan = amt===200 ? 'pro-year' : amt===199 ? 'api' : amt===1990 ? 'api-year' : 'pro';
+  const plan = amt===19 ? 'ebook' : amt===200 ? 'pro-year' : amt===199 ? 'api' : amt===1990 ? 'api-year' : 'pro';
   const btn = document.getElementById('cardBtn');
   const orig = btn.textContent;
   btn.textContent = 'Creating invoice…';
@@ -355,6 +365,17 @@ function getInvoice(){
 }
 (function(){ var b='m'; try{ if(localStorage.getItem('sroi_billing')==='y') b='y'; }catch(e){} setBilling(b); })();
 renderQR('TRC-20');
+// If arriving with ?plan=ebook (from the ebook sales page), preselect Ebook + USDT-link path.
+(function(){
+  const q = new URLSearchParams(location.search).get('plan');
+  if(q === 'ebook'){
+    document.getElementById('plan').value = '19';
+    document.getElementById('planU').value = '19';
+    selectPlan('19');
+    chooseMethod('card');
+    document.getElementById('cardPanel').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+})();
 </script>
 </body>
 </html>

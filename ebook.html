@@ -133,25 +133,8 @@
 <script>
 async function buyEbook(e){
   e.preventDefault();
-  const btn = e.currentTarget;
-  const orig = btn.textContent;
-  btn.textContent = 'Creating payment…';
-  btn.style.opacity = '0.6';
-  try{
-    const email = prompt('Enter your email to receive the download link:') || '';
-    if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ alert('Please enter a valid email.'); btn.textContent=orig; btn.style.opacity='1'; return; }
-    const r = await fetch('https://subnet-roi-api.mentatdev.workers.dev/v1/paylink', {
-      method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify({email: email, plan:'ebook'})
-    });
-    const d = await r.json();
-    btn.textContent = orig; btn.style.opacity = '1';
-    if(r.ok && d.payment_url){ window.open(d.payment_url, '_blank'); }
-    else { alert('Could not create payment — try again or email info@subnetroi.com'); }
-  }catch(err){
-    btn.textContent = orig; btn.style.opacity = '1';
-    alert('Network error — try again or email info@subnetroi.com');
-  }
+  // Route buyers to the single payments page — ebook preselected in "Choose how to pay".
+  window.location.href = 'usdt_payment.html?plan=ebook';
 }
 </script>
 
