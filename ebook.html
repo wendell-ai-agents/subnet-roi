@@ -67,8 +67,8 @@
   <p class="sub">Why your staked TAO keeps dropping — and the exact system to stake safely, pick the right subnets, and stop getting wrecked by bad validators and dead subnets.</p>
 
   <div class="hero">
-    <div class="price">Free <small>· instant download · plain English, no jargon</small></div>
-    <a class="btn" href="https://subnet-roi-api.mentatdev.workers.dev/v1/ebook/free" download>Download the Guide — Free</a>
+    <div class="price">$10 <small>· instant download · plain English, no jargon</small></div>
+    <a class="btn" href="#" onclick="buyEbook(event)">Get the Guide — $10</a>
     <div class="btn-note">Instant PDF · read on any device · 30-day money-back guarantee</div>
   </div>
 
@@ -125,13 +125,39 @@
 
   <div class="final">
     <p class="sub" style="margin-bottom:10px">Stop guessing. Start staking right.</p>
-    <div class="price">Free</div>
-    <a class="btn" href="https://subnet-roi-api.mentatdev.workers.dev/v1/ebook/free" download>Download the Guide — Free</a>
+    <div class="price">$10</div>
+    <a class="btn" href="#" onclick="buyEbook(event)">Get the Guide — $10</a>
     <div class="btn-note">Instant PDF · 30-day money-back guarantee</div>
   </div>
 
   <div class="disclaimer">This guide is for educational purposes only and is not financial advice. Bittensor staking involves risk, including loss of principal. Always do your own research and never stake more than you can afford to lose.</div>
 </div>
+
+
+<script>
+async function buyEbook(e){
+  e.preventDefault();
+  const btn = e.currentTarget;
+  const orig = btn.textContent;
+  btn.textContent = 'Creating payment…';
+  btn.style.opacity = '0.6';
+  try{
+    const email = prompt('Enter your email to receive the download link:') || '';
+    if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ alert('Please enter a valid email.'); btn.textContent=orig; btn.style.opacity='1'; return; }
+    const r = await fetch('https://subnet-roi-api.mentatdev.workers.dev/v1/paylink', {
+      method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({email: email, plan:'ebook'})
+    });
+    const d = await r.json();
+    btn.textContent = orig; btn.style.opacity = '1';
+    if(r.ok && d.payment_url){ window.open(d.payment_url, '_blank'); }
+    else { alert('Could not create payment — try again or email info@subnetroi.com'); }
+  }catch(err){
+    btn.textContent = orig; btn.style.opacity = '1';
+    alert('Network error — try again or email info@subnetroi.com');
+  }
+}
+</script>
 
 </body>
 </html>
