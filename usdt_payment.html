@@ -154,6 +154,22 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
         <li>Instant PDF · read on any device</li>
       </ul>
     </div>
+    <div class="plan" id="cardValidator" data-val="29" data-v="29" onclick="selectPlan(this.dataset.v)">
+      <div class="name">📗 Validator's Playbook</div>
+      <div class="price">29 USDT<small>/one-time</small></div>
+      <ul>
+        <li>Run a Bittensor validator — the real economics</li>
+        <li>37 chapters · instant PDF</li>
+      </ul>
+    </div>
+    <div class="plan" id="cardTaxes" data-val="29" data-v="29" onclick="selectPlan(this.dataset.v)">
+      <div class="name">📘 Bittensor Taxes</div>
+      <div class="price">29 USDT<small>/one-time</small></div>
+      <ul>
+        <li>Staking, Alpha &amp; validator income — how it's taxed</li>
+        <li>40 chapters · instant PDF</li>
+      </ul>
+    </div>
   </div>
 
   <div class="paybox">
@@ -184,6 +200,8 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
           <label>Plan</label>
           <select id="plan" onchange="syncAmount(this)">
             <option value="19" selected>Ebook — 19 USDT (one-time)</option>
+            <option value="29">Validator's Playbook — 29 USDT (one-time)</option>
+            <option value="29">Bittensor Taxes — 29 USDT (one-time)</option>
             <option value="20">Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
           </select>
@@ -202,6 +220,8 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
           <label>Plan</label>
           <select id="planU" onchange="syncAmount(this)">
             <option value="19" selected>Ebook — 19 USDT (one-time)</option>
+            <option value="29">Validator's Playbook — 29 USDT (one-time)</option>
+            <option value="29">Bittensor Taxes — 29 USDT (one-time)</option>
             <option value="20">Pro — $20 / month</option>
             <option value="199">API — $199 / month</option>
           </select>
@@ -252,7 +272,7 @@ function chooseMethod(m){
   document.getElementById('methodCard').classList.toggle('active', m==='card');
   document.getElementById('methodUsdt').classList.toggle('active', m==='usdt');
 }
-const PLNAME = {19:'Ebook — 19 USDT (one-time)', 20:'Pro — $20 / month', 200:'Pro — $200 / year', 199:'API — $199 / month', 1990:'API — $1990 / year'};
+const PLNAME = {19:'Ebook — 19 USDT (one-time)', 29:'Field guide — 29 USDT (one-time)', 20:'Pro — $20 / month', 200:'Pro — $200 / year', 199:'API — $199 / month', 1990:'API — $1990 / year'};
 function setBilling(p){
   document.getElementById('billM').classList.toggle('active', p==='m');
   document.getElementById('billY').classList.toggle('active', p==='y');
@@ -266,7 +286,7 @@ function setBilling(p){
   const cp=document.getElementById('cardPro'), ca=document.getElementById('cardApi');
   cp.dataset.v=proV; cp.dataset.val=proV; ca.dataset.v=apiV; ca.dataset.val=apiV;
   cp.querySelector('.price').innerHTML=proP; ca.querySelector('.price').innerHTML=apiP;
-  const opts = '<option value="19" selected>Ebook — 19 USDT (one-time)</option><option value="'+proV+'">'+proL+'</option><option value="'+apiV+'">'+apiL+'</option>';
+  const opts = '<option value="19" selected>Ebook — 19 USDT (one-time)</option><option value="29">Validator Playbook — 29 USDT</option><option value="29">Bittensor Taxes — 29 USDT</option><option value="'+proV+'">'+proL+'</option><option value="'+apiV+'">'+apiL+'</option>';
   document.getElementById('plan').innerHTML=opts;
   document.getElementById('planU').innerHTML=opts;
   syncAmount();
@@ -339,7 +359,7 @@ function getInvoice(){
     return;
   }
   // Map the selected amount to the worker's plan name.
-  const plan = amt===19 ? 'ebook' : amt===200 ? 'pro-year' : amt===199 ? 'api' : amt===1990 ? 'api-year' : 'pro';
+  const plan = amt===19 ? 'ebook' : amt===29 ? (document.getElementById('plan').selectedOptions[0].text.includes('Validator') ? 'validator' : 'taxes') : amt===200 ? 'pro-year' : amt===199 ? 'api' : amt===1990 ? 'api-year' : 'pro';
   const btn = document.getElementById('cardBtn');
   const orig = btn.textContent;
   btn.textContent = 'Creating invoice…';
@@ -370,10 +390,11 @@ renderQR('TRC-20');
 // If arriving with ?plan=ebook (from the ebook sales page), preselect Ebook + USDT-link path.
 (function(){
   const q = new URLSearchParams(location.search).get('plan');
-  if(q === 'ebook'){
-    document.getElementById('plan').value = '19';
-    document.getElementById('planU').value = '19';
-    selectPlan('19');
+  if(q === 'ebook' || q === 'validator' || q === 'taxes'){
+    const v = q === 'ebook' ? '19' : '29';
+    document.getElementById('plan').value = v;
+    document.getElementById('planU').value = v;
+    selectPlan(v);
     chooseMethod('card');
     document.getElementById('cardPanel').scrollIntoView({behavior:'smooth', block:'center'});
   }

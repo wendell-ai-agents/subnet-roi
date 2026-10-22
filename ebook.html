@@ -45,6 +45,11 @@
   .faq p{font-size:14px;color:var(--muted);margin-top:8px}
   .final{text-align:center;margin-top:40px}
   .final .price{font-size:26px;font-weight:800;color:var(--green)}
+  .library{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:0 0 24px}
+  .lib-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px}
+  .lib-name{font-weight:700;font-size:15px;margin-bottom:8px}
+  .lib-desc{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+  .lib-price{font-size:20px;font-weight:800;color:var(--green);margin-bottom:10px}
   .disclaimer{font-size:11px;color:var(--muted);margin-top:30px;text-align:center}
   @media(max-width:600px){.grid{grid-template-columns:1fr}h1{font-size:30px}}
 </style>
@@ -119,6 +124,22 @@
     <details><summary>How do I get the guide?</summary><p>Instant download as a PDF. Read it on your phone, tablet, or computer.</p></details>
   </div>
 
+  <h2>More from the library</h2>
+  <div class="library">
+    <div class="lib-card">
+      <div class="lib-name">📗 The Validator's Playbook</div>
+      <div class="lib-desc">Run a Bittensor validator — the real economics: income mechanics, delegation, take rates, uptime, and the honest math of whether it's worth it. 37 chapters.</div>
+      <div class="lib-price">29 USDT</div>
+      <a class="btn" href="#" onclick="buyFieldGuide('validator')">Get the Playbook — 29 USDT</a>
+    </div>
+    <div class="lib-card">
+      <div class="lib-name">📘 Bittensor Taxes</div>
+      <div class="lib-desc">How staking rewards, Alpha tokens, and validator income are taxed — what to report, what records to keep, and how to plan ahead. 40 chapters. Educational, not advice.</div>
+      <div class="lib-price">29 USDT</div>
+      <a class="btn" href="#" onclick="buyFieldGuide('taxes')">Get the Guide — 29 USDT</a>
+    </div>
+  </div>
+
   <div class="final">
     <p class="sub" style="margin-bottom:10px">Stop guessing. Start staking right.</p>
     <div class="price">19 USDT</div>
@@ -135,6 +156,10 @@ async function buyEbook(e){
   e.preventDefault();
   // Route buyers to the single payments page — ebook preselected in "Choose how to pay".
   window.location.href = 'usdt_payment.html?plan=ebook';
+}
+async function buyFieldGuide(which){
+  // Route to the payments page with the field guide preselected.
+  window.location.href = 'usdt_payment.html?plan=' + which;
 }
 </script>
 
