@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T01:00:01+00:00",
+  "generated_at": "2026-10-22T01:15:02+00:00",
   "customers": {
     "count": 5,
     "list": [
@@ -42,11 +42,11 @@
   },
   "watchers": {
     "usdt_watcher": {
-      "last": "2026-10-21T18:55:01",
+      "last": "2026-10-21T19:10:01",
       "status": "FATAL: eth_getLogs failed: HTTP Error 403: Forbidden"
     },
     "tron_watcher": {
-      "last": "2026-10-21T18:55:01",
+      "last": "2026-10-21T19:10:01",
       "status": "scan complete: 0 new tx, 2 tracked"
     },
     "invoice_watcher": {
@@ -56,7 +56,7 @@
     },
     "reg_cost_alert": {
       "last": "2026-10-21",
-      "status": "cost=658.9 floor=453.2 near_floor=False below_thresh=False",
+      "status": "cost=657.7 floor=451.9 near_floor=False below_thresh=False",
       "alerts": 4
     },
     "roi_digest": {
