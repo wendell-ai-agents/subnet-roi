@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SubnetROI — Portfolio Tracker</title>
+<style>
+:root{
+  --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
+  --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
+  --warn:#e08a00; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --navbg:rgba(255,255,255,.92); --rowhover:#eef2f8;
+  --errbg:#fde7e7; --errbd:#f5c2c2; --errfg:#b3382e;
+  html[data-theme="dark"]{ --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+    --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c;
+    --navbg:rgba(10,13,19,.92); --rowhover:#161c28;
+    --errbg:#2b1a1a; --errbd:#4a2c2c; --errfg:#ffb4b4; }
+}
+body{ margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif; }
+nav{ position:sticky; top:0; z-index:10; background:var(--navbg); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; gap:16px; align-items:center; }
+nav a{ color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; }
+nav a:hover{ color:var(--accent); }
+nav .sp{ flex:1; }
+.wrap{ max-width:980px; margin:0 auto; padding:24px 20px 60px; }
+h1{ font-size:22px; margin:0 0 4px; }
+.hint{ color:var(--muted); font-size:13px; margin:0 0 18px; }
+.banner{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:16px; }
+.banner .t{ font-weight:700; margin-bottom:4px; }
+.banner .s{ font-size:12.5px; color:var(--muted); }
+.banner a{ color:var(--accent); }
+.btn{ display:inline-block; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer; text-decoration:none; }
+.btn.ghost{ background:var(--panel2); color:var(--fg); border:1px solid var(--border); }
+.btn.small{ padding:5px 10px; font-size:12px; }
+.btn:hover{ opacity:.9; }
+.btn:disabled{ opacity:.5; cursor:default; }
+.err{ display:none; background:var(--errbg); border:1px solid var(--errbd); color:var(--errfg); border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:13px; }
+.totals{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:18px; }
+.tot{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+.tot .l{ font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+.tot .v{ font-size:19px; font-weight:800; font-variant-numeric:tabular-nums; }
+.tot .s{ font-size:12px; color:var(--muted); margin-top:2px; }
+.good{ color:var(--good); } .bad{ color:var(--bad); }
+.card{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px; }
+.card h2{ font-size:15px; margin:0 0 12px; }
+.row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.field{ display:flex; flex-direction:column; gap:4px; }
+.field label{ font-size:11.5px; color:var(--muted); }
+.field input{ background:var(--panel2); border:1px solid var(--border); color:var(--fg); border-radius:8px; padding:8px 10px; font-size:13px; min-width:130px; }
+table{ border-collapse:collapse; width:100%; font-size:13px; }
+th,td{ border-bottom:1px solid var(--border); padding:9px 10px; text-align:left; vertical-align:top; }
+th{ font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+td.num{ text-align:right; font-variant-numeric:tabular-nums; }
+tr:hover td{ background:var(--rowhover); }
+.empty{ color:var(--muted); text-align:center; padding:28px 0; }
+.del{ background:none; border:none; color:var(--bad); cursor:pointer; font-size:13px; padding:2px 6px; }
+.del:hover{ text-decoration:underline; }
+.news{ font-size:12.5px; color:var(--muted); margin-top:8px; }
+.news b{ color:var(--fg); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="roi_planner.html">📊 SubnetROI</a>
+  <a href="portfolio.html" style="color:var(--accent)">💼 Portfolio</a>
+  <a href="methodology.html">Methodology</a>
+  <a href="ebook.html">Ebooks</a>
+  <span class="sp"></span>
+  <a href="usdt_payment.html" style="font-size:12.5px" id="navKey">🔑 Upgrade to Pro</a>
+</nav>
+
+<div class="wrap">
+  <h1>Portfolio Tracker</h1>
+  <p class="hint" id="subHint">Log your staked positions — SubnetROI values them live in TAO and USD, and tracks your gain or loss against the Alpha price at entry.</p>
+  <div class="err" id="err"></div>
+
+  <div id="lockPanel">
+    <div class="banner">
+      <div class="t">🔓 Portfolio requires Pro</div>
+      <div class="s">Enter your Pro API key to log and track positions. No key? Upgrade at the payments page — free ROI table always remains available on the dashboard.</div>
+      <div style="margin-top:10px"><input id="keyInput" type="password" placeholder="sr_…" style="background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:8px 10px;font-size:13px;min-width:240px"> <button class="btn" onclick="unlock()">Unlock</button></div>
+    </div>
+  </div>
+
+  <div id="app" style="display:none">
+    <div class="totals" id="totalsRow"></div>
+
+    <div class="card">
+      <h2>Add a position</h2>
+      <div class="row">
+        <div class="field"><label>Subnet (netuid)</label><input id="fSubnet" type="number" min="0" placeholder="64"></div>
+        <div class="field"><label>TAO staked</label><input id="fTao" type="number" step="any" min="0.000001" placeholder="100"></div>
+        <div class="field"><label>Alpha price at entry</label><input id="fPrice" type="number" step="any" min="0.000001" placeholder="0.06"></div>
+        <div class="field"><label>Label (optional)</label><input id="fLabel" type="text" placeholder="Chutes stake"></div>
+        <div style="align-self:flex-end"><button class="btn" onclick="addPos()">➕ Add</button></div>
+      </div>
+      <div class="news"><b>Tip:</b> entry Alpha price is what the subnet's Alpha was worth (in TAO) when you staked — <a href="methodology.html" style="color:var(--accent)">see Methodology</a>. Not sure? Leave it at the current price to start tracking from today.</div>
+    </div>
+
+    <div class="card">
+      <h2>Positions</h2>
+      <table id="posTable">
+        <thead><tr>
+          <th>Subnet</th><th>Label</th><th class="num">Staked (TAO)</th><th class="num">Entry α</th><th class="num">Now α</th><th class="num">Value (TAO)</th><th class="num">P&amp;L</th><th class="num">Value (USD)</th><th></th>
+        </tr></thead>
+        <tbody id="posBody"></tbody>
+      </table>
+      <div class="empty" id="empty">No positions yet — add your first stake above.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://subnet-roi-api.mentatdev.workers.dev';
+let proState = { key: localStorage.getItem('sroi_key')||'', plan: null };
+let positions = [];
+
+function showErr(m){ var e=document.getElementById('err'); e.textContent=m; e.style.display='block'; }
+function hideErr(){ document.getElementById('err').style.display='none'; }
+
+async function unlock(){
+  const k = document.getElementById('keyInput').value.trim();
+  if(!k){ showErr('Enter your API key.'); return; }
+  const r = await fetch(API+'/v1/key', { headers:{ 'x-api-key': k } });
+  if(r.status===401){ showErr('Invalid key.'); return; }
+  const j = await r.json();
+  proState.key=k; proState.plan=j.plan; localStorage.setItem('sroi_key', k);
+  hideErr(); paintAuth(); load();
+}
+function lock(){
+  proState.key=''; proState.plan=null; localStorage.removeItem('sroi_key');
+  paintAuth();
+}
+function paintAuth(){
+  document.getElementById('lockPanel').style.display = (proState.plan==='pro'||proState.plan==='api') ? 'none' : 'block';
+  document.getElementById('app').style.display = (proState.plan==='pro'||proState.plan==='api') ? 'block' : 'none';
+  const nav = document.getElementById('navKey');
+  if(nav) nav.textContent = (proState.plan==='pro'||proState.plan==='api') ? 'Key: '+proState.plan : 'Upgrade to Pro';
+}
+
+async function load(){
+  hideErr();
+  try{
+    const r = await fetch(API+'/v1/portfolio', { headers:{ 'x-api-key': proState.key } });
+    if(r.status===401||r.status===403){ proState.plan=null; localStorage.removeItem('sroi_key'); paintAuth(); return; }
+    const j = await r.json();
+    positions = j.positions||[];
+    render(j.totals, j.taoUsd);
+  }catch(e){ showErr('Could not load portfolio — API unreachable.'); }
+}
+function fmt(n,d=2){ return n==null?'—':Number(n).toLocaleString(undefined,{maximumFractionDigits:d}); }
+function pct(n,d=1){ return n==null?'—':(n>=0?'+':'')+Number(n).toFixed(d)+'%'; }
+function cls(n){ return n>0?'good':n<0?'bad':''; }
+
+function render(totals, taoUsd){
+  document.getElementById('totalsRow').innerHTML = [
+    ['Staked', fmt(totals.taoStaked,0)+' TAO', taoUsd?('$'+fmt(totals.taoStaked*taoUsd,0)):''],
+    ['Current value', fmt(totals.curValueTao,0)+' TAO', taoUsd?('$'+fmt(totals.curValueUsd,0)):''],
+    ['P&L', '<span class="'+cls(totals.pnlTao)+'">'+pct(totals.pnlTao,0)+' TAO</span>', taoUsd?('<span class="'+cls(totals.pnlUsd)+'">'+pct(totals.pnlUsd,0)+'</span>'):''],
+  ].map(([l,v,s])=>'<div class="tot"><div class="l">'+l+'</div><div class="v">'+v+'</div><div class="s">'+(s||'')+'</div></div>').join('');
+
+  const body = document.getElementById('posBody');
+  body.innerHTML = positions.map((p,i)=>'<tr>'+
+    '<td>SN'+p.subnet+' <span style="color:var(--muted)">'+p.name+'</span></td>'+
+    '<td>'+(p.label||'—')+'</td>'+
+    '<td class="num">'+fmt(p.taoStaked)+'</td>'+
+    '<td class="num">'+fmt(p.entryPrice,4)+'</td>'+
+    '<td class="num">'+fmt(p.curPrice,4)+'</td>'+
+    '<td class="num">'+fmt(p.curValueTao)+' TAO</td>'+
+    '<td class="num"><span class="'+cls(p.pnlTao)+'">'+pct(p.pnlPct)+'</span><br><span style="font-size:11px;color:var(--muted)">'+pct(p.pnlTao,0)+' TAO</span></td>'+
+    '<td class="num">$'+fmt(p.curValueUsd)+'<br><span style="font-size:11px;color:var(--muted)" class="'+cls(p.pnlUsd)+'">'+pct(p.pnlUsd,0)+'</span></td>'+
+    '<td><button class="del" onclick="delPos('+i+')">✕</button></td>'+
+  '</tr>').join('');
+  document.getElementById('empty').style.display = positions.length ? 'none' : 'block';
+}
+
+async function addPos(){
+  hideErr();
+  const subnet = +document.getElementById('fSubnet').value;
+  const taoStaked = parseFloat(document.getElementById('fTao').value);
+  const entryPrice = parseFloat(document.getElementById('fPrice').value);
+  const label = document.getElementById('fLabel').value.trim();
+  if(!Number.isInteger(subnet)||subnet<0){ showErr('Enter a valid subnet (netuid).'); return; }
+  if(!(taoStaked>0)){ showErr('Enter TAO staked > 0.'); return; }
+  if(!(entryPrice>0)){ showErr('Enter an entry Alpha price > 0.'); return; }
+  const positions2 = (positions||[]).concat([{subnet, taoStaked, entryPrice, label}]);
+  await save(positions2);
+}
+async function delPos(i){
+  const positions2 = (positions||[]).filter((_,idx)=>idx!==i);
+  await save(positions2);
+}
+async function save(list){
+  hideErr();
+  try{
+    const r = await fetch(API+'/v1/portfolio', { method:'PUT', headers:{ 'x-api-key': proState.key, 'Content-Type':'application/json' }, body: JSON.stringify({ positions: list }) });
+    if(!r.ok){ const j = await r.json().catch(()=>({})); showErr(j.error||'Could not save positions.'); return; }
+    await load();
+  }catch(e){ showErr('Could not save positions — API unreachable.'); }
+}
+
+(function init(){
+  const saved = localStorage.getItem('sroi_key')||'';
+  if(saved){ proState.key=saved; fetch(API+'/v1/key', { headers:{ 'x-api-key': saved } }).then(r=>r.ok?r.json():null).then(j=>{ if(j){ proState.plan=j.plan; paintAuth(); if(proState.plan==='pro'||proState.plan==='api') load(); } }); }
+  paintAuth();
+})();
+</script>
+</body>
+</html>
