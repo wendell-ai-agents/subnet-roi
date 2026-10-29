@@ -155,7 +155,7 @@ function render(totals, taoUsd){
   document.getElementById('totalsRow').innerHTML = [
     ['Staked', fmt(totals.taoStaked,0)+' TAO', taoUsd?('$'+fmt(totals.taoStaked*taoUsd,0)):''],
     ['Current value', fmt(totals.curValueTao,0)+' TAO', taoUsd?('$'+fmt(totals.curValueUsd,0)):''],
-    ['P&L', '<span class="'+cls(totals.pnlTao)+'">'+pct(totals.pnlTao,0)+' TAO</span>', taoUsd?('<span class="'+cls(totals.pnlUsd)+'">'+pct(totals.pnlUsd,0)+'</span>'):''],
+    ['P&L', '<span class="'+cls(totals.pnlTao)+'">'+pct(totals.pnlTao,0)+' TAO</span>', taoUsd?('<span class="'+cls(totals.pnlUsd)+'">$'+fmt(totals.pnlUsd,0)+'</span>'):''],
   ].map(([l,v,s])=>'<div class="tot"><div class="l">'+l+'</div><div class="v">'+v+'</div><div class="s">'+(s||'')+'</div></div>').join('');
 
   const body = document.getElementById('posBody');
@@ -167,7 +167,7 @@ function render(totals, taoUsd){
     '<td class="num">'+fmt(p.curPrice,4)+'</td>'+
     '<td class="num">'+fmt(p.curValueTao)+' TAO</td>'+
     '<td class="num"><span class="'+cls(p.pnlTao)+'">'+pct(p.pnlPct)+'</span><br><span style="font-size:11px;color:var(--muted)">'+pct(p.pnlTao,0)+' TAO</span></td>'+
-    '<td class="num">$'+fmt(p.curValueUsd)+'<br><span style="font-size:11px;color:var(--muted)" class="'+cls(p.pnlUsd)+'">'+pct(p.pnlUsd,0)+'</span></td>'+
+    '<td class="num">$'+fmt(p.curValueUsd)+'<br><span style="font-size:11px;color:var(--muted)" class="'+cls(p.pnlUsd)+'">'+(p.pnlUsd>=0?'+$':'-$')+fmt(Math.abs(p.pnlUsd),0)+'</span></td>'+
     '<td><button class="del" onclick="delPos('+i+')">✕</button></td>'+
   '</tr>').join('');
   document.getElementById('empty').style.display = positions.length ? 'none' : 'block';
