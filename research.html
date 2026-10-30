@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SubnetROI — Research</title>
+<style>
+:root{
+  --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
+  --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
+  --warn:#e08a00; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --navbg:rgba(255,255,255,.92); --rowhover:#eef2f8;
+  --errbg:#fde7e7; --errbd:#f5c2c2; --errfg:#b3382e;
+  html[data-theme="dark"]{ --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+    --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c;
+    --navbg:rgba(10,13,19,.92); --rowhover:#161c28;
+    --errbg:#2b1a1a; --errbd:#4a2c2c; --errfg:#ffb4b4; }
+}
+body{ margin:0; background:var(--bg); color:var(--fg); font:14px/1.55 -apple-system,Segoe UI,Roboto,sans-serif; }
+nav{ position:sticky; top:0; z-index:10; background:var(--navbg); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; gap:16px; align-items:center; }
+nav a{ color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; }
+nav a:hover{ color:var(--accent); }
+nav .sp{ flex:1; }
+.wrap{ max-width:860px; margin:0 auto; padding:24px 20px 60px; }
+h1{ font-size:22px; margin:0 0 4px; }
+.hint{ color:var(--muted); font-size:13px; margin:0 0 18px; }
+.banner{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:16px; }
+.banner .t{ font-weight:700; margin-bottom:4px; }
+.banner .s{ font-size:12.5px; color:var(--muted); }
+.banner input{ background:var(--panel2); border:1px solid var(--border); color:var(--fg); border-radius:8px; padding:8px 10px; font-size:13px; min-width:240px; }
+.btn{ display:inline-block; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer; text-decoration:none; }
+.btn.ghost{ background:var(--panel2); color:var(--fg); border:1px solid var(--border); }
+.btn.small{ padding:5px 10px; font-size:12px; }
+.btn:hover{ opacity:.9; }
+.err{ display:none; background:var(--errbg); border:1px solid var(--errbd); color:var(--errfg); border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:13px; }
+.reports{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-bottom:18px; }
+.rep{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; cursor:pointer; transition:border-color .15s; }
+.rep:hover{ border-color:var(--accent); }
+.rep .name{ font-weight:700; font-size:15px; margin-bottom:4px; }
+.rep .meta{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+.report-body{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:20px 24px; }
+.report-body h1{ font-size:20px; margin:0 0 4px; }
+.report-body h2{ font-size:16px; margin:22px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.report-body h3{ font-size:14px; margin:16px 0 6px; }
+.report-body p{ margin:0 0 10px; }
+.report-body ul, .report-body ol{ margin:0 0 12px; padding-left:22px; }
+.report-body li{ margin-bottom:4px; }
+.report-body table{ border-collapse:collapse; width:100%; margin:0 0 14px; font-size:13px; }
+.report-body th, .report-body td{ border:1px solid var(--border); padding:7px 9px; text-align:left; }
+.report-body th{ background:var(--panel2); }
+.report-body em{ color:var(--muted); }
+.report-body strong{ color:var(--fg); }
+.back{ display:inline-block; margin-bottom:14px; color:var(--accent); cursor:pointer; text-decoration:none; font-weight:600; font-size:13px; }
+.empty{ color:var(--muted); text-align:center; padding:30px 0; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="roi_planner.html">📊 SubnetROI</a>
+  <a href="portfolio.html">💼 Portfolio</a>
+  <a href="research.html" style="color:var(--accent)">🔬 Research</a>
+  <a href="methodology.html">Methodology</a>
+  <a href="ebook.html">Ebooks</a>
+  <span class="sp"></span>
+  <a href="usdt_payment.html" style="font-size:12.5px" id="navKey">🔑 Upgrade to Pro</a>
+</nav>
+
+<div class="wrap">
+  <h1>Subnet Research</h1>
+  <p class="hint" id="subHint">Deep-dive reports on the major subnets — emission, momentum, liquidity, validators, and risk. New reports published monthly. Included with Pro.</p>
+  <div class="err" id="err"></div>
+
+  <div id="lockPanel">
+    <div class="banner">
+      <div class="t">🔓 Research reports require Pro</div>
+      <div class="s">Enter your Pro API key to read the reports. No key? Upgrade at the payments page.</div>
+      <div style="margin-top:10px"><input id="keyInput" type="password" placeholder="sr_…"> <button class="btn" onclick="unlock()">Unlock</button></div>
+    </div>
+  </div>
+
+  <div id="app" style="display:none">
+    <div id="listView">
+      <div class="reports" id="repGrid"></div>
+      <div class="empty" id="empty">No reports published yet — the first one is on the way.</div>
+    </div>
+    <div id="reportView" style="display:none">
+      <a class="back" onclick="showList()">← All reports</a>
+      <div class="report-body" id="repBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://subnet-roi-api.mentatdev.workers.dev';
+let proState = { key: localStorage.getItem('sroi_key')||'', plan: null };
+let reports = [];
+
+function showErr(m){ var e=document.getElementById('err'); e.textContent=m; e.style.display='block'; }
+function hideErr(){ document.getElementById('err').style.display='none'; }
+
+async function unlock(){
+  const k = document.getElementById('keyInput').value.trim();
+  if(!k){ showErr('Enter your API key.'); return; }
+  const r = await fetch(API+'/v1/key', { headers:{ 'x-api-key': k } });
+  if(r.status===401){ showErr('Invalid key.'); return; }
+  const j = await r.json();
+  proState.key=k; proState.plan=j.plan; localStorage.setItem('sroi_key', k);
+  hideErr(); paintAuth(); load();
+}
+function lock(){
+  proState.key=''; proState.plan=null; localStorage.removeItem('sroi_key');
+  paintAuth();
+}
+function canRead(){ return proState.plan==='pro' || proState.plan==='api'; }
+function paintAuth(){
+  document.getElementById('lockPanel').style.display = canRead() ? 'none' : 'block';
+  document.getElementById('app').style.display = canRead() ? 'block' : 'none';
+  const nav = document.getElementById('navKey');
+  if(nav) nav.textContent = canRead() ? 'Key: '+proState.plan : '🔑 Upgrade to Pro';
+}
+
+async function load(){
+  hideErr();
+  try{
+    const r = await fetch(API+'/v1/research', { headers:{ 'x-api-key': proState.key } });
+    if(r.status===401||r.status===403){ proState.plan=null; localStorage.removeItem('sroi_key'); paintAuth(); return; }
+    const j = await r.json();
+    reports = j.reports||[];
+    renderList();
+  }catch(e){ showErr('Could not load reports — API unreachable.'); }
+}
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderList(){
+  document.getElementById('repGrid').innerHTML = reports.map(r=>
+    '<div class="rep" onclick="openReport(\''+r.slug+'\')">'+
+      '<div class="name">🔬 '+esc(r.title)+'</div>'+
+      '<div class="meta">'+(r.subnet!=null?'SN'+r.subnet+' · ':'')+esc(r.date)+'</div>'+
+    '</div>').join('');
+  document.getElementById('empty').style.display = reports.length ? 'none' : 'block';
+}
+async function openReport(slug){
+  hideErr();
+  try{
+    const r = await fetch(API+'/v1/research/report?slug='+slug, { headers:{ 'x-api-key': proState.key } });
+    if(!r.ok){ const j = await r.json().catch(()=>({})); showErr(j.error||'Could not load report.'); return; }
+    const j = await r.json();
+    document.getElementById('repBody').innerHTML = renderMarkdown(j.report.markdown);
+    document.getElementById('listView').style.display='none';
+    document.getElementById('reportView').style.display='block';
+    window.scrollTo(0,0);
+  }catch(e){ showErr('Could not load report.'); }
+}
+function showList(){
+  document.getElementById('reportView').style.display='none';
+  document.getElementById('listView').style.display='block';
+}
+// Minimal markdown renderer (headings, tables, lists, bold, italic, hr, paragraphs)
+function renderMarkdown(md){
+  let s = esc(md);
+  s = s.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+  s = s.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+  s = s.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+  // tables
+  s = s.replace(/\|([^\n]+)\|\n\|([^\n]+)\|\n((?:\|[^\n]+\|\n)*)/g, (m, h, sep, rows) => {
+    const hd = h.split('|').map(x=>x.trim()).filter(x=>x!=='');
+    const body = rows.split('\n').filter(r=>r.trim()).map(r=>'<tr>'+r.split('|').map(x=>x.trim()).filter((x,i,a)=>!(i===a.length-1&&x==='')).map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('');
+    return '<table><thead><tr>'+hd.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+body+'</tbody></table>';
+  });
+  // lists
+  s = s.replace(/^- (.*)$/gm, '<li>$1</li>');
+  s = s.replace(/(?:<li>.*<\/li>\n?)+/g, m=>'<ul>'+m+'</ul>');
+  s = s.replace(/^\d+\. (.*)$/gm, '<li>$1</li>');
+  s = s.replace(/^\*\*([^*]+)\*\*$/gm, '<p><strong>$1</strong></p>');
+  // bold / italic
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  // horizontal rule
+  s = s.replace(/^---*$/gm, '<hr>');
+  // paragraphs (remaining lines not inside block tags)
+  const lines = s.split('\n');
+  let out = '', open=false;
+  for(const ln of lines){
+    if(!ln.trim()){ if(open){ out+='</p>'; open=false; } continue; }
+    if(/^<(h1|h2|h3|table|ul|ol|hr|p)/.test(ln)){ if(open){ out+='</p>'; open=false; } out+=ln+'\n'; continue; }
+    if(!open){ out+='<p>'; open=true; }
+    out+=ln+' ';
+  }
+  if(open) out+='</p>';
+  return out;
+}
+
+(function init(){
+  const saved = localStorage.getItem('sroi_key')||'';
+  if(saved){ proState.key=saved; fetch(API+'/v1/key', { headers:{ 'x-api-key': saved } }).then(r=>r.ok?r.json():null).then(j=>{ if(j){ proState.plan=j.plan; paintAuth(); if(canRead()) load(); } }); }
+  paintAuth();
+})();
+</script>
+</body>
+</html>
