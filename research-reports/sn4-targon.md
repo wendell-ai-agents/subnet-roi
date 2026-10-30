@@ -11,16 +11,16 @@
 | Metric | Value |
 |---|---|
 | Subnet | SN4 — Targon |
-| Alpha price | ~0.0573 τ |
+| Alpha price | ~0.0574 τ |
 | 24h | -0.04% |
-| 7d | +6.58% |
-| 30d | +9.65% |
+| 7d | +6.60% |
+| 30d | +9.68% |
 | Emission share | 7.87% (#3 of 129) |
 | Miner income/day | ~169.3 τ/day |
-| Validator stake (into subnet) | ~1,659,265 τ |
-| Liquidity (TAO side) | ~141,864 τ |
-| Liquidity (Alpha side) | ~2,473,794 α |
-| Validators staked | 25 |
+| Validator stake (into subnet) | ~1,690,467 τ |
+| Liquidity (TAO side) | ~141,874 τ |
+| Liquidity (Alpha side) | ~2,473,630 α |
+| Validators staked | 48 |
 | Dev activity (90d) | 8 commits |
 | Dereg risk flag | None |
 
@@ -34,25 +34,25 @@ SN4 captures **7.87%** of network emission (rank #3 of 129) and ~**169.3 τ/day*
 
 ## 2. Alpha price and momentum
 
-The Alpha price is **~0.0573 τ**. Over the last 30 days the trend is moderate upward momentum (α +9.7% over 30 days).
+The Alpha price is **~0.0574 τ**. Over the last 30 days the trend is moderate upward momentum (α +9.7% over 30 days).
 
 **Staking implication:** a stake here has been roughly holding value; rewards are the main driver of net return.
 
 ## 3. Liquidity and tradeability
 
-Liquidity: **~141,864 τ** on the TAO side and **~2,473,794 α** on the Alpha side. This is deep liquidity — staking and unstaking are unlikely to be blocked by thin markets, and the "cannot unstake" failure mode is much less of a risk.
+Liquidity: **~141,874 τ** on the TAO side and **~2,473,630 α** on the Alpha side. This is deep liquidity — staking and unstaking are unlikely to be blocked by thin markets, and the "cannot unstake" failure mode is much less of a risk.
 
 ## 4. Stake concentration
 
-**~1,659,265 τ** of validator stake is allocated into this subnet across **25 validators**. The top five control **~72%**:
+**~1,690,467 τ** of validator stake is allocated into this subnet across **48 validators**. The top five control **~70%**:
 
-| tao.bot | ~287,282τ | 17313822934.8% |
-| Yuma, a DCG Company | ~260,758τ | 15715299867.5% |
-| Taostats & Corcel | ~228,327τ | 13760745767.8% |
-| Arbos | ~216,158τ | 13027320086.5% |
-| TAO.com | ~195,485τ | 11781437202.3% |
+| tao.bot | ~287,282τ | 16994249523.5% |
+| Yuma, a DCG Company | ~260,758τ | 15425231521.1% |
+| Taostats & Corcel | ~228,327τ | 13506754001.5% |
+| Arbos | ~216,158τ | 12786865674.1% |
+| TAO.com | ~195,485τ | 11563978926.9% |
 
-The concentration is high — the top five operators hold ~72% of stake into this subnet. A major shift by any one of them (take-rate change, reputation event, stake migration) can move the subnet's dynamics noticeably.
+The concentration is high — the top five operators hold ~70% of stake into this subnet. A major shift by any one of them (take-rate change, reputation event, stake migration) can move the subnet's dynamics noticeably.
 
 **Staking implication:** validator choice matters. Compare take rates and staker yields carefully before choosing.
 
@@ -66,9 +66,9 @@ Active development (8 commits in 90 days). Ongoing shipping is a positive signal
 |---|---|---|
 | Alpha price drift | Low | +9.7% over 30 days |
 | Development activity | Low | 8 commits / 90d |
-| Liquidity | Low | ~141,864 τ TAO side |
+| Liquidity | Low | ~141,874 τ TAO side |
 | Deregistration | Low | risk flag: not set |
-| Validator concentration | High | top-5 ~72% |
+| Validator concentration | High | top-5 ~70% |
 
 ## 7. Conclusion
 
