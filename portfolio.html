@@ -76,8 +76,13 @@ tr:hover td{ background:var(--rowhover); }
   <div id="lockPanel">
     <div class="banner">
       <div class="t">🔓 Portfolio requires Pro</div>
-      <div class="s">Enter your Pro API key to log and track positions. No key? Upgrade at the payments page — free ROI table always remains available on the dashboard.</div>
+      <div class="s">Log every stake, see its live value in TAO and USD, and get a Telegram nudge when a position turns against you. No key? Upgrade at the payments page — the free ROI table always remains available on the dashboard.</div>
       <div style="margin-top:10px"><input id="keyInput" type="password" placeholder="sr_…" style="background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:8px 10px;font-size:13px;min-width:240px"> <button class="btn" onclick="unlock()">Unlock</button></div>
+    </div>
+    <div class="totals" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="tot"><div class="l">📊 Live valuation</div><div class="s">Every position valued in TAO + USD from live on-chain data, the moment you load the page.</div></div>
+      <div class="tot"><div class="l">📉 P&amp;L at a glance</div><div class="s">Value vs. your entry Alpha price — gain or loss, per position and across the whole portfolio.</div></div>
+      <div class="tot"><div class="l">🔔 Telegram alerts</div><div class="s">Set a down/up % threshold and get a nudge to your phone before a bad position gets worse.</div></div>
     </div>
   </div>
 
