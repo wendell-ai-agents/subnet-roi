@@ -85,6 +85,21 @@ tr:hover td{ background:var(--rowhover); }
     <div class="totals" id="totalsRow"></div>
 
     <div class="card">
+      <h2>🔔 Alerts</h2>
+      <div class="news" style="margin-bottom:10px">Get a Telegram nudge when a position moves past your thresholds. Link your Telegram chat ID once — any position that drops or rises past the % threshold triggers a notification (max one per position per day).</div>
+      <div class="row">
+        <div class="field"><label>Alert when down (%, 1-99)</label><input id="aDown" type="number" min="1" max="99" placeholder="10"></div>
+        <div class="field"><label>Alert when up (%, 1-99)</label><input id="aUp" type="number" min="1" max="99" placeholder="25"></div>
+        <div class="field" style="flex:1;min-width:200px"><label>Telegram chat ID</label><input id="aChat" type="text" placeholder="Your Telegram user ID (e.g. 8895981540)"></div>
+        <div style="align-self:flex-end;display:flex;gap:8px">
+          <button class="btn ghost" onclick="loadAlerts()">↻</button>
+          <button class="btn" onclick="saveAlerts()">Save alerts</button>
+        </div>
+      </div>
+      <div class="news"><b>Where's my Telegram ID?</b> Message <b>@userinfobot</b> on Telegram — it replies with your numeric ID. Alerts only fire if this is set.</div>
+    </div>
+
+    <div class="card">
       <h2>Add a position</h2>
       <div class="row">
         <div class="field"><label>Subnet (netuid)</label><input id="fSubnet" type="number" min="0" placeholder="64"></div>
@@ -137,6 +152,30 @@ function paintAuth(){
   if(nav) nav.textContent = (proState.plan==='pro'||proState.plan==='api') ? 'Key: '+proState.plan : 'Upgrade to Pro';
 }
 
+async function loadAlerts(){
+  try{
+    const r = await fetch(API+'/v1/portfolio/alerts', { headers:{ 'x-api-key': proState.key } });
+    if(!r.ok) return;
+    const j = await r.json();
+    const st = j.settings||{};
+    document.getElementById('aDown').value = st.thresholdDown??'';
+    document.getElementById('aUp').value = st.thresholdUp??'';
+    document.getElementById('aChat').value = st.chatId||'';
+    document.getElementById('aEnabled') && (document.getElementById('aEnabled').checked = st.enabled!==false);
+  }catch(e){}
+}
+async function saveAlerts(){
+  hideErr();
+  try{
+    const r = await fetch(API+'/v1/portfolio/alerts', { method:'PUT', headers:{ 'x-api-key': proState.key, 'Content-Type':'application/json' }, body: JSON.stringify({
+      thresholdDown: document.getElementById('aDown').value,
+      thresholdUp: document.getElementById('aUp').value,
+      chatId: document.getElementById('aChat').value
+    }) });
+    if(r.ok){ document.getElementById('aChat').style.borderColor='var(--good)'; setTimeout(()=>document.getElementById('aChat').style.borderColor='',1500); }
+    else { const j = await r.json().catch(()=>({})); showErr(j.error||'Could not save alerts'); }
+  }catch(e){ showErr('Could not save alerts — API unreachable.'); }
+}
 async function load(){
   hideErr();
   try{
@@ -145,6 +184,7 @@ async function load(){
     const j = await r.json();
     positions = j.positions||[];
     render(j.totals, j.taoUsd);
+    loadAlerts();
   }catch(e){ showErr('Could not load portfolio — API unreachable.'); }
 }
 function fmt(n,d=2){ return n==null?'—':Number(n).toLocaleString(undefined,{maximumFractionDigits:d}); }
