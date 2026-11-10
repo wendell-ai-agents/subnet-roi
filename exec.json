@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T09:30:01+00:00",
+  "generated_at": "2026-11-10T09:45:01+00:00",
   "customers": {
     "count": 5,
     "list": [
@@ -42,21 +42,21 @@
   },
   "watchers": {
     "usdt_watcher": {
-      "last": "2026-11-10T02:25:21",
-      "status": "FATAL: RPC blockNumber failed: <urlopen error [Errno -3] Temporary failure in name resolution>"
+      "last": "2026-11-10T02:40:02",
+      "status": "scan complete: 0 new tx, 0 tracked, latest block 26383672"
     },
     "tron_watcher": {
-      "last": "2026-11-10T02:25:21",
-      "status": "FATAL: TronScan fetch failed: <urlopen error [Errno -3] Temporary failure in name resolution>"
+      "last": "2026-11-10T02:40:02",
+      "status": "scan complete: 0 new tx, 2 tracked"
     },
     "invoice_watcher": {
       "last": "2026-11-10",
-      "status": "FATAL: IMAP error: [Errno -3] Temporary failure in name resolution",
+      "status": "found 0 unread 'payment request' email(s)",
       "nudges": 2
     },
     "reg_cost_alert": {
       "last": "2026-11-10",
-      "status": "fetch failed: <urlopen error [Errno -3] Temporary failure in name resolution>",
+      "status": "already alerted today (near_floor); skipping",
       "alerts": 13
     },
     "roi_digest": {
