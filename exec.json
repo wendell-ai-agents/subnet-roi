@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15T15:00:02+00:00",
+  "generated_at": "2026-11-15T15:15:01+00:00",
   "customers": {
     "count": 5,
     "list": [
@@ -42,11 +42,11 @@
   },
   "watchers": {
     "usdt_watcher": {
-      "last": "2026-11-15T07:55:02",
-      "status": "scan complete: 0 new tx, 0 tracked, latest block 26421133"
+      "last": "2026-11-15T08:10:01",
+      "status": "scan complete: 0 new tx, 0 tracked, latest block 26421209"
     },
     "tron_watcher": {
-      "last": "2026-11-15T07:55:02",
+      "last": "2026-11-15T08:10:01",
       "status": "scan complete: 0 new tx, 2 tracked"
     },
     "invoice_watcher": {
@@ -56,12 +56,12 @@
     },
     "reg_cost_alert": {
       "last": "2026-11-15",
-      "status": "cost=96.6 floor=87.5 near_floor=False below_thresh=False",
+      "status": "cost=96.2 floor=87.0 near_floor=False below_thresh=False",
       "alerts": 16
     },
     "roi_digest": {
-      "last": "2026-11-14T08:00:04",
-      "status": "sent digest to 1 recipient(s) (10 subnets, TAO $198.37)"
+      "last": "2026-11-15T08:00:04",
+      "status": "sent digest to 1 recipient(s) (10 subnets, TAO $191.23)"
     }
   },
   "payments_verified": {
