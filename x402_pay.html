@@ -157,6 +157,17 @@ function showErr(msg){ const el=$('err'); el.textContent=msg; el.style.display='
 function shortAddr(a){ return a?a.slice(0,6)+'…'+a.slice(-4):''; }
 
 renderItems();
+// deep link: ?res=<resource> — highlight+scroll to the matching item
+try{
+  const res = new URLSearchParams(location.search).get("res");
+  if(res){
+    const idx = ITEMS.findIndex(it => it.resource === res);
+    if(idx >= 0){
+      const cards = document.querySelectorAll('.item');
+      if(cards[idx]){ cards[idx].style.border='2px solid var(--accent)'; cards[idx].scrollIntoView({behavior:'smooth'}); }
+    }
+  }
+}catch(e){}
 </script>
 </body>
 </html>

@@ -60,7 +60,7 @@
   <div class="right">
     <a href="roi_planner.html">Planner</a>
     <a href="methodology.html">Methodology</a>
-    <a href="usdt_payment.html">Pricing</a>
+    <a href="x402_pay.html">Pricing</a>
   </div>
 </div></div>
 
@@ -70,8 +70,8 @@
   <p class="sub">Why your staked TAO keeps dropping — and the exact system to stake safely, pick the right subnets, and stop getting wrecked by bad validators and dead subnets.</p>
 
   <div class="hero">
-    <div class="price">19 USDT <small>· instant download · plain English, no jargon</small></div>
-    <a class="btn" href="#" onclick="buyEbook(event)">Get the Guide — 19 USDT</a>
+    <div class="price">$1 USDC <small>· instant download · plain English, no jargon</small></div>
+    <a class="btn" href="x402_pay.html">Get the Guide — $1</a>
     <div class="btn-note">Instant PDF · read on any device</div>
   </div>
 
@@ -129,21 +129,21 @@
     <div class="lib-card">
       <div class="lib-name">📗 The Validator's Playbook</div>
       <div class="lib-desc">Run a Bittensor validator — the real economics: income mechanics, delegation, take rates, uptime, and the honest math of whether it's worth it. 37 chapters.</div>
-      <div class="lib-price">29 USDT</div>
-      <a class="btn" href="#" onclick="buyFieldGuide('validator')">Get the Playbook — 29 USDT</a>
+      <div class="lib-price">$1 USDC</div>
+      <a class="btn" href="x402_pay.html">Get the Playbook — $1</a>
     </div>
     <div class="lib-card">
       <div class="lib-name">📘 Bittensor Taxes</div>
       <div class="lib-desc">How staking rewards, Alpha tokens, and validator income are taxed — what to report, what records to keep, and how to plan ahead. 40 chapters. Educational, not advice.</div>
-      <div class="lib-price">29 USDT</div>
-      <a class="btn" href="#" onclick="buyFieldGuide('taxes')">Get the Guide — 29 USDT</a>
+      <div class="lib-price">$1 USDC</div>
+      <a class="btn" href="x402_pay.html">Get the Guide — $1</a>
     </div>
   </div>
 
   <div class="final">
     <p class="sub" style="margin-bottom:10px">Stop guessing. Start staking right.</p>
-    <div class="price">19 USDT</div>
-    <a class="btn" href="#" onclick="buyEbook(event)">Get the Guide — 19 USDT</a>
+    <div class="price">$1 USDC</div>
+    <a class="btn" href="x402_pay.html">Get the Guide — $1</a>
     <div class="btn-note">Instant PDF · read on any device</div>
   </div>
 
@@ -155,11 +155,12 @@
 async function buyEbook(e){
   e.preventDefault();
   // Route buyers to the single payments page — ebook preselected in "Choose how to pay".
-  window.location.href = 'usdt_payment.html?plan=ebook';
+  // x402 pay-per-query — routing replaced by direct link to x402_pay.html
+  window.location.href = 'x402_pay.html';
 }
 async function buyFieldGuide(which){
   // Route to the payments page with the field guide preselected.
-  window.location.href = 'usdt_payment.html?plan=' + which;
+  window.location.href = 'x402_pay.html' + (which==='validator' ? '?res=ebook:validator-playbook' : '?res=ebook:bittensor-taxes');
 }
 </script>
 

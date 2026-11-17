@@ -141,12 +141,12 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
       <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
       <a href="#tool">Dashboard</a>
       <a href="methodology.html">Methodology</a>
-      <a href="usdt_payment.html">Pricing</a>
+      <a href="x402_pay.html">Pricing</a>
       <a href="portfolio.html">Portfolio</a>
       <a href="research.html">Research</a>
       <a href="ebook.html">Ebook</a>
       <a href="#digestpage">Daily Digest</a>
-      <a class="btn" href="usdt_payment.html">Upgrade · Pay with USDT</a>
+      <a class="btn" href="x402_pay.html">Buy · Pay per query</a>
     </div>
   </div>
 </div>
@@ -160,7 +160,7 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   <div class="banner" id="ebookbanner" style="border:2px solid var(--accent);background:linear-gradient(135deg,var(--panel2),var(--card));margin-bottom:14px">
     <div style="flex:1">
       <div class="t">📕 New: <b>Stop Losing TAO</b> — the Bittensor staking survival guide</div>
-      <div class="s">Why your staked TAO keeps dropping, how to pick safe subnets &amp; validators, and the exact steps to stake right. 124 chapters, plain English. <b>19 USDT</b> · instant download.</div>
+      <div class="s">Why your staked TAO keeps dropping, how to pick safe subnets &amp; validators, and the exact steps to stake right. 124 chapters, plain English. <b>$1 USDC</b> · instant download.</div>
     </div>
     <a class="btn" href="ebook.html" style="white-space:nowrap">Get the Guide</a>
   </div>
@@ -180,12 +180,12 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   <div class="banner" id="probox">
     <div style="flex:1">
       <div class="t" id="proTitle">Pro unlocks the portfolio tracker, watchlists, hardware sizing &amp; Telegram alerts</div>
-      <div class="s" id="proSub">$20/mo · pay with USDT · cancel anytime</div>
+      <div class="s" id="proSub">Pay per query · no subscription · pay as you go</div>
     </div>
     <form class="emailform" id="proForm" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" onsubmit="return unlock(event)">
       <input type="text" id="proKey" placeholder="Paste Pro / API key" style="min-width:220px" autocomplete="off">
       <button class="btn" type="submit">Unlock</button>
-      <a class="btn ghost" href="usdt_payment.html">Upgrade</a>
+      <a class="btn ghost" href="x402_pay.html">Pay per query</a>
     </form>
     <div id="proMsg" style="display:none"></div>
   </div>
@@ -317,16 +317,16 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
 
   <div class="footer">
     <div><b>SubnetROI</b> · Bittensor miner/validator ROI planner</div>
-    <div>Data: <a href="https://api.taomarketcap.com">TaoMarketCap</a> + <a href="https://www.coingecko.com">CoinGecko</a> · <a href="usdt_payment.html">Pricing</a> · This tool informs, it does not advise.</div>
+    <div>Data: <a href="https://api.taomarketcap.com">TaoMarketCap</a> + <a href="https://www.coingecko.com">CoinGecko</a> · <a href="x402_pay.html">Pricing</a> · This tool informs, it does not advise.</div>
     <div style="margin-top:8px;font-size:11.5px;color:var(--muted)">Pro: portfolio tracker with Telegram alerts · watchlists · hardware sizing · alpha-price &amp; collateral scenarios · registration forecast · emission-shift, dereg &amp; Kraken alerts · daily digest</div>
-    <div style="margin-top:4px;font-size:11.5px;color:var(--muted)">Questions? <a href="mailto:info@subnetroi.com" style="color:var(--accent)">info@subnetroi.com</a> · <a href="usdt_payment.html" style="color:var(--accent)">Upgrade</a></div>
+    <div style="margin-top:4px;font-size:11.5px;color:var(--muted)">Questions? <a href="mailto:info@subnetroi.com" style="color:var(--accent)">info@subnetroi.com</a> · <a href="x402_pay.html" style="color:var(--accent)">Buy</a></div>
     <div style="margin-top:14px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">How to use</b> — set your hardware and assumptions, sort by Net $/d, star subnets to watch them, and subscribe to the daily digest for the top-10 in your inbox. Pro unlocks the portfolio tracker, watchlists, scenario modeling and Telegram alerts.</div>
     <div style="margin-top:8px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">Data freshness</b> — subnet data refreshes every 30 minutes; TAO price every 5 minutes. The registration-cost panel updates live from the network.</div>
     <div style="margin-top:8px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">Disclaimer</b> — SubnetROI is an informational tool. Bittensor mining involves real capital risk: emissions are volatile, alpha prices can move sharply, and subnets can deregister. Nothing here is financial advice.</div>
     <div style="margin-top:14px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">FAQ</b></div>
     <div style="margin-top:4px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">Why is my net $/day negative?</b> — most subnets are unprofitable for median miners at your assumed incentive share; the top-10 by net $/day are the outliers worth modeling.</div>
     <div style="margin-top:4px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">What is the registration cost?</b> — the TAO burned to register a miner on a subnet, amortized over your period. The live lock-cost panel shows the subnet-creation cost curve.</div>
-    <div style="margin-top:4px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">How do I get Pro?</b> — <a href="usdt_payment.html" style="color:var(--accent)">$20/mo or $200/yr</a>, paid by card or USDT. Your key unlocks the portfolio tracker, watchlists, scenario modeling, the registration forecast and Telegram alerts.</div>
+    <div style="margin-top:4px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">How do I get Pro?</b> — <a href="x402_pay.html" style="color:var(--accent)">Pay per query in USDC</a> — connect a wallet, pay only for what you use: portfolio valuation $0.01, research reports $0.05, API data $0.001/request. No subscription, ever.</div>
   </div>
 </div>
 
