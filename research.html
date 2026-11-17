@@ -193,6 +193,12 @@ function renderMarkdown(md){
   const saved = localStorage.getItem('sroi_key')||'';
   if(saved){ proState.key=saved; fetch(API+'/v1/key', { headers:{ 'x-api-key': saved } }).then(r=>r.ok?r.json():null).then(j=>{ if(j){ proState.plan=j.plan; paintAuth(); if(canRead()) load(); } }); }
   paintAuth();
+  // ?report=slug — deep link opened after paying via x402 checkout
+  try{
+    const rp = new URLSearchParams(location.search).get("report");
+    if(rp && canRead()){ load().then(()=> openReport(rp)); }
+    if(rp && !canRead()){ document.getElementById('keyInput').placeholder = "Enter your key to unlock"; }
+  }catch(e){}
 })();
 </script>
 </body>

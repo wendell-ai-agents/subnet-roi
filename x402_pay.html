@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SubnetROI — Pay per query</title>
+<style>
+:root{
+  --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
+  --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
+  --navbg:rgba(255,255,255,.92); --errbg:#fde7e7; --errbd:#f5c2c2; --errfg:#b3382e;
+  --okbg:#e2f5ea; --okbd:#b8e2c9; --okfg:#0e7a3e;
+  html[data-theme="dark"]{ --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+    --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c;
+    --navbg:rgba(10,13,19,.92); --errbg:#2b1a1a; --errbd:#4a2c2c; --errfg:#ffb4b4; }
+}
+body{ margin:0; background:var(--bg); color:var(--fg); font:14px/1.55 -apple-system,Segoe UI,Roboto,sans-serif; }
+nav{ position:sticky; top:0; z-index:10; background:var(--navbg); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; gap:16px; align-items:center; }
+nav a{ color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; }
+nav a:hover{ color:var(--accent); }
+nav .sp{ flex:1; }
+.wrap{ max-width:860px; margin:0 auto; padding:24px 20px 60px; }
+h1{ font-size:22px; margin:0 0 4px; }
+.hint{ color:var(--muted); font-size:13px; margin:0 0 18px; }
+.how{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; font-size:13px; margin-bottom:20px; }
+.how ol{ margin:6px 0 0; padding-left:20px; }
+.how li{ margin-bottom:4px; }
+.walletbar{ display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.walletbar .addr{ font:12px var(--mono,ui-monospace,Menlo,Consolas); color:var(--muted); }
+.btn{ display:inline-block; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer; }
+.btn:hover{ opacity:.9; }
+.btn.ghost{ background:var(--panel2); color:var(--fg); border:1px solid var(--border); }
+.btn:disabled{ opacity:.5; cursor:default; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-bottom:20px; }
+.item{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; display:flex; flex-direction:column; }
+.item .name{ font-weight:700; font-size:15px; margin-bottom:4px; }
+.item .desc{ font-size:12.5px; color:var(--muted); margin-bottom:10px; flex:1; }
+.item .price{ font-size:18px; font-weight:700; margin-bottom:10px; }
+.item .price small{ font-size:12px; color:var(--muted); font-weight:400; }
+.status{ display:none; background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; }
+.status.spin{ display:block; }
+.ok{ display:none; background:var(--okbg); border:1px solid var(--okbd); color:var(--okfg); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; white-space:pre-wrap; }
+.err{ display:none; background:var(--errbg); border:1px solid var(--errbd); color:var(--errfg); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; white-space:pre-wrap; }
+.mono{ font-family:ui-monospace,Menlo,Consolas; font-size:12px; }
+a{ color:var(--accent); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="roi_planner.html">📊 SubnetROI</a>
+  <a href="portfolio.html">💼 Portfolio</a>
+  <a href="research.html">🔬 Research</a>
+  <a href="ebook.html">Ebooks</a>
+  <span class="sp"></span>
+  <a href="usdt_payment.html" style="color:var(--accent)">🪙 Pay per query</a>
+</nav>
+<div class="wrap">
+  <h1>Pay per query</h1>
+  <p class="hint">No subscriptions, no accounts, no recurring charges. Connect a wallet, pay in <strong>USDC</strong> only when you want something, keep the data.</p>
+
+  <div class="how">
+    <strong>How it works</strong>
+    <ol>
+      <li>Connect your wallet (MetaMask, Coinbase Wallet, or any EVM wallet).</li>
+      <li>Pick what you want below — a price appears.</li>
+      <li>Approve the payment in your wallet — one signature, ~10 seconds.</li>
+      <li>Your data is delivered immediately. Pay again whenever you want more; you're never charged again automatically.</li>
+    </ol>
+  </div>
+
+  <div class="walletbar">
+    <button class="btn" id="connBtn" onclick="connectWallet()">Connect wallet</button>
+    <span class="addr" id="addr"></span>
+    <span class="addr" id="net"></span>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div class="ok" id="ok"></div>
+  <div class="err" id="err"></div>
+
+  <div class="grid" id="items"></div>
+</div>
+
+<script src="x402-paywall.js"></script>
+<script>
+const ITEMS = [
+  { resource: "ebook:stop-losing-tao",     name: "Stop Losing TAO",   desc: "The 124-chapter staking survival guide — PDF, instant download.", price: "$1.00", kind: "ebook" },
+  { resource: "ebook:validator-playbook",  name: "Validator's Playbook", desc: "Run a validator without losing money. 37 chapters + appendices, PDF.", price: "$1.00", kind: "ebook" },
+  { resource: "ebook:bittensor-taxes",     name: "Bittensor Taxes",   desc: "How staking rewards and Alpha are taxed. Educational, not advice. PDF.", price: "$1.00", kind: "ebook" },
+  { resource: "research:sn64-chutes",      name: "Research — SN64 Chutes", desc: "Full deep-dive report: emission, momentum, liquidity, validators, dev activity.", price: "$0.05", kind: "research" },
+  { resource: "portfolio:view",            name: "Portfolio valuation", desc: "Live value of your saved positions in TAO and USDC.", price: "$0.01", kind: "portfolio" },
+  { resource: "api:roi-top",               name: "Top subnets by emission", desc: "Top 10 subnets, live, for your own tools.", price: "$0.001", kind: "api" },
+];
+const $ = id => document.getElementById(id);
+let wallet = { address: "", chainId: 0 };
+
+function statusMsg(m){ const el=$('status'); el.textContent=m; el.classList.add('spin'); return el; }
+function clearMsgs(){ $('status').classList.remove('spin'); $('ok').style.display='none'; $('err').style.display='none'; }
+
+function renderItems(){
+  $('items').innerHTML = ITEMS.map((it,i) =>
+    '<div class="item">'+
+      '<div class="name">'+it.name+'</div>'+
+      '<div class="desc">'+it.desc+'</div>'+
+      '<div class="price">'+it.price+' <small>USDC · one-time</small></div>'+
+      '<button class="btn" onclick="buy('+i+')" id="btn'+i+'">Buy</button>'+
+    '</div>').join('');
+}
+
+async function connectWallet(){
+  clearMsgs();
+  if(!window.ethereum){ showErr('No wallet found. Install MetaMask or use Coinbase Wallet in the browser, then reload.'); return; }
+  try{
+    statusMsg('Connecting wallet…');
+    const w = await SubnetROIPay.connect(window.ethereum);
+    wallet = w;
+    $('addr').textContent = shortAddr(w.address);
+    $('net').textContent = w.network;
+    $('connBtn').textContent = 'Connected';
+    $('connBtn').classList.add('ghost');
+    statusMsg('Connected to '+w.network+'. Pick what you want below.');
+  }catch(e){ showErr(e.message||'Failed to connect wallet.'); }
+}
+
+async function buy(i){
+  clearMsgs();
+  if(!wallet.address){ showErr('Connect your wallet first.'); return; }
+  const it = ITEMS[i];
+  const btn = $('btn'+i);
+  btn.disabled = true;
+  try{
+    statusMsg('Requesting '+it.name+' ('+it.price+' USDC)…');
+    const res = await SubnetROIPay.buy(it.resource, { onStatus: (s)=>{
+      if(s==='required') statusMsg('Send the wallet signature to pay '+it.price+'…');
+      if(s==='settled') statusMsg('Payment settled — delivering…');
+    }});
+    if(!res.ok){ showErr((res.error||'Payment failed')+' '+(res.status?('(HTTP '+res.status+')'):'')); return; }
+    // deliver per kind
+    const d = res.data || {};
+    if(it.kind==='ebook'){
+      const url = location.origin + d.downloadUrl;
+      showOk('✅ Paid '+it.price+' — '+it.name+' unlocked.\n\nDownload: '+url+'\n(one-time link, valid 7 days)');
+    } else if(it.kind==='research'){
+      const md = d.markdown || 'report not found';
+      showOk('✅ Paid '+it.price+' — research report unlocked. Click to view:\n\n'+window.location.origin+'/research.html?report='+d.slug);
+    } else if(it.kind==='portfolio'){
+      showOk('✅ Paid '+it.price+' — portfolio valuation:\n\n'+JSON.stringify(d.positions||[], null, 1)+'\n\nOpen the portfolio page to manage positions.');
+    } else if(it.kind==='api'){
+      showOk('✅ Paid '+it.price+' — top subnets by emission:\n\n'+JSON.stringify((d.top||[]).map(t=>'SN'+t.subnet+' '+t.name+' '+t.emission.toFixed(2)+'%'), null, 1));
+    }
+  } catch(e){ showErr(e.message||'Payment failed.'); }
+  finally{ btn.disabled=false; }
+}
+
+function showOk(msg){ const el=$('ok'); el.textContent=msg; el.style.display='block'; $('status').classList.remove('spin'); }
+function showErr(msg){ const el=$('err'); el.textContent=msg; el.style.display='block'; $('status').classList.remove('spin'); }
+function shortAddr(a){ return a?a.slice(0,6)+'…'+a.slice(-4):''; }
+
+renderItems();
+</script>
+</body>
+</html>

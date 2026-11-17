@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SubnetROI — x402 Activity Dashboard</title>
+<style>
+:root{
+  --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
+  --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --navbg:rgba(255,255,255,.92);
+  html[data-theme="dark"]{ --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+    --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c; --navbg:rgba(10,13,19,.92); }
+}
+body{ margin:0; background:var(--bg); color:var(--fg); font:14px/1.55 -apple-system,Segoe UI,Roboto,sans-serif; }
+nav{ position:sticky; top:0; z-index:10; background:var(--navbg); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; gap:16px; align-items:center; }
+nav a{ color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; }
+nav a:hover{ color:var(--accent); }
+nav .sp{ flex:1; }
+.wrap{ max-width:1000px; margin:0 auto; padding:24px 20px 60px; }
+h1{ font-size:21px; margin:0 0 4px; }
+.hint{ color:var(--muted); font-size:13px; margin:0 0 18px; }
+.gate{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; max-width:420px; }
+.gate input{ background:var(--panel2); border:1px solid var(--border); color:var(--fg); border-radius:8px; padding:8px 10px; font-size:13px; width:100%; box-sizing:border-box; margin:8px 0; }
+.btn{ display:inline-block; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer; }
+.btn:hover{ opacity:.9; }
+.err{ color:var(--bad); font-size:13px; margin-top:8px; min-height:16px; }
+.cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:20px; }
+.card{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.card .num{ font-size:24px; font-weight:700; margin-top:4px; }
+.card .lbl{ font-size:12px; color:var(--muted); }
+table{ border-collapse:collapse; width:100%; font-size:13px; background:var(--panel); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+th, td{ padding:8px 10px; text-align:left; border-bottom:1px solid var(--border); }
+th{ background:var(--panel2); font-size:12px; color:var(--muted); }
+td.mono{ font-family:var(--mono); font-size:12px; }
+tr:last-child td{ border-bottom:none; }
+.sect{ font-size:15px; font-weight:700; margin:22px 0 10px; }
+.tag{ display:inline-block; background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:2px 8px; font-size:11px; margin:2px; }
+.empty{ color:var(--muted); text-align:center; padding:20px 0; }
+.badge{ display:inline-block; border-radius:10px; padding:2px 8px; font-size:11px; font-weight:600; }
+.badge.test{ background:#fff4e0; color:#a05f00; }
+.badge.live{ background:#e2f5ea; color:#0e7a3e; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="roi_planner.html">📊 SubnetROI</a>
+  <a href="portfolio.html">💼 Portfolio</a>
+  <a href="research.html">🔬 Research</a>
+  <a href="x402_dashboard.html" style="color:var(--accent)">🪙 x402</a>
+  <span class="sp"></span>
+</nav>
+<div class="wrap">
+  <h1>x402 Payment Activity</h1>
+  <p class="hint">Live payments received via x402 (Base USDC, Dex...):</p>
+
+  <div class="gate" id="gate">
+    <strong>Admin access required</strong>
+    <input id="tok" type="password" placeholder="admin token">
+    <button class="btn" onclick="loadDash()">Load dashboard</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="dash" style="display:none">
+    <div style="margin-bottom:12px"><span class="badge" id="envBadge">TESTNET</span> <span class="badge" style="background:var(--panel2)">Base Sepolia</span></div>
+    <div class="cards">
+      <div class="card"><div class="lbl">Payments</div><div class="num" id="cCount">0</div></div>
+      <div class="card"><div class="lbl">Volume (USDC)</div><div class="num" id="cVol">$0.00</div></div>
+      <div class="card"><div class="lbl">TAO price (context)</div><div class="num" id="cTao">–</div></div>
+      <div class="card"><div class="lbl">Unique payers</div><div class="num" id="cPayers">0</div></div>
+    </div>
+
+    <div class="sect">Per resource</div>
+    <div id="byResource"></div>
+
+    <div class="sect">Per day</div>
+    <div id="byDay"></div>
+
+    <div class="sect">Recent payments</div>
+    <table id="tbl">
+      <thead><tr><th>Time</th><th>Resource</th><th>USDC</th><th>Payer</th><th>Tx</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="noPay">No payments yet — paid requests will appear here.</div>
+  </div>
+</div>
+<script>
+const API='https://subnet-roi-api.mentatdev.workers.dev';
+const $=id=>document.getElementById(id);
+async function loadDash(){
+  const t=$('tok').value.trim(); if(!t) return;
+  try{
+    const r=await fetch(API+'/v1/x402/admin',{headers:{'Authorization':'Bearer '+t}});
+    if(r.status===403){$('err').textContent='Forbidden — bad admin token.';return;}
+    const j=await r.json();
+    $('gate').style.display='none'; $('dash').style.display='block';
+    $('envBadge').textContent = j.recent && j.recent.length ? (j.recent[0].testnet?'TESTNET':'LIVE') : 'TESTNET';
+    $('cCount').textContent=j.count||0;
+    $('cVol').textContent='$'+(j.volumeUsd||0).toFixed(2);
+    $('cTao').textContent=j.taoUsd?('$'+j.taoUsd):'–';
+    $('cPayers').textContent=Object.keys(j.byWallet||{}).length;
+    $('byResource').innerHTML=Object.entries(j.byResource||{}).map(([k,v])=>'<span class="tag">'+k+' × '+v+'</span>').join('')||'<span class="empty">none</span>';
+    $('byDay').innerHTML=Object.entries(j.byDay||{}).map(([k,v])=>'<span class="tag">'+k+' × '+v+'</span>').join('')||'<span class="empty">none</span>';
+    const rows=(j.recent||[]).map(r=>'<tr><td>'+new Date(r.at).toLocaleString()+'</td><td class="mono">'+esc(r.resource)+'</td><td>$'+r.usd.toFixed(3)+'</td><td class="mono" title="'+esc(r.payer||'')+'">'+short(r.payer)+'</td><td class="mono" title="'+esc(r.tx||'')+'">'+short(r.tx)+'</td></tr>').join('');
+    $('tbody').innerHTML=rows;
+    $('noPay').style.display=(j.count||0)?'none':'block';
+  }catch(e){$('err').textContent='Load failed: '+e.message;}
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function short(s){s=String(s||'');return s.length>14?s.slice(0,6)+'…'+s.slice(-4):s;}
+</script>
+</body>
+</html>
