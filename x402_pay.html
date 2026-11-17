@@ -87,7 +87,6 @@ const ITEMS = [
   { resource: "ebook:stop-losing-tao",     name: "Stop Losing TAO",   desc: "The 124-chapter staking survival guide — PDF, instant download.", price: "$1.00", kind: "ebook" },
   { resource: "ebook:validator-playbook",  name: "Validator's Playbook", desc: "Run a validator without losing money. 37 chapters + appendices, PDF.", price: "$1.00", kind: "ebook" },
   { resource: "ebook:bittensor-taxes",     name: "Bittensor Taxes",   desc: "How staking rewards and Alpha are taxed. Educational, not advice. PDF.", price: "$1.00", kind: "ebook" },
-  { resource: "research:sn64-chutes",      name: "Research — SN64 Chutes", desc: "Full deep-dive report: emission, momentum, liquidity, validators, dev activity.", price: "$0.05", kind: "research" },
   { resource: "portfolio:view",            name: "Portfolio valuation", desc: "Live value of your saved positions in TAO and USDC.", price: "$0.01", kind: "portfolio" },
   { resource: "api:roi-top",               name: "Top subnets by emission", desc: "Top 10 subnets, live, for your own tools.", price: "$0.001", kind: "api" },
 ];
@@ -96,6 +95,21 @@ let wallet = { address: "", chainId: 0 };
 
 function statusMsg(m){ const el=$('status'); el.textContent=m; el.classList.add('spin'); return el; }
 function clearMsgs(){ $('status').classList.remove('spin'); $('ok').style.display='none'; $('err').style.display='none'; }
+
+async function loadPublishedReports(){
+  // fetch the shop listing — every published report becomes a buyable item
+  try{
+    const r = await fetch(SubnetROIPay.API+'/v1/x402/reports');
+    if(!r.ok) return;
+    const j = await r.json();
+    const items = (j.reports||[]).map(rep=>({
+      resource: rep.resource, name: 'Research — '+rep.title.split(' — ')[0],
+      desc: 'Deep-dive report, '+rep.date+'. Emission, momentum, liquidity, validators, dev activity.',
+      price: '$'+j.priceUsd.toFixed(2), kind: 'research' }));
+    const i = ITEMS.findIndex(x=>x.kind==='research');
+    if(i>=0) ITEMS.splice(i,1, ...items); else ITEMS.push(...items);
+  }catch(e){ /* keep static items */ }
+}
 
 function renderItems(){
   $('items').innerHTML = ITEMS.map((it,i) =>
@@ -156,7 +170,7 @@ function showOk(msg){ const el=$('ok'); el.textContent=msg; el.style.display='bl
 function showErr(msg){ const el=$('err'); el.textContent=msg; el.style.display='block'; $('status').classList.remove('spin'); }
 function shortAddr(a){ return a?a.slice(0,6)+'…'+a.slice(-4):''; }
 
-renderItems();
+loadPublishedReports().then(renderItems);
 // deep link: ?res=<resource> — highlight+scroll to the matching item
 try{
   const res = new URLSearchParams(location.search).get("res");
