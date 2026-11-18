@@ -145,7 +145,6 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
       <a href="portfolio.html">Portfolio</a>
       <a href="research.html">Research</a>
       <a href="ebook.html">Ebook</a>
-      <a href="#digestpage">Daily Digest</a>
       <a class="btn" href="x402_pay.html">⚡ API · Pay with x402</a>
     </div>
   </div>
@@ -155,39 +154,6 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
   <div class="hero">
     <h1>Bittensor Subnet ROI Planner</h1>
     <p>Expected miner/validator emissions per subnet from live on-chain data. Input your hardware and stake, see net $/day, payback, and dereg risk across all 129 subnets.</p>
-  </div>
-
-  <div class="banner" id="ebookbanner" style="border:2px solid var(--accent);background:linear-gradient(135deg,var(--panel2),var(--card));margin-bottom:14px">
-    <div style="flex:1">
-      <div class="t">📕 New: <b>Stop Losing TAO</b> — the Bittensor staking survival guide</div>
-      <div class="s">Why your staked TAO keeps dropping, how to pick safe subnets &amp; validators, and the exact steps to stake right. 124 chapters, plain English. <b>$1 USDC</b> · instant download.</div>
-    </div>
-    <a class="btn" href="ebook.html" style="white-space:nowrap">Get the Guide</a>
-  </div>
-
-  <div class="banner" id="digest">
-    <div style="flex:1">
-      <div class="t">Get the daily top-10 subnets in your inbox</div>
-      <div class="s">Free · every morning · live emission &amp; ROI data — this is a preview of what the email contains.</div>
-    </div>
-    <form class="emailform" onsubmit="return subscribe(event)">
-      <input type="email" id="subEmail" placeholder="you@example.com" required>
-      <button class="btn" type="submit">Subscribe</button>
-    </form>
-    <div id="subMsg" class="emailok" style="display:none"></div>
-  </div>
-
-  <div class="banner" id="probox">
-    <div style="flex:1">
-      <div class="t" id="proTitle">Pro unlocks the portfolio tracker, watchlists, hardware sizing &amp; Telegram alerts</div>
-      <div class="s" id="proSub">Pay per query · no subscription · pay as you go</div>
-    </div>
-    <form class="emailform" id="proForm" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" onsubmit="return unlock(event)">
-      <input type="text" id="proKey" placeholder="Paste Pro / API key" style="min-width:220px" autocomplete="off">
-      <button class="btn" type="submit">Unlock</button>
-      <a class="btn ghost" href="x402_pay.html">⚡ Developer API</a>
-    </form>
-    <div id="proMsg" style="display:none"></div>
   </div>
 
   <div id="errbox" class="err" style="display:none"></div>
@@ -301,26 +267,12 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
     </p>
   </div>
 
-  <div class="method" id="digestpage">
-    <h3>Daily Digest — preview <span style="font-size:11px;color:var(--muted);font-weight:400">(what subscribers receive each morning)</span></h3>
-    <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead><tr style="color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em">
-          <th style="padding:6px 8px">SN</th><th style="padding:6px 8px">Name</th><th style="padding:6px 8px">α price (τ)</th>
-          <th style="padding:6px 8px">Emission %</th><th style="padding:6px 8px">Net $/d</th>
-        </tr></thead>
-        <tbody id="digestRows"><tr><td colspan="5" style="padding:10px">—</td></tr></tbody>
-      </table>
-    </div>
-    <p style="margin:10px 0 0;color:var(--muted);font-size:12px">Subscribe above to receive this in your inbox every morning — plus the full methodology notes and live TAO price.</p>
-  </div>
-
   <div class="footer">
     <div><b>SubnetROI</b> · Bittensor miner/validator ROI planner</div>
     <div>Data: <a href="https://api.taomarketcap.com">TaoMarketCap</a> + <a href="https://www.coingecko.com">CoinGecko</a> · <a href="x402_pay.html">Pricing</a> · This tool informs, it does not advise.</div>
-    <div style="margin-top:8px;font-size:11.5px;color:var(--muted)">Pro: portfolio tracker with Telegram alerts · watchlists · hardware sizing · alpha-price &amp; collateral scenarios · registration forecast · emission-shift, dereg &amp; Kraken alerts · daily digest</div>
+    <div style="margin-top:8px;font-size:11.5px;color:var(--muted)">Everything on this site is <a href="x402_pay.html" style="color:var(--accent)">$1 USDC via x402</a> — pay per resource with a wallet signature, no accounts or subscriptions.</div>
     <div style="margin-top:4px;font-size:11.5px;color:var(--muted)">Questions? <a href="mailto:info@subnetroi.com" style="color:var(--accent)">info@subnetroi.com</a> · <a href="x402_pay.html" style="color:var(--accent)">Buy</a></div>
-    <div style="margin-top:14px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">How to use</b> — set your hardware and assumptions, sort by Net $/d, star subnets to watch them, and subscribe to the daily digest for the top-10 in your inbox. Pro unlocks the portfolio tracker, watchlists, scenario modeling and Telegram alerts.</div>
+    <div style="margin-top:14px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">How to use</b> — set your hardware and assumptions, sort by Net $/d. Programmatic access (top subnets, research reports, ebooks, portfolio valuation) is one $1 USDC x402 payment per resource: see the <a href="x402_pay.html" style="color:var(--accent)">Developer API</a>.</div>
     <div style="margin-top:8px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">Data freshness</b> — subnet data refreshes every 30 minutes; TAO price every 5 minutes. The registration-cost panel updates live from the network.</div>
     <div style="margin-top:8px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">Disclaimer</b> — SubnetROI is an informational tool. Bittensor mining involves real capital risk: emissions are volatile, alpha prices can move sharply, and subnets can deregister. Nothing here is financial advice.</div>
     <div style="margin-top:14px;font-size:11.5px;color:var(--muted)"><b style="color:var(--fg)">FAQ</b></div>
@@ -405,15 +357,6 @@ function render(){
   const med = netDays.length? netDays.sort((a,b)=>a-b)[Math.floor(netDays.length/2)] : null;
   document.getElementById('medNet').innerHTML = med!=null? money(med)+' <small>/day</small>' : '—';
   document.getElementById('profitable').textContent = `${profitable} / ${rows.length}`;
-
-  const digestTop = [...rows].sort((a,b)=>(b.netDay??-1e18)-(a.netDay??-1e18)).slice(0,10);
-  document.getElementById('digestRows').innerHTML = digestTop.map(r=>
-    `<tr><td style="padding:5px 8px;border-bottom:1px solid var(--border)">${r.subnet}</td>`+
-    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">${r.name||''}</td>`+
-    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">${fmt(r.price,4)}</td>`+
-    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)">${r.emission!=null?r.emission.toFixed(2)+'%':'—'}</td>`+
-    `<td style="padding:5px 8px;border-bottom:1px solid var(--border)" class="${r.netDay>=0?'pos':'neg'}">${money(r.netDay)}</td></tr>`
-  ).join('');
 
   document.getElementById('thead').innerHTML = COLS.map(([k,l])=>`<th data-k="${k}">${l}</th>`).join('');
   document.getElementById('tbody').innerHTML = list.map(r=>{
@@ -507,19 +450,7 @@ document.getElementById('thead').addEventListener('click', e=>{
   document.getElementById('sortSel').value = k; render();
 });
 
-function subscribe(e){
-  e.preventDefault();
-  const em = document.getElementById('subEmail').value.trim();
-  const msg = document.getElementById('subMsg');
-  if(!em || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ msg.textContent='Enter a valid email.'; msg.style.display='block'; return false; }
-  try{
-      const url = 'https://subnet-roi-api.mentatdev.workers.dev/v1/digest/subscribe';
-      fetch(url, {method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({email:em})})
-        .then(r=>{ msg.textContent = r.ok ? 'Subscribed! You\u2019ll get the daily digest.' : 'Error — try again.'; msg.style.display='block'; })
-        .catch(()=>{ msg.textContent='Error — try again.'; msg.style.display='block'; });
-  }catch(err){ msg.textContent='Error — try again.'; msg.style.display='block'; }
-  return false;
-}
+
 load();
 </script>
 <script>
@@ -589,19 +520,11 @@ function starCell(n){
 }
 
 function paintPro(){
-  const form = document.getElementById('proForm');
-  const msg = document.getElementById('proMsg');
   const wt = document.getElementById('watchToggle');
-  if(proState.plan){
-    form.style.display = 'none';
-    msg.style.display = 'block';
-    msg.innerHTML = `<div class="t">✓ Pro active — <b>${proState.plan==='api'?'API':'Pro'}</b> plan</div>
-      <div class="s">${proState.daysLeft!=null ? 'Key expires <b>'+ (proState.expiresAt||'').slice(0,10) +'</b> ('+ proState.daysLeft +' days) · ' : ''}Star subnets to save your watchlist (synced to your key) · <a onclick="lock()">Lock</a></div>`;
+  if(proState.plan && wt){
     wt.style.display = 'inline-block';
     if(watchOnly) wt.classList.add('on');
-  } else {
-    form.style.display = 'flex';
-    msg.style.display = 'none';
+  } else if(wt){
     wt.style.display = 'none';
     wt.classList.remove('on');
     watchOnly = false;
@@ -618,7 +541,9 @@ async function syncWatch(){
 
 async function unlock(ev){
   if(ev) ev.preventDefault();
-  const k = (document.getElementById('proKey').value||'').trim();
+  const el = document.getElementById('proKey');
+  if(!el){ showErr('Pro keys are no longer used — everything is $1 USDC via x402.'); return false; }
+  const k = (el.value||'').trim();
   if(!k){ showErr('Enter your Pro or API key first.'); return false; }
   try{
     const r = await fetch(API+'/v1/key', { headers: { 'x-api-key': k } });
