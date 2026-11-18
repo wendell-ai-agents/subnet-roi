@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SubnetROI — Pay per query</title>
+<title>SubnetROI — Ebooks & Research</title>
 <style>
 :root{
   --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
@@ -55,16 +55,16 @@ a{ color:var(--accent); }
   <a href="usdt_payment.html" style="color:var(--accent)">🪙 Pay per query</a>
 </nav>
 <div class="wrap">
-  <h1>Pay per query</h1>
-  <p class="hint">No subscriptions, no accounts, no recurring charges. Connect a wallet, pay in <strong>USDC</strong> only when you want something, keep the data.</p>
+  <h1>Ebooks & Research</h1>
+  <p class="hint">One-time purchases in <strong>USDC</strong> — no subscription, no account, no recurring charge. Connect a wallet, pay for what you want, keep it forever.</p>
 
   <div class="how">
     <strong>How it works</strong>
     <ol>
-      <li>Connect your wallet (MetaMask, Coinbase Wallet, or any EVM wallet).</li>
-      <li>Pick what you want below — a price appears.</li>
+      <li>Connect your wallet (MetaMask, Coinbase Wallet, or any EVM wallet) on the Base network.</li>
+      <li>Pick an ebook or research report below.</li>
       <li>Approve the payment in your wallet — one signature, ~10 seconds.</li>
-      <li>Your data is delivered immediately. Pay again whenever you want more; you're never charged again automatically.</li>
+      <li>Your PDF or report is delivered immediately. Yours to keep — no account, no renewal, ever.</li>
     </ol>
   </div>
 
@@ -79,6 +79,19 @@ a{ color:var(--accent); }
   <div class="err" id="err"></div>
 
   <div class="grid" id="items"></div>
+
+  <h2 style="font-size:16px;margin:26px 0 8px">For developers — use the API</h2>
+  <div class="how">
+    <p style="margin:0 0 8px"><strong>Programmatic access via x402 (HTTP 402).</strong> Machines pay per request with a wallet signature — no API key, no account, no subscription. Call an endpoint, get <code>402</code> + payment requirements, sign with your wallet, receive data.
+    </p>
+    <p style="margin:0 0 8px">Pricing: <strong>$0.001</strong> per API request · <strong>$0.01</strong> portfolio valuation · metered <strong>upto</strong> rates (cap $0.10/request, settle actual usage) for programmatic consumers.</p>
+    <ol>
+      <li><code>POST /v1/x402/checkout/api:roi-top</code> → <code>402</code> + <code>PAYMENT-REQUIRED</code> header (price, asset, payTo, network)</li>
+      <li>Sign the EIP-3009 / Permit2 authorization with your wallet</li>
+      <li>Retry with the <code>PAYMENT-SIGNATURE</code> header → <code>200</code> + data</li>
+    </ol>
+    <p style="margin:8px 0 0">SDKs: <code>@x402/fetch</code>, <code>@x402/axios</code> (TypeScript), <code>x402</code> (Python), Go. Discoverable via the x402 Bazaar search index.</p>
+  </div>
 </div>
 
 <script src="x402-paywall.js"></script>
@@ -87,8 +100,6 @@ const ITEMS = [
   { resource: "ebook:stop-losing-tao",     name: "Stop Losing TAO",   desc: "The 124-chapter staking survival guide — PDF, instant download.", price: "$1.00", kind: "ebook" },
   { resource: "ebook:validator-playbook",  name: "Validator's Playbook", desc: "Run a validator without losing money. 37 chapters + appendices, PDF.", price: "$1.00", kind: "ebook" },
   { resource: "ebook:bittensor-taxes",     name: "Bittensor Taxes",   desc: "How staking rewards and Alpha are taxed. Educational, not advice. PDF.", price: "$1.00", kind: "ebook" },
-  { resource: "portfolio:view",            name: "Portfolio valuation", desc: "Live value of your saved positions in TAO and USDC.", price: "$0.01", kind: "portfolio" },
-  { resource: "api:roi-top",               name: "Top subnets by emission", desc: "Top 10 subnets, live, for your own tools.", price: "$0.001", kind: "api" },
 ];
 const $ = id => document.getElementById(id);
 let wallet = { address: "", chainId: 0 };
