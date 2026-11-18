@@ -3,46 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SubnetROI — Ebooks & Research</title>
+<title>SubnetROI — x402 Developer API</title>
 <style>
 :root{
   --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
   --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
-  --navbg:rgba(255,255,255,.92); --errbg:#fde7e7; --errbd:#f5c2c2; --errfg:#b3382e;
-  --okbg:#e2f5ea; --okbd:#b8e2c9; --okfg:#0e7a3e;
+  --navbg:rgba(255,255,255,.92); --code:#f2f4f8;
   html[data-theme="dark"]{ --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
     --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c;
-    --navbg:rgba(10,13,19,.92); --errbg:#2b1a1a; --errbd:#4a2c2c; --errfg:#ffb4b4; }
+    --navbg:rgba(10,13,19,.92); --code:#0d1119; }
 }
 body{ margin:0; background:var(--bg); color:var(--fg); font:14px/1.55 -apple-system,Segoe UI,Roboto,sans-serif; }
 nav{ position:sticky; top:0; z-index:10; background:var(--navbg); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; gap:16px; align-items:center; }
 nav a{ color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; }
 nav a:hover{ color:var(--accent); }
+nav a.active{ color:var(--accent); }
 nav .sp{ flex:1; }
-.wrap{ max-width:860px; margin:0 auto; padding:24px 20px 60px; }
-h1{ font-size:22px; margin:0 0 4px; }
-.hint{ color:var(--muted); font-size:13px; margin:0 0 18px; }
-.how{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; font-size:13px; margin-bottom:20px; }
-.how ol{ margin:6px 0 0; padding-left:20px; }
-.how li{ margin-bottom:4px; }
-.walletbar{ display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
-.walletbar .addr{ font:12px var(--mono,ui-monospace,Menlo,Consolas); color:var(--muted); }
-.btn{ display:inline-block; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer; }
-.btn:hover{ opacity:.9; }
-.btn.ghost{ background:var(--panel2); color:var(--fg); border:1px solid var(--border); }
-.btn:disabled{ opacity:.5; cursor:default; }
-.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-bottom:20px; }
-.item{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; display:flex; flex-direction:column; }
-.item .name{ font-weight:700; font-size:15px; margin-bottom:4px; }
-.item .desc{ font-size:12.5px; color:var(--muted); margin-bottom:10px; flex:1; }
-.item .price{ font-size:18px; font-weight:700; margin-bottom:10px; }
-.item .price small{ font-size:12px; color:var(--muted); font-weight:400; }
-.status{ display:none; background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; }
-.status.spin{ display:block; }
-.ok{ display:none; background:var(--okbg); border:1px solid var(--okbd); color:var(--okfg); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; white-space:pre-wrap; }
-.err{ display:none; background:var(--errbg); border:1px solid var(--errbd); color:var(--errfg); border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:13px; white-space:pre-wrap; }
-.mono{ font-family:ui-monospace,Menlo,Consolas; font-size:12px; }
+.wrap{ max-width:920px; margin:0 auto; padding:32px 20px 70px; }
+.hero{ background:linear-gradient(135deg,#0d1b2e,#12355c); color:#eef2f7; border-radius:14px; padding:28px 30px; margin-bottom:26px; }
+.hero h1{ font-size:26px; margin:0 0 10px; }
+.hero p{ font-size:14.5px; margin:0 0 12px; color:#c6d3e4; max-width:720px; }
+.hero .hash{ font:12.5px ui-monospace,Menlo,Consolas,monospace; color:#7fb3ff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 12px; display:inline-block; }
+h2{ font-size:17px; margin:26px 0 8px; }
+.panel{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin-bottom:16px; }
+table{ border-collapse:collapse; width:100%; font-size:13px; }
+th,td{ padding:8px 10px; text-align:left; border-bottom:1px solid var(--border); }
+th{ background:var(--panel2); font-size:12px; color:var(--muted); }
+tr:last-child td{ border-bottom:none; }
+td.mono, code{ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
+pre{ background:var(--code); border:1px solid var(--border); border-radius:10px; padding:14px 16px; overflow-x:auto; font:12px/1.6 ui-monospace,Menlo,Consolas,monospace; margin:10px 0 4px; }
+ol.step{ margin:8px 0; padding-left:22px; }
+ol.step li{ margin-bottom:6px; }
+.muted{ color:var(--muted); }
 a{ color:var(--accent); }
+.res-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; }
+.res{ background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.res .name{ font-weight:700; font-size:13.5px; }
+.res .p{ font-size:12.5px; color:var(--muted); margin-top:3px; }
+.res .price{ font-size:15px; font-weight:700; color:var(--good); margin-top:5px; }
 </style>
 </head>
 <body>
@@ -52,147 +50,109 @@ a{ color:var(--accent); }
   <a href="research.html">🔬 Research</a>
   <a href="ebook.html">Ebooks</a>
   <span class="sp"></span>
-  <a href="usdt_payment.html" style="color:var(--accent)">🪙 Pay per query</a>
+  <a href="x402_pay.html" class="active">⚡ Developer API</a>
 </nav>
+
 <div class="wrap">
-  <h1>Ebooks & Research</h1>
-  <p class="hint">One-time purchases in <strong>USDC</strong> — no subscription, no account, no recurring charge. Connect a wallet, pay for what you want, keep it forever.</p>
-
-  <div class="how">
-    <strong>How it works</strong>
-    <ol>
-      <li>Connect your wallet (MetaMask, Coinbase Wallet, or any EVM wallet) on the Base network.</li>
-      <li>Pick an ebook or research report below.</li>
-      <li>Approve the payment in your wallet — one signature, ~10 seconds.</li>
-      <li>Your PDF or report is delivered immediately. Yours to keep — no account, no renewal, ever.</li>
-    </ol>
+  <div class="hero">
+    <h1>⚡ SubnetROI runs on x402</h1>
+    <p>Everything on this site is sold over plain HTTP using the <strong>x402 payment protocol</strong> — the open standard built on HTTP <code>402 Payment Required</code>. No accounts, no subscriptions, no API keys. Any wallet (or AI agent with a wallet) pays per request with a single signature, and settles in <strong>USDC on Base</strong>.</p>
+    <p><strong>Every resource costs $1.00 USDC.</strong> One price, one protocol, no billing relationship.</p>
+    <p><span class="hash">protocol: HTTP 402 · network: Base (eip155:8453) · asset: USDC · scheme: exact · facilitator: Dexter</span></p>
   </div>
 
-  <div class="walletbar">
-    <button class="btn" id="connBtn" onclick="connectWallet()">Connect wallet</button>
-    <span class="addr" id="addr"></span>
-    <span class="addr" id="net"></span>
+  <h2>Why x402</h2>
+  <div class="panel">
+    <p style="margin:0 0 8px">SubnetROI sells <strong>information</strong> — ROI data, research reports, ebooks, portfolio valuations. Information wants a micropayment rail that is built into the web, not bolted on after. x402 re-activates the long-reserved <code>402 Payment Required</code> status code:</p>
+    <ol class="step">
+      <li>A client requests a resource without payment.</li>
+      <li>The server replies <code>402</code> with a <code>PAYMENT-REQUIRED</code> header — price, asset, receiving wallet, network.</li>
+      <li>The client signs the authorization with its wallet (gasless, EIP-3009 / Permit2) and retries with a <code>PAYMENT-SIGNATURE</code> header.</li>
+      <li>A facilitator verifies and settles the transfer on-chain; the server returns <code>200</code> + the resource.</li>
+    </ol>
+    <p style="margin:10px 0 0">For you as a builder: no account creation, no credit card, no monthly commitment, no KYC — machines transact like they breathe. That is the point.</p>
   </div>
 
-  <div class="status" id="status"></div>
-  <div class="ok" id="ok"></div>
-  <div class="err" id="err"></div>
+  <h2>Available resources — all $1 USDC</h2>
+  <div class="res-list" id="resources"></div>
 
-  <div class="grid" id="items"></div>
+  <h2>Try it — one request</h2>
+  <div class="panel" style="margin-top:14px">
+    <p class="muted" style="margin:0 0 6px">There is no API key. Copy this into <code>curl</code> with <code>x402</code> installed, or use the SDK:</p>
+<pre># 1. discover the payment requirement
+curl -s -D - -o /dev/null https://subnet-roi-api.mentatdev.workers.dev/v1/x402/checkout/api:roi-top
+#     → HTTP/2 402 · PAYMENT-REQUIRED: &lt;base64 requirements: $1 USDC → 0x7d47…CC838&gt;
 
-  <h2 style="font-size:16px;margin:26px 0 8px">For developers — use the API</h2>
-  <div class="how">
-    <p style="margin:0 0 8px"><strong>Programmatic access via x402 (HTTP 402).</strong> Machines pay per request with a wallet signature — no API key, no account, no subscription. Call an endpoint, get <code>402</code> + payment requirements, sign with your wallet, receive data.
-    </p>
-    <p style="margin:0 0 8px">Pricing: <strong>$0.001</strong> per API request · <strong>$0.01</strong> portfolio valuation · metered <strong>upto</strong> rates (cap $0.10/request, settle actual usage) for programmatic consumers.</p>
-    <ol>
-      <li><code>POST /v1/x402/checkout/api:roi-top</code> → <code>402</code> + <code>PAYMENT-REQUIRED</code> header (price, asset, payTo, network)</li>
-      <li>Sign the EIP-3009 / Permit2 authorization with your wallet</li>
-      <li>Retry with the <code>PAYMENT-SIGNATURE</code> header → <code>200</code> + data</li>
-    </ol>
-    <p style="margin:8px 0 0">SDKs: <code>@x402/fetch</code>, <code>@x402/axios</code> (TypeScript), <code>x402</code> (Python), Go. Discoverable via the x402 Bazaar search index.</p>
+# 2. pay with your wallet (SDK does this)
+pip install x402
+#    npm i @x402/fetch @x402/evm
+
+# 3. retry with the signed header → 200 + live top subnets</pre>
+    <p class="muted" style="margin:8px 0 0">Endpoints are discoverable by other agents through the <strong>x402 Bazaar</strong> (facilitator <code>/discovery/resources</code>).</p>
+  </div>
+
+  <h2>Checkout endpoint</h2>
+  <div class="panel">
+    <table>
+      <thead><tr><th>Endpoint</th><th>Resource</th><th>Price</th><th>Returns</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">POST /v1/x402/checkout/ebook:stop-losing-tao</td><td>Stop Losing TAO (PDF)</td><td>$1</td><td>one-time download token</td></tr>
+        <tr><td class="mono">POST /v1/x402/checkout/ebook:validator-playbook</td><td>Validator's Playbook (PDF)</td><td>$1</td><td>one-time download token</td></tr>
+        <tr><td class="mono">POST /v1/x402/checkout/ebook:bittensor-taxes</td><td>Bittensor Taxes (PDF)</td><td>$1</td><td>one-time download token</td></tr>
+        <tr><td class="mono">POST /v1/x402/checkout/research:&lt;slug&gt;</td><td>Subnet deep-dive report</td><td>$1</td><td>markdown report</td></tr>
+        <tr><td class="mono">POST /v1/x402/checkout/api:roi-top</td><td>Top subnets by emission</td><td>$1</td><td>JSON</td></tr>
+        <tr><td class="mono">POST /v1/x402/checkout/portfolio:view</td><td>Saved portfolio valuation</td><td>$1</td><td>JSON</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin:10px 0 0">Published research slugs: <span id="slugs">—</span></p>
+  </div>
+
+  <h2>SDKs &amp; tooling</h2>
+  <div class="panel">
+    <table>
+      <thead><tr><th>Language</th><th>Package</th></tr></thead>
+      <tbody>
+        <tr><td>TypeScript (fetch)</td><td class="mono">npm i @x402/fetch @x402/evm</td></tr>
+        <tr><td>TypeScript (axios)</td><td class="mono">npm i @x402/axios @x402/evm</td></tr>
+        <tr><td>Python (httpx)</td><td class="mono">pip install "x402[httpx]"</td></tr>
+        <tr><td>Go</td><td class="mono">go get github.com/x402-foundation/x402/go/v2</td></tr>
+        <tr><td>Discovery</td><td class="mono">GET {facilitator}/discovery/resources (Bazaar)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel" style="background:var(--panel2)">
+    <p style="margin:0" class="muted">Questions or a custom data feed? <a href="mailto:info@subnetroi.com">info@subnetroi.com</a> — or watch the <a href="x402_dashboard.html">live payment dashboard</a>.</p>
   </div>
 </div>
 
-<script src="x402-paywall.js"></script>
 <script>
-const ITEMS = [
-  { resource: "ebook:stop-losing-tao",     name: "Stop Losing TAO",   desc: "The 124-chapter staking survival guide — PDF, instant download.", price: "$1.00", kind: "ebook" },
-  { resource: "ebook:validator-playbook",  name: "Validator's Playbook", desc: "Run a validator without losing money. 37 chapters + appendices, PDF.", price: "$1.00", kind: "ebook" },
-  { resource: "ebook:bittensor-taxes",     name: "Bittensor Taxes",   desc: "How staking rewards and Alpha are taxed. Educational, not advice. PDF.", price: "$1.00", kind: "ebook" },
+const API='https://subnet-roi-api.mentatdev.workers.dev';
+const STATIC=[
+  { name:'Stop Losing TAO', desc:'124-chapter staking survival guide — PDF download.', res:'ebook:stop-losing-tao' },
+  { name:'Validator\'s Playbook', desc:'Run a validator without losing money — PDF download.', res:'ebook:validator-playbook' },
+  { name:'Bittensor Taxes', desc:'How staking rewards and Alpha are taxed — PDF download.', res:'ebook:bittensor-taxes' },
+  { name:'Top subnets by emission', desc:'Live top-10 subnets: emission, price, rank.', res:'api:roi-top' },
+  { name:'Portfolio valuation', desc:'Live value of a saved position set in TAO + USDC.', res:'portfolio:view' },
 ];
-const $ = id => document.getElementById(id);
-let wallet = { address: "", chainId: 0 };
-
-function statusMsg(m){ const el=$('status'); el.textContent=m; el.classList.add('spin'); return el; }
-function clearMsgs(){ $('status').classList.remove('spin'); $('ok').style.display='none'; $('err').style.display='none'; }
-
-async function loadPublishedReports(){
-  // fetch the shop listing — every published report becomes a buyable item
-  try{
-    const r = await fetch(SubnetROIPay.API+'/v1/x402/reports');
-    if(!r.ok) return;
-    const j = await r.json();
-    const items = (j.reports||[]).map(rep=>({
-      resource: rep.resource, name: 'Research — '+rep.title.split(' — ')[0],
-      desc: 'Deep-dive report, '+rep.date+'. Emission, momentum, liquidity, validators, dev activity.',
-      price: '$'+j.priceUsd.toFixed(2), kind: 'research' }));
-    const i = ITEMS.findIndex(x=>x.kind==='research');
-    if(i>=0) ITEMS.splice(i,1, ...items); else ITEMS.push(...items);
-  }catch(e){ /* keep static items */ }
-}
-
-function renderItems(){
-  $('items').innerHTML = ITEMS.map((it,i) =>
-    '<div class="item">'+
-      '<div class="name">'+it.name+'</div>'+
-      '<div class="desc">'+it.desc+'</div>'+
-      '<div class="price">'+it.price+' <small>USDC · one-time</small></div>'+
-      '<button class="btn" onclick="buy('+i+')" id="btn'+i+'">Buy</button>'+
-    '</div>').join('');
-}
-
-async function connectWallet(){
-  clearMsgs();
-  if(!window.ethereum){ showErr('No wallet found. Install MetaMask or use Coinbase Wallet in the browser, then reload.'); return; }
-  try{
-    statusMsg('Connecting wallet…');
-    const w = await SubnetROIPay.connect(window.ethereum);
-    wallet = w;
-    $('addr').textContent = shortAddr(w.address);
-    $('net').textContent = w.network;
-    $('connBtn').textContent = 'Connected';
-    $('connBtn').classList.add('ghost');
-    statusMsg('Connected to '+w.network+'. Pick what you want below.');
-  }catch(e){ showErr(e.message||'Failed to connect wallet.'); }
-}
-
-async function buy(i){
-  clearMsgs();
-  if(!wallet.address){ showErr('Connect your wallet first.'); return; }
-  const it = ITEMS[i];
-  const btn = $('btn'+i);
-  btn.disabled = true;
-  try{
-    statusMsg('Requesting '+it.name+' ('+it.price+' USDC)…');
-    const res = await SubnetROIPay.buy(it.resource, { onStatus: (s)=>{
-      if(s==='required') statusMsg('Send the wallet signature to pay '+it.price+'…');
-      if(s==='settled') statusMsg('Payment settled — delivering…');
-    }});
-    if(!res.ok){ showErr((res.error||'Payment failed')+' '+(res.status?('(HTTP '+res.status+')'):'')); return; }
-    // deliver per kind
-    const d = res.data || {};
-    if(it.kind==='ebook'){
-      const url = location.origin + d.downloadUrl;
-      showOk('✅ Paid '+it.price+' — '+it.name+' unlocked.\n\nDownload: '+url+'\n(one-time link, valid 7 days)');
-    } else if(it.kind==='research'){
-      const md = d.markdown || 'report not found';
-      showOk('✅ Paid '+it.price+' — research report unlocked. Click to view:\n\n'+window.location.origin+'/research.html?report='+d.slug);
-    } else if(it.kind==='portfolio'){
-      showOk('✅ Paid '+it.price+' — portfolio valuation:\n\n'+JSON.stringify(d.positions||[], null, 1)+'\n\nOpen the portfolio page to manage positions.');
-    } else if(it.kind==='api'){
-      showOk('✅ Paid '+it.price+' — top subnets by emission:\n\n'+JSON.stringify((d.top||[]).map(t=>'SN'+t.subnet+' '+t.name+' '+t.emission.toFixed(2)+'%'), null, 1));
-    }
-  } catch(e){ showErr(e.message||'Payment failed.'); }
-  finally{ btn.disabled=false; }
-}
-
-function showOk(msg){ const el=$('ok'); el.textContent=msg; el.style.display='block'; $('status').classList.remove('spin'); }
-function showErr(msg){ const el=$('err'); el.textContent=msg; el.style.display='block'; $('status').classList.remove('spin'); }
-function shortAddr(a){ return a?a.slice(0,6)+'…'+a.slice(-4):''; }
-
-loadPublishedReports().then(renderItems);
-// deep link: ?res=<resource> — highlight+scroll to the matching item
-try{
-  const res = new URLSearchParams(location.search).get("res");
-  if(res){
-    const idx = ITEMS.findIndex(it => it.resource === res);
-    if(idx >= 0){
-      const cards = document.querySelectorAll('.item');
-      if(cards[idx]){ cards[idx].style.border='2px solid var(--accent)'; cards[idx].scrollIntoView({behavior:'smooth'}); }
-    }
+async function init(){
+  const grid=document.getElementById('resources');
+  let html='';
+  for(const s of STATIC){
+    html+='<div class="res"><div class="name">'+s.name+'</div><div class="p">'+s.desc+'</div><div class="price">$1.00 USDC</div><div class="p" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;margin-top:6px">'+s.res+'</div></div>';
   }
-}catch(e){}
+  try{
+    const r=await fetch(API+'/v1/x402/reports');
+    const j=await r.json();
+    const reps=(j.reports||[]);
+    document.getElementById('slugs').textContent=reps.map(x=>x.slug).join(', ')||'none yet';
+    for(const rep of reps){
+      html+='<div class="res"><div class="name">🔬 '+rep.title+'</div><div class="p">Deep-dive report · '+rep.date+'</div><div class="price">$1.00 USDC</div><div class="p" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;margin-top:6px">research:'+rep.slug+'</div></div>';
+    }
+  }catch(e){}
+  grid.innerHTML=html;
+}
+init();
 </script>
 </body>
 </html>
