@@ -20,6 +20,7 @@ body{ margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 -apple-syst
 nav{ position:sticky; top:0; z-index:10; background:var(--navbg); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; gap:16px; align-items:center; }
 nav a{ color:var(--fg); text-decoration:none; font-weight:600; font-size:13.5px; }
 nav a:hover{ color:var(--accent); }
+nav a.active{ color:var(--accent); }
 nav .sp{ flex:1; }
 .wrap{ max-width:980px; margin:0 auto; padding:24px 20px 60px; }
 h1{ font-size:22px; margin:0 0 4px; }
@@ -56,37 +57,40 @@ tr:hover td{ background:var(--rowhover); }
 .del:hover{ text-decoration:underline; }
 .news{ font-size:12.5px; color:var(--muted); margin-top:8px; }
 .news b{ color:var(--fg); }
+.walletbar{ display:flex; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
+.walletbar .addr{ font:12px var(--mono); color:var(--muted); }
 </style>
 </head>
 <body>
 <nav>
-  <a href="roi_planner.html">📊 SubnetROI</a>
-  <a href="portfolio.html" style="color:var(--accent)">💼 Portfolio</a>
-  <a href="methodology.html">Methodology</a>
+  <a href="x402_pay.html">⚡ SubnetROI</a>
+  <a href="portfolio.html" class="active">💼 Portfolio</a>
+  <a href="research.html">🔬 Research</a>
   <a href="ebook.html">Ebooks</a>
+  <a href="methodology.html">Methodology</a>
   <span class="sp"></span>
-  <a href="x402_pay.html" style="font-size:12.5px" id="navKey">🔑 Upgrade to Pro</a>
+  <a href="x402_pay.html">Developer API</a>
 </nav>
 
 <div class="wrap">
   <h1>Portfolio Tracker</h1>
-  <p class="hint" id="subHint">Log your staked positions — SubnetROI values them live in TAO and USD, and tracks your gain or loss against the Alpha price at entry.</p>
+  <p class="hint" id="subHint">Log your staked positions — SubnetROI values them live in TAO and USD, and tracks your gain or loss against the Alpha price at entry. Your portfolio is bound to your wallet address; no account, no API key.</p>
   <div class="err" id="err"></div>
 
   <div id="lockPanel">
     <div class="banner">
-      <div class="t">🔓 Portfolio requires Pro</div>
-      <div class="s">Log every stake, see its live value in TAO and USD, and get a Telegram nudge when a position turns against you. No key? Upgrade at the payments page — the free ROI table always remains available on the dashboard.</div>
-      <div style="margin-top:10px"><input id="keyInput" type="password" placeholder="sr_…" style="background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:8px 10px;font-size:13px;min-width:240px"> <button class="btn" onclick="unlock()">Unlock</button></div>
-    </div>
-    <div class="totals" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
-      <div class="tot"><div class="l">📊 Live valuation</div><div class="s">Every position valued in TAO + USD from live on-chain data, the moment you load the page.</div></div>
-      <div class="tot"><div class="l">📉 P&amp;L at a glance</div><div class="s">Value vs. your entry Alpha price — gain or loss, per position and across the whole portfolio.</div></div>
-      <div class="tot"><div class="l">🔔 Telegram alerts</div><div class="s">Set a down/up % threshold and get a nudge to your phone before a bad position gets worse.</div></div>
+      <div class="t">🔓 Connect your wallet</div>
+      <div class="s">Your portfolio is stored under your wallet address (MetaMask, Coinbase Wallet, Tangem extension — any EVM wallet). Connect once to add positions and see live valuations. Programmatic access to this data is <a href="x402_pay.html">$1 USDC via x402</a>.</div>
+      <div style="margin-top:12px"><button class="btn" id="connBtn" onclick="connectWallet()">Connect wallet</button> <span class="addr" id="addr"></span></div>
     </div>
   </div>
 
   <div id="app" style="display:none">
+    <div class="walletbar">
+      <button class="btn ghost small" onclick="connectWallet()">↻ Reconnect</button>
+      <span class="addr" id="addr2"></span>
+    </div>
+
     <div class="totals" id="totalsRow"></div>
 
     <div class="card">
@@ -131,48 +135,49 @@ tr:hover td{ background:var(--rowhover); }
 
 <script>
 const API = 'https://subnet-roi-api.mentatdev.workers.dev';
-let proState = { key: localStorage.getItem('sroi_key')||'', plan: null };
+let wallet = localStorage.getItem('sroi_wallet')||'';
 let positions = [];
 
 function showErr(m){ var e=document.getElementById('err'); e.textContent=m; e.style.display='block'; }
 function hideErr(){ document.getElementById('err').style.display='none'; }
+function shortAddr(a){ return a?a.slice(0,6)+'…'+a.slice(-4):''; }
 
-async function unlock(){
-  const k = document.getElementById('keyInput').value.trim();
-  if(!k){ showErr('Enter your API key.'); return; }
-  const r = await fetch(API+'/v1/key', { headers:{ 'x-api-key': k } });
-  if(r.status===401){ showErr('Invalid key.'); return; }
-  const j = await r.json();
-  proState.key=k; proState.plan=j.plan; localStorage.setItem('sroi_key', k);
-  hideErr(); paintAuth(); load();
-}
-function lock(){
-  proState.key=''; proState.plan=null; localStorage.removeItem('sroi_key');
-  paintAuth();
+async function connectWallet(){
+  hideErr();
+  if(!window.ethereum){ showErr('No wallet found. Install MetaMask, Coinbase Wallet, or the Tangem extension, then reload.'); return; }
+  try{
+    const accounts = await window.ethereum.request({ method:'eth_requestAccounts' });
+    if(!accounts || !accounts[0]) return;
+    wallet = accounts[0].toLowerCase();
+    localStorage.setItem('sroi_wallet', wallet);
+    paintAuth();
+    await load();
+  }catch(e){ showErr(e.message||'Could not connect wallet.'); }
 }
 function paintAuth(){
-  document.getElementById('lockPanel').style.display = (proState.plan==='pro'||proState.plan==='api') ? 'none' : 'block';
-  document.getElementById('app').style.display = (proState.plan==='pro'||proState.plan==='api') ? 'block' : 'none';
-  const nav = document.getElementById('navKey');
-  if(nav) nav.textContent = (proState.plan==='pro'||proState.plan==='api') ? 'Key: '+proState.plan : 'Upgrade to Pro';
+  document.getElementById('lockPanel').style.display = wallet ? 'none' : 'block';
+  document.getElementById('app').style.display = wallet ? 'block' : 'none';
+  document.getElementById('addr').textContent = wallet ? shortAddr(wallet) : '';
+  document.getElementById('addr2').textContent = wallet ? shortAddr(wallet) : '';
 }
 
 async function loadAlerts(){
+  if(!wallet) return;
   try{
-    const r = await fetch(API+'/v1/portfolio/alerts', { headers:{ 'x-api-key': proState.key } });
+    const r = await fetch(API+'/v1/portfolio/alerts?wallet='+wallet);
     if(!r.ok) return;
     const j = await r.json();
     const st = j.settings||{};
     document.getElementById('aDown').value = st.thresholdDown??'';
     document.getElementById('aUp').value = st.thresholdUp??'';
     document.getElementById('aChat').value = st.chatId||'';
-    document.getElementById('aEnabled') && (document.getElementById('aEnabled').checked = st.enabled!==false);
   }catch(e){}
 }
 async function saveAlerts(){
+  if(!wallet) return;
   hideErr();
   try{
-    const r = await fetch(API+'/v1/portfolio/alerts', { method:'PUT', headers:{ 'x-api-key': proState.key, 'Content-Type':'application/json' }, body: JSON.stringify({
+    const r = await fetch(API+'/v1/portfolio/alerts?wallet='+wallet, { method:'PUT', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({
       thresholdDown: document.getElementById('aDown').value,
       thresholdUp: document.getElementById('aUp').value,
       chatId: document.getElementById('aChat').value
@@ -182,10 +187,11 @@ async function saveAlerts(){
   }catch(e){ showErr('Could not save alerts — API unreachable.'); }
 }
 async function load(){
+  if(!wallet) return;
   hideErr();
   try{
-    const r = await fetch(API+'/v1/portfolio', { headers:{ 'x-api-key': proState.key } });
-    if(r.status===401||r.status===403){ proState.plan=null; localStorage.removeItem('sroi_key'); paintAuth(); return; }
+    const r = await fetch(API+'/v1/portfolio?wallet='+wallet);
+    if(r.status===400){ showErr('Invalid wallet address.'); return; }
     const j = await r.json();
     positions = j.positions||[];
     render(j.totals, j.taoUsd);
@@ -220,6 +226,7 @@ function render(totals, taoUsd){
 
 async function addPos(){
   hideErr();
+  if(!wallet){ showErr('Connect your wallet first.'); return; }
   const subnet = +document.getElementById('fSubnet').value;
   const taoStaked = parseFloat(document.getElementById('fTao').value);
   const entryPrice = parseFloat(document.getElementById('fPrice').value);
@@ -236,17 +243,23 @@ async function delPos(i){
 }
 async function save(list){
   hideErr();
+  if(!wallet) return;
   try{
-    const r = await fetch(API+'/v1/portfolio', { method:'PUT', headers:{ 'x-api-key': proState.key, 'Content-Type':'application/json' }, body: JSON.stringify({ positions: list }) });
+    const r = await fetch(API+'/v1/portfolio?wallet='+wallet, { method:'PUT', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ positions: list }) });
     if(!r.ok){ const j = await r.json().catch(()=>({})); showErr(j.error||'Could not save positions.'); return; }
     await load();
   }catch(e){ showErr('Could not save positions — API unreachable.'); }
 }
 
-(function init(){
-  const saved = localStorage.getItem('sroi_key')||'';
-  if(saved){ proState.key=saved; fetch(API+'/v1/key', { headers:{ 'x-api-key': saved } }).then(r=>r.ok?r.json():null).then(j=>{ if(j){ proState.plan=j.plan; paintAuth(); if(proState.plan==='pro'||proState.plan==='api') load(); } }); }
-  paintAuth();
+(async function init(){
+  if(window.ethereum){
+    try{
+      const accounts = await window.ethereum.request({ method:'eth_accounts' }).catch(()=>[]);
+      if(accounts && accounts[0]){ wallet = accounts[0].toLowerCase(); localStorage.setItem('sroi_wallet', wallet); }
+    }catch(e){}
+  }
+  if(wallet){ paintAuth(); await load(); }
+  else paintAuth();
 })();
 </script>
 </body>
