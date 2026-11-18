@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T03:00:01+00:00",
+  "generated_at": "2026-11-18T03:15:01+00:00",
   "customers": {
     "count": 5,
     "list": [
@@ -56,7 +56,7 @@
     },
     "reg_cost_alert": {
       "last": "2026-11-17",
-      "status": "cost=174.5 floor=87.5 near_floor=False below_thresh=False",
+      "status": "cost=173.9 floor=87.0 near_floor=False below_thresh=False",
       "alerts": 16
     },
     "roi_digest": {
