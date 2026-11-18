@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stop Losing TAO — The Bittensor Staking Survival Guide</title>
 <style>
-  :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--fg:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149}
-  [data-theme="light"]{--bg:#ffffff;--card:#f6f8fa;--border:#d0d7de;--fg:#1f2328;--muted:#57606a;--accent:#0969da;--green:#1a7f37;--red:#cf222e}
+  :root{--bg:#ffffff;--card:#f6f8fa;--panel2:#eef1f5;--navbg:rgba(255,255,255,.92);--border:#d0d7de;--fg:#1f2328;--muted:#57606a;--accent:#0969da;--green:#1a7f37;--red:#cf222e}
+  [data-theme="dark"]{--bg:#0d1117;--card:#161b22;--panel2:#0d1119;--navbg:rgba(13,17,23,.92);--border:#30363d;--fg:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6}
   .nav{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--border)}
@@ -52,17 +52,46 @@
   .lib-price{font-size:20px;font-weight:800;color:var(--green);margin-bottom:10px}
   .disclaimer{font-size:11px;color:var(--muted);margin-top:30px;text-align:center}
   @media(max-width:600px){.grid{grid-template-columns:1fr}h1{font-size:30px}}
+
+nav.topnav{position:sticky;top:0;z-index:20;background:var(--navbg,rgba(255,255,255,.92));backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:11px 22px;display:flex;gap:20px;align-items:center;}
+nav.topnav .brand{font-weight:800;font-size:15px;color:var(--fg);text-decoration:none;letter-spacing:.01em}
+nav.topnav .brand span{color:var(--accent)}
+nav.topnav a.navlink{color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px;padding:4px 2px;border-bottom:2px solid transparent}
+nav.topnav a.navlink:hover{color:var(--fg)}
+nav.topnav a.navlink.active{color:var(--accent);border-bottom-color:var(--accent)}
+nav.topnav .sp{flex:1}
+nav.topnav .theme-toggle{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;line-height:1}
+nav.topnav .theme-toggle:hover{border-color:var(--accent)}
+nav.topnav a.cta{background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px}
+nav.topnav a.cta:hover{opacity:.9}
 </style>
+<script>
+(function(){
+  function saved(){ try{ var s=localStorage.getItem('sroi_theme'); if(s==='dark'||s==='light') return s; }catch(e){} return null; }
+  function apply(t){ document.documentElement.dataset.theme=t; var b=document.getElementById('themeBtn'); if(b) b.textContent=(t==='dark'?'☀️':'🌙'); }
+  apply(saved() || 'light');
+  document.addEventListener('DOMContentLoaded', function(){ var b=document.getElementById('themeBtn'); if(b) b.textContent=(document.documentElement.dataset.theme==='dark'?'☀️':'🌙'); });
+})();
+function toggleTheme(){
+  var cur = document.documentElement.dataset.theme==='dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = cur;
+  try{ localStorage.setItem('sroi_theme', cur); }catch(e){}
+  var b = document.getElementById('themeBtn'); if(b) b.textContent = (cur==='dark'?'☀️':'🌙');
+}
+</script>
 </head>
 <body>
-<div class="nav"><div class="nav-in">
-  <a class="brand" href="roi_planner.html">Subnet<span>ROI</span></a>
-  <div class="right">
-    <a href="roi_planner.html">Planner</a>
-    <a href="methodology.html">Methodology</a>
-    <a href="x402_pay.html">Pricing</a>
-  </div>
-</div></div>
+<nav class="topnav">
+<a class="brand" href="x402_pay.html">Subnet<span>ROI</span></a>
+  <a class="navlink" href="roi_planner.html">Dashboard</a>
+  <a class="navlink" href="portfolio.html">Portfolio</a>
+  <a class="navlink" href="research.html">Research</a>
+  <a class="navlink active" href="ebook.html">Ebooks</a>
+  <a class="navlink" href="methodology.html">Methodology</a>
+  <span class="sp"></span>
+  <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
+  <a class="cta" href="x402_pay.html">⚡ Developer API</a>
+</nav>
 
 <div class="wrap">
   <div class="kicker">The Bittensor Staking Survival Guide</div>

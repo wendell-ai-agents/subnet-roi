@@ -121,6 +121,18 @@
   .footer a{color:var(--accent);text-decoration:none}
   .theme-toggle{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:7px;padding:6px 10px;font-size:15px;cursor:pointer;line-height:1}
   .theme-toggle:hover{filter:brightness(1.05)}
+
+nav.topnav{position:sticky;top:0;z-index:20;background:var(--navbg,rgba(255,255,255,.92));backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:11px 22px;display:flex;gap:20px;align-items:center;}
+nav.topnav .brand{font-weight:800;font-size:15px;color:var(--fg);text-decoration:none;letter-spacing:.01em}
+nav.topnav .brand span{color:var(--accent)}
+nav.topnav a.navlink{color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px;padding:4px 2px;border-bottom:2px solid transparent}
+nav.topnav a.navlink:hover{color:var(--fg)}
+nav.topnav a.navlink.active{color:var(--accent);border-bottom-color:var(--accent)}
+nav.topnav .sp{flex:1}
+nav.topnav .theme-toggle{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;line-height:1}
+nav.topnav .theme-toggle:hover{border-color:var(--accent)}
+nav.topnav a.cta{background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px}
+nav.topnav a.cta:hover{opacity:.9}
 </style>
 <script>
 (function(){
@@ -134,21 +146,17 @@ function toggleTheme(){ var cur=document.documentElement.dataset.theme==='dark'?
 <script data-goatcounter="https://subnetroi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
-<div class="nav">
-  <div class="nav-in">
-    <div class="brand">Subnet<span>ROI</span></div>
-    <div class="nav-links">
-      <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
-      <a href="#tool">Dashboard</a>
-      <a href="methodology.html">Methodology</a>
-      <a href="x402_pay.html">Pricing</a>
-      <a href="portfolio.html">Portfolio</a>
-      <a href="research.html">Research</a>
-      <a href="ebook.html">Ebook</a>
-      <a class="btn" href="x402_pay.html">⚡ API · Pay with x402</a>
-    </div>
-  </div>
-</div>
+<nav class="topnav">
+<a class="brand" href="x402_pay.html">Subnet<span>ROI</span></a>
+  <a class="navlink active" href="roi_planner.html">Dashboard</a>
+  <a class="navlink" href="portfolio.html">Portfolio</a>
+  <a class="navlink" href="research.html">Research</a>
+  <a class="navlink" href="ebook.html">Ebooks</a>
+  <a class="navlink" href="methodology.html">Methodology</a>
+  <span class="sp"></span>
+  <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
+  <a class="cta" href="x402_pay.html">⚡ Developer API</a>
+</nav>
 
 <div class="wrap">
   <div class="hero">
