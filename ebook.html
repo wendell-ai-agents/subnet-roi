@@ -70,9 +70,8 @@
   <p class="sub">Why your staked TAO keeps dropping — and the exact system to stake safely, pick the right subnets, and stop getting wrecked by bad validators and dead subnets.</p>
 
   <div class="hero">
-    <div class="price">$1 USDC <small>· instant download · plain English, no jargon</small></div>
-    <a class="btn" href="x402_pay.html">Buy via x402 — $1 USDC</a>
-    <div class="btn-note">Instant PDF · read on any device</div>
+    <div class="price">$1 USDC <small>· PDF · plain English, no jargon</small></div>
+    <div class="btn-note">Available through the <a href="x402_pay.html">SubnetROI x402 API</a> — pay per download with a wallet signature, no account.</div>
   </div>
 
   <h2>If you've staked TAO, you've probably felt this.</h2>
@@ -129,40 +128,26 @@
     <div class="lib-card">
       <div class="lib-name">📗 The Validator's Playbook</div>
       <div class="lib-desc">Run a Bittensor validator — the real economics: income mechanics, delegation, take rates, uptime, and the honest math of whether it's worth it. 37 chapters.</div>
-      <div class="lib-price">$1 USDC</div>
-      <a class="btn" href="x402_pay.html">Buy via x402 — $1 USDC</a>
+      <div class="lib-price">$1 USDC <small>· via <a href="x402_pay.html">x402 API</a></small></div>
     </div>
     <div class="lib-card">
       <div class="lib-name">📘 Bittensor Taxes</div>
       <div class="lib-desc">How staking rewards, Alpha tokens, and validator income are taxed — what to report, what records to keep, and how to plan ahead. 40 chapters. Educational, not advice.</div>
-      <div class="lib-price">$1 USDC</div>
-      <a class="btn" href="x402_pay.html">Buy via x402 — $1 USDC</a>
+      <div class="lib-price">$1 USDC <small>· via <a href="x402_pay.html">x402 API</a></small></div>
     </div>
   </div>
 
   <div class="final">
     <p class="sub" style="margin-bottom:10px">Stop guessing. Start staking right.</p>
-    <div class="price">$1 USDC</div>
-    <a class="btn" href="x402_pay.html">Buy via x402 — $1 USDC</a>
-    <div class="btn-note">Instant PDF · read on any device</div>
+    <div class="price">$1 USDC <small>· PDF</small></div>
+    <div class="btn-note">Available through the <a href="x402_pay.html">SubnetROI x402 API</a>.</div>
   </div>
 
   <div class="disclaimer">This guide is for educational purposes only and is not financial advice. Bittensor staking involves risk, including loss of principal. Always do your own research and never stake more than you can afford to lose.</div>
 </div>
 
 
-<script>
-async function buyEbook(e){
-  e.preventDefault();
-  // Route buyers to the single payments page — ebook preselected in "Choose how to pay".
-  // x402 pay-per-query — routing replaced by direct link to x402_pay.html
-  window.location.href = 'x402_pay.html';
-}
-async function buyFieldGuide(which){
-  // Route to the payments page with the field guide preselected.
-  window.location.href = 'x402_pay.html' + (which==='validator' ? '?res=ebook:validator-playbook' : '?res=ebook:bittensor-taxes');
-}
-</script>
+
 
 </body>
 </html>
