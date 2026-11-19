@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TAO Arbitrage Signals — SubnetROI</title>
+<style>
+:root{
+  --bg:#f6f8fb; --panel:#ffffff; --panel2:#eef2f7; --border:#d9e0ea;
+  --fg:#161d2a; --muted:#5b6675; --accent:#2f6fe4; --good:#1a9e57; --bad:#e5484d;
+  --navbg:rgba(255,255,255,.92); --code:#f2f4f8;
+}
+html[data-theme="dark"]{ --bg:#0a0d13; --panel:#11151f; --panel2:#0d1119; --border:#1e2634;
+  --fg:#e8ebf1; --muted:#8b93a3; --accent:#4f8cff; --good:#2ecc71; --bad:#ff5c5c;
+  --navbg:rgba(10,13,19,.92); --code:#0d1119; }
+body{ margin:0; background:var(--bg); color:var(--fg); font:14px/1.55 -apple-system,Segoe UI,Roboto,sans-serif; }
+nav.topnav{position:sticky;top:0;z-index:20;background:var(--navbg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:11px 22px;display:flex;gap:20px;align-items:center;}
+nav.topnav .brand{font-weight:800;font-size:15px;color:var(--fg);text-decoration:none;letter-spacing:.01em}
+nav.topnav .brand span{color:var(--accent)}
+nav.topnav a.navlink{color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px;padding:4px 2px;border-bottom:2px solid transparent}
+nav.topnav a.navlink:hover{color:var(--fg)}
+nav.topnav a.navlink.active{color:var(--accent);border-bottom-color:var(--accent)}
+nav.topnav .sp{flex:1}
+nav.topnav .theme-toggle{background:var(--panel2);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;line-height:1}
+nav.topnav .theme-toggle:hover{border-color:var(--accent)}
+nav.topnav a.cta{background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px}
+nav.topnav a.cta:hover{opacity:.9}
+.wrap{ max-width:980px; margin:0 auto; padding:32px 20px 70px; }
+.hero{ background:linear-gradient(135deg,#0b1f3a,#12355c); color:#eef2f7; border-radius:14px; padding:28px 30px; margin-bottom:22px; }
+.hero h1{ font-size:26px; margin:0 0 10px; }
+.hero p{ font-size:14.5px; margin:0 0 12px; color:#c6d3e4; max-width:760px; }
+.hero .hash{ font:12.5px ui-monospace,Menlo,Consolas,monospace; color:#7fb3ff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:8px 12px; display:inline-block; }
+h2{ font-size:17px; margin:26px 0 8px; }
+.panel{ background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin-bottom:16px; }
+table{ border-collapse:collapse; width:100%; font-size:13px; }
+th,td{ padding:8px 10px; text-align:left; border-bottom:1px solid var(--border); }
+th{ background:var(--panel2); font-size:12px; color:var(--muted); }
+tr:last-child td{ border-bottom:none; }
+td.mono, code{ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
+pre{ background:var(--code); border:1px solid var(--border); border-radius:10px; padding:14px 16px; overflow-x:auto; font:12px/1.6 ui-monospace,Menlo,Consolas,monospace; margin:10px 0 4px; }
+.muted{ color:var(--muted); }
+a{ color:var(--accent); }
+.market-strip{ display:flex; gap:12px; flex-wrap:wrap; margin:14px 0 4px; }
+.market{ background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px 16px; min-width:150px; }
+.market .sym{ font-weight:700; font-size:13px; color:var(--muted); }
+.market .px{ font-size:20px; font-weight:800; margin-top:2px; }
+.market .d{ font-size:12px; color:var(--muted); margin-top:2px; }
+.market.discount .px{ color:var(--bad); }
+.market.discount.good .px{ color:var(--good); }
+.btn{ display:inline-block; background:var(--accent); color:#fff; border:none; border-radius:9px; padding:11px 18px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; }
+.btn:hover{ opacity:.9; }
+.btn.sec{ background:var(--panel2); color:var(--fg); border:1px solid var(--border); }
+#buyStatus{ margin:10px 0 0; font-size:13px; }
+.badge{ display:inline-block; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.badge.on{ background:rgba(26,158,87,.13); color:var(--good); }
+.badge.off{ background:rgba(229,72,77,.13); color:var(--bad); }
+.fam-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+.fam{ background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+.fam .t{ font-weight:700; font-size:13.5px; margin-bottom:4px; }
+.fam .d{ font-size:12.5px; color:var(--muted); }
+.spin{ display:inline-block; animation:spin 1s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+</style>
+<script>
+(function(){
+  function saved(){ try{ var s=localStorage.getItem('sroi_theme'); if(s==='dark'||s==='light') return s; }catch(e){} return null; }
+  function apply(t){ document.documentElement.dataset.theme=t; var b=document.getElementById('themeBtn'); if(b) b.textContent=(t==='dark'?'☀️':'🌙'); }
+  apply(saved() || 'light');
+  document.addEventListener('DOMContentLoaded', function(){ var b=document.getElementById('themeBtn'); if(b) b.textContent=(document.documentElement.dataset.theme==='dark'?'☀️':'🌙'); });
+})();
+function toggleTheme(){
+  var cur = document.documentElement.dataset.theme==='dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = cur;
+  try{ localStorage.setItem('sroi_theme', cur); }catch(e){}
+  var b = document.getElementById('themeBtn'); if(b) b.textContent = (cur==='dark'?'☀️':'🌙');
+}
+</script>
+</head>
+<body>
+<nav class="topnav">
+  <a class="brand" href="index.html">Subnet<span>ROI</span></a>
+  <a class="navlink" href="roi_planner.html">Dashboard</a>
+  <a class="navlink" href="portfolio.html">Portfolio</a>
+  <a class="navlink" href="research.html">Research</a>
+  <a class="navlink" href="ebook.html">Ebooks</a>
+  <a class="navlink active" href="arb.html">Arbitrage</a>
+  <a class="navlink" href="methodology.html">Methodology</a>
+  <span class="sp"></span>
+  <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
+  <a class="cta" href="x402_pay.html">⚡ Developer API</a>
+</nav>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>📈 TAO Arbitrage Signals</h1>
+    <p>Live statistical arbitrage on the Bittensor economy: the spread between TAO, its <strong>wrapped forms</strong> (wTAO) and its <strong>staked derivatives</strong> (stTAO), plus every healthy on-chain pool's quote vs the CEX reference. Our scanner runs the token graph every 90 seconds and scores each gap with rolling z-scores and mean-reversion half-life (Ornstein–Uhlenbeck).</p>
+    <p><strong>Every signal is $1.00 USDC per query</strong> — x402 payment protocol, USDC on Base, no accounts, no API keys. Machine or human, same price.</p>
+    <p><span class="hash">network: Base (eip155:8453) · asset: USDC · scheme: exact · facilitator: Dexter</span></p>
+  </div>
+
+  <h2>Live markets</h2>
+  <div class="market-strip" id="markets">
+    <div class="market"><div class="sym">TAO (Kraken)</div><div class="px" id="m_tao">—</div><div class="d">CEX reference</div></div>
+    <div class="market"><div class="sym">wTAO</div><div class="px" id="m_wtao">—</div><div class="d">wrapped ETH</div></div>
+    <div class="market"><div class="sym">stTAO</div><div class="px" id="m_sttao">—</div><div class="d">Tensorplex staked</div></div>
+    <div class="market discount" id="m_stk"><div class="sym">stTAO vs wTAO</div><div class="px" id="m_stk_px">—</div><div class="d" id="m_stk_d">staked-derivative discount</div></div>
+  </div>
+  <p class="muted" style="font-size:12.5px;margin:6px 0 0">Updated <span id="gen_at">—</span> · full snapshot refreshes every 90s. <a href="#buy">Buy the full live payload →</a></p>
+
+  <h2>Scored signals</h2>
+  <div class="panel">
+    <p class="muted" style="margin:0 0 10px">Entry rule: |z₁₈₀| ≥ 2 <em>and</em> half-life ≤ 7 days <em>and</em> spread clears round-trip fees. z-scores grow historical weight as the scanner accumulates data.</p>
+    <table>
+      <thead><tr><th>Pair</th><th>Family</th><th>Spread</th><th>z₁₈₀</th><th>Half-life</th><th>Signal</th></tr></thead>
+      <tbody id="sigRows"><tr><td colspan="6" class="muted"><span class="spin">◌</span> loading…</td></tr></tbody>
+    </table>
+  </div>
+
+  <h2>The four families we track</h2>
+  <div class="fam-grid">
+    <div class="fam"><div class="t">CEX ↔ DEX</div><div class="d">TAO on centralized exchanges vs wTAO as priced by the deepest on-chain pool — the classic cross-market gap.</div></div>
+    <div class="fam"><div class="t">Wrapped variants</div><div class="d">wTAO across chains and bridges. Bridge premiums are slow, mean-reverting gaps.</div></div>
+    <div class="fam"><div class="t">Staked derivatives</div><div class="d">stTAO vs wTAO: the discount is bounded by redemption terms (0.2 TAO + 2% + cooldown) plus accrued staking yield — a structural, statistical band.</div></div>
+    <div class="fam"><div class="t">Pool pairs</div><div class="d">Every healthy pool's implied price vs the CEX reference, fee-aware and depth-gated.</div></div>
+  </div>
+
+  <h2 id="buy">Get the full live payload — $1 USDC</h2>
+  <div class="panel">
+    <button class="btn" id="buyCurrent" onclick="buyResource('arb:current')">🦊 Connect wallet &amp; buy current feed ($1)</button>
+    <button class="btn sec" id="buyHistory" onclick="buyResource('arb:history')">Buy 30-day history ($1)</button>
+    <p id="buyStatus" class="muted">One signature, settled in ~10 seconds on Base. Works with any EVM wallet (MetaMask / WalletConnect / in-app browser).</p>
+    <pre id="buyOut" style="display:none"></pre>
+    <p class="muted" style="font-size:12.5px;margin:10px 0 0">Agents: <code>GET https://tao-arb-api.mentatdev.workers.dev/v1/x402/checkout/arb:current</code> — or <code>arb:history</code> for the daily series. <code>pip install "x402[httpx]"</code> / <code>npm i @x402/fetch @x402/evm</code>.</p>
+  </div>
+
+  <h2>Transparency</h2>
+  <div class="panel">
+    <p style="margin:0 0 6px" class="muted">Every pool behind each signal is sanity-checked against CEX reference prices; quote-rotted or dead pools (e.g. near-empty Uniswap V2 dust, manipulated V3 quotes) are excluded and publicly listed:</p>
+    <p id="staleList" style="margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;color:var(--muted)">…</p>
+  </div>
+
+  <div class="panel" style="background:var(--panel2)">
+    <p style="margin:0" class="muted">Signals are research, not investment advice — execution costs and slippage apply. Custom feeds? <a href="mailto:info@subnetroi.com">info@subnetroi.com</a> · see also <a href="x402_pay.html">SubnetROI's x402 Developer API</a>.</p>
+  </div>
+</div>
+
+<script src="tao-arb-paywall.js"></script>
+<script>
+const API='https://tao-arb-api.mentatdev.workers.dev';
+function esc(s){ return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+function fmtPct(x){ return (x>=0?'+':'')+x.toFixed(2)+'%'; }
+const FAM={pool:'Pool pair',staked:'Staked derivative',cex_dex:'CEX↔DEX',wrapped:'Wrapped'};
+
+async function loadStats(){
+  try{
+    const r=await fetch(API+'/v1/arb/stats');
+    const j=await r.json();
+    const d=j.data; if(!d) return;
+    document.getElementById('gen_at').textContent=d.generated_at+' UTC';
+    const m=d.markets||{};
+    const set=(id,v)=>{ const e=document.getElementById(id); if(v!=null) e.textContent=v.toLocaleString(undefined,{maximumFractionDigits:2}); };
+    set('m_tao',m.tao); set('m_wtao',m.wtao); set('m_sttao',m.sttao);
+    const box=document.getElementById('m_stk');
+    if(m.wtao&&m.sttao){
+      const disc=(m.sttao/m.wtao-1)*100;
+      document.getElementById('m_stk_px').textContent=fmtPct(disc);
+      document.getElementById('m_stk_d').textContent='vs redemption band ≈ -2.1%';
+      box.classList.toggle('good',disc>-2.1);
+    }
+    const rows=d.top_signals||[];
+    const tb=document.getElementById('sigRows');
+    if(!rows.length){ tb.innerHTML='<tr><td colspan="6" class="muted">No active signals — history still accumulating (z-scores need ≥ 20 days of daily spreads). Watch this space.</td></tr>'; }
+    else{
+      tb.innerHTML=rows.map(s=>{
+        const z=s.z180;
+        const badge=s.signal?'<span class="badge on">LIVE</span>':'<span class="badge off">WATCH</span>';
+        return '<tr><td class="mono">'+esc(s.pair)+'</td><td>'+(FAM[s.family]||esc(s.family))+'</td>'+
+          '<td class="mono">'+fmtPct(s.spread_pct)+'</td>'+
+          '<td class="mono">'+(z==null?'—':Number(z).toFixed(2))+'</td>'+
+          '<td class="mono">'+(s.half_life_d==null?'—':Number(s.half_life_d).toFixed(1)+'d')+'</td>'+
+          '<td>'+badge+'</td></tr>';
+      }).join('');
+    }
+    document.getElementById('staleList').textContent=(d.stale_pools&&d.stale_pools.length)?d.stale_pools.length+' flagged — '+d.stale_pools.slice(0,4).join(', ')+'…':'none right now';
+  }catch(e){
+    document.getElementById('sigRows').innerHTML='<tr><td colspan="6" class="muted">live feed unreachable ('+esc(e.message)+')</td></tr>';
+  }
+}
+
+async function buyResource(resource){
+  const st=document.getElementById('buyStatus');
+  const out=document.getElementById('buyOut');
+  out.style.display='none';
+  try{
+    if(!window.ethereum){ st.innerHTML='No wallet found — install <a href="https://metamask.io">MetaMask</a> or use an in-app browser, or buy programmatically via the endpoint below.'; return; }
+    if(!window.TaoArbPay||!window.TaoArbPay.connect){ st.textContent='paywall not loaded yet — refresh and try again.'; return; }
+    const conn=await window.TaoArbPay.connect(window.ethereum);
+    st.innerHTML='Signed in as <span class="mono">'+conn.address.slice(0,8)+'…</span> · requesting '+resource+' …';
+    const res=await window.TaoArbPay.buy(resource,{onStatus:(s)=>{
+      st.textContent = s==='requesting'?'requesting payment requirement…': s==='settled'?'payment settled — delivering…':'awaiting signature…';
+    }});
+    if(res.ok){
+      st.innerHTML='<span style="color:var(--good);font-weight:700">✓ Paid $1.00 USDC — payload delivered.</span> <span class="muted">(tx '+(res.payment&&res.payment.tx?res.payment.tx.slice(0,10)+'…':'')+')</span>';
+      out.style.display='block';
+      out.textContent=JSON.stringify(res.data||res.body,null,2);
+    }else{
+      st.innerHTML='<span style="color:var(--bad)">✗ '+(res.error||'payment not completed')+'</span> — <span class="muted">'+(res.status||'')+'</span>';
+      if(res.header) out.style.display='block', out.textContent=JSON.stringify(res.header,null,2);
+    }
+  }catch(e){
+    st.innerHTML='<span style="color:var(--bad)">✗ '+esc(e.message||e)+'</span>';
+  }
+}
+loadStats();
+setInterval(loadStats, 90000);
+</script>
+</body>
+</html>
