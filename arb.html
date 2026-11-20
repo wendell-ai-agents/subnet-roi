@@ -94,7 +94,7 @@ function toggleTheme(){
   <div class="hero">
     <h1>📈 TAO Arbitrage Signals</h1>
     <p>Live statistical arbitrage on the Bittensor economy: the spread between TAO, its <strong>wrapped forms</strong> (wTAO) and its <strong>staked derivatives</strong> (stTAO), plus every healthy on-chain pool's quote vs the CEX reference. Our scanner runs the token graph every 90 seconds and scores each gap with rolling z-scores and mean-reversion half-life (Ornstein–Uhlenbeck).</p>
-    <p><strong>Every signal is $1.00 USDC per query</strong> — x402 payment protocol, USDC on Base, no accounts, no API keys. Machine or human, same price.</p>
+    <p><strong>From $1.00 USDC per query</strong> — current snapshot $1, 30-day history $3. x402 payment protocol, USDC on Base, no accounts, no API keys. Machine or human, same price.</p>
     <p><span class="hash">network: Base (eip155:8453) · asset: USDC · scheme: exact · facilitator: Dexter</span></p>
   </div>
 
@@ -124,10 +124,10 @@ function toggleTheme(){
     <div class="fam"><div class="t">Pool pairs</div><div class="d">Every healthy pool's implied price vs the CEX reference, fee-aware and depth-gated.</div></div>
   </div>
 
-  <h2 id="buy">Get the full live payload — $1 USDC</h2>
+  <h2 id="buy">Get the full live payload — from $1 USDC</h2>
   <div class="panel">
     <button class="btn" id="buyCurrent" onclick="buyResource('arb:current')">🦊 Connect wallet &amp; buy current feed ($1)</button>
-    <button class="btn sec" id="buyHistory" onclick="buyResource('arb:history')">Buy 30-day history ($1)</button>
+    <button class="btn sec" id="buyHistory" onclick="buyResource('arb:history')">Buy 30-day history ($3)</button>
     <p id="buyStatus" class="muted">One signature, settled in ~10 seconds on Base. Works with any EVM wallet (MetaMask / WalletConnect / in-app browser).</p>
     <pre id="buyOut" style="display:none"></pre>
     <p class="muted" style="font-size:12.5px;margin:10px 0 0">Agents: <code>GET https://tao-arb-api.mentatdev.workers.dev/v1/x402/checkout/arb:current</code> — or <code>arb:history</code> for the daily series. <code>pip install "x402[httpx]"</code> / <code>npm i @x402/fetch @x402/evm</code>.</p>

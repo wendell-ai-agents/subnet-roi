@@ -86,7 +86,7 @@ function toggleTheme(){
   <div class="hero">
     <h1>⚡ SubnetROI runs on x402</h1>
     <p>Everything on this site is sold over plain HTTP using the <strong>x402 payment protocol</strong> — the open standard built on HTTP <code>402 Payment Required</code>. No accounts, no subscriptions, no API keys. Any wallet (or AI agent with a wallet) pays per request with a single signature, and settles in <strong>USDC on Base</strong>.</p>
-    <p><strong>Every resource costs $1.00 USDC.</strong> One price, one protocol, no billing relationship.</p>
+    <p><strong>Prices: $1.00 USDC for API reads and portfolio valuations — $3.00 for deep-dive research reports.</strong> One protocol, no billing relationship.</p>
     <p><span class="hash">protocol: HTTP 402 · network: Base (eip155:8453) · asset: USDC · scheme: exact · facilitator: Dexter</span></p>
     <p style="margin:14px 0 0;font-size:13px;color:#9fb6d1">Free preview: <a href="roi_planner.html" style="color:#7fb3ff">see the live ROI data behind these endpoints →</a></p>
   </div>
@@ -103,7 +103,7 @@ function toggleTheme(){
     <p style="margin:10px 0 0">For you as a builder: no account creation, no credit card, no monthly commitment, no KYC — machines transact like they breathe. That is the point.</p>
   </div>
 
-  <h2>Available resources — all $1 USDC</h2>
+  <h2>Available resources</h2>
   <div class="res-list" id="resources"></div>
 
   <h2>Try it — one request</h2>
@@ -129,7 +129,7 @@ pip install x402
         <tr><td class="mono">POST /v1/x402/checkout/ebook:stop-losing-tao</td><td>Stop Losing TAO (PDF)</td><td>$1</td><td>one-time download token</td></tr>
         <tr><td class="mono">POST /v1/x402/checkout/ebook:validator-playbook</td><td>Validator's Playbook (PDF)</td><td>$1</td><td>one-time download token</td></tr>
         <tr><td class="mono">POST /v1/x402/checkout/ebook:bittensor-taxes</td><td>Bittensor Taxes (PDF)</td><td>$1</td><td>one-time download token</td></tr>
-        <tr><td class="mono">POST /v1/x402/checkout/research:&lt;slug&gt;</td><td>Subnet deep-dive report</td><td>$1</td><td>markdown report</td></tr>
+        <tr><td class="mono">POST /v1/x402/checkout/research:&lt;slug&gt;</td><td>Subnet deep-dive report</td><td>$3</td><td>markdown report</td></tr>
         <tr><td class="mono">POST /v1/x402/checkout/api:roi-top</td><td>Top subnets by emission</td><td>$1</td><td>JSON</td></tr>
         <tr><td class="mono">POST /v1/x402/checkout/portfolio:view</td><td>Saved portfolio valuation</td><td>$1</td><td>JSON</td></tr>
       </tbody>
@@ -177,7 +177,7 @@ async function init(){
     const reps=(j.reports||[]);
     document.getElementById('slugs').textContent=reps.map(x=>x.slug).join(', ')||'none yet';
     for(const rep of reps){
-      html+='<div class="res"><div class="name">🔬 '+rep.title+'</div><div class="p">Deep-dive report · '+rep.date+'</div><div class="price">$1.00 USDC</div><div class="p" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;margin-top:6px">research:'+rep.slug+'</div></div>';
+      html+='<div class="res"><div class="name">🔬 '+rep.title+'</div><div class="p">Deep-dive report · '+rep.date+'</div><div class="price">$'+(rep.price||1)+'.00 USDC</div><div class="p" style="font-family:ui-monospace,Menlo,monospace;font-size:11px;margin-top:6px">research:'+rep.slug+'</div></div>';
     }
   }catch(e){}
   grid.innerHTML=html;
