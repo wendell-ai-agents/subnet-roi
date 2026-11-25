@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T15:00:01+00:00",
+  "generated_at": "2026-11-25T15:15:01+00:00",
   "customers": {
     "count": 5,
     "list": [
@@ -56,12 +56,12 @@
     },
     "reg_cost_alert": {
       "last": "2026-11-25",
-      "status": "cost=229.8 floor=88.0 near_floor=False below_thresh=False",
+      "status": "cost=228.5 floor=87.5 near_floor=False below_thresh=False",
       "alerts": 16
     },
     "roi_digest": {
-      "last": "2026-11-24T08:00:04",
-      "status": "sent digest to 1 recipient(s) (10 subnets, TAO $182.74)"
+      "last": "2026-11-25T08:00:04",
+      "status": "sent digest to 1 recipient(s) (10 subnets, TAO $172.26)"
     }
   },
   "payments_verified": {
