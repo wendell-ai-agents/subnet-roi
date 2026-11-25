@@ -94,7 +94,7 @@ function toggleTheme(){
   <div class="hero">
     <h1>📈 TAO Arbitrage Signals</h1>
     <p>Live statistical arbitrage on the Bittensor economy: the spread between TAO, its <strong>wrapped forms</strong> (wTAO) and its <strong>staked derivatives</strong> (stTAO), plus every healthy on-chain pool's quote vs the CEX reference. Our scanner runs the token graph every 90 seconds and scores each gap with rolling z-scores and mean-reversion half-life (Ornstein–Uhlenbeck).</p>
-    <p><strong>From $1.00 USDC per query</strong> — current snapshot $1, 30-day history $3. x402 payment protocol, USDC on Base, no accounts, no API keys. Machine or human, same price.</p>
+    <p><strong>From $1.00 USDC per query</strong> — current snapshot $1, daily history $3. x402 payment protocol, USDC on Base, no accounts, no API keys. Machine or human, same price.</p>
     <p><span class="hash">network: Base (eip155:8453) · asset: USDC · scheme: exact · facilitator: Dexter</span></p>
   </div>
 
@@ -106,6 +106,7 @@ function toggleTheme(){
     <div class="market discount" id="m_stk"><div class="sym">stTAO vs wTAO</div><div class="px" id="m_stk_px">—</div><div class="d" id="m_stk_d">staked-derivative discount</div></div>
   </div>
   <p class="muted" style="font-size:12.5px;margin:6px 0 0">Updated <span id="gen_at">—</span> · full snapshot refreshes every 90s. <a href="#buy">Buy the full live payload →</a></p>
+  <p class="muted" style="font-size:11.5px;margin:2px 0 0">wTAO and stTAO references come from CoinGecko and update slowly; on-chain pool quotes are live. Suspicious gaps (beyond the ~4% redemption band) are flagged <span class="badge off">⚠ STALE REF</span> rather than shown as signals.</p>
 
   <h2>Scored signals</h2>
   <div class="panel">
@@ -127,7 +128,7 @@ function toggleTheme(){
   <h2 id="buy">Get the full live payload — from $1 USDC</h2>
   <div class="panel">
     <button class="btn" id="buyCurrent" onclick="buyResource('arb:current')">🦊 Connect wallet &amp; buy current feed ($1)</button>
-    <button class="btn sec" id="buyHistory" onclick="buyResource('arb:history')">Buy 30-day history ($3)</button>
+    <button class="btn sec" id="buyHistory" onclick="buyResource('arb:history')">Buy daily history ($3)</button>
     <p id="buyStatus" class="muted">One signature, settled in ~10 seconds on Base. Works with any EVM wallet (MetaMask / WalletConnect / in-app browser).</p>
     <pre id="buyOut" style="display:none"></pre>
     <p class="muted" style="font-size:12.5px;margin:10px 0 0">Agents: <code>GET https://tao-arb-api.mentatdev.workers.dev/v1/x402/checkout/arb:current</code> — or <code>arb:history</code> for the daily series. <code>pip install "x402[httpx]"</code> / <code>npm i @x402/fetch @x402/evm</code>.</p>
@@ -173,7 +174,7 @@ async function loadStats(){
     else{
       tb.innerHTML=rows.map(s=>{
         const z=s.z180;
-        const badge=s.signal?'<span class="badge on">LIVE</span>':'<span class="badge off">WATCH</span>';
+        const badge=s.signal?'<span class="badge on">LIVE</span>':(s.stale_ref?'<span class="badge off" title="reference price stale — flagged to avoid false signals">⚠ STALE REF</span>':'<span class="badge off">WATCH</span>');
         return '<tr><td class="mono">'+esc(s.pair)+'</td><td>'+(FAM[s.family]||esc(s.family))+'</td>'+
           '<td class="mono">'+fmtPct(s.spread_pct)+'</td>'+
           '<td class="mono">'+(z==null?'—':Number(z).toFixed(2))+'</td>'+
